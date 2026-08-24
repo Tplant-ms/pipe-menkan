@@ -1201,8 +1201,8 @@ function attachStepper(inputId, step, decimals, min, max){
     if(input.value === '') return;
     let v = parseFloat(input.value);
     if(isNaN(v)) return;
-    const factor = Math.pow(10, decimals);
-    v = Math.round(v*factor)/factor;
+    // 直接入力した小数はそのまま尊重する(浮動小数点の誤差だけ除去。刻み幅には丸めない)
+    v = Math.round(v * 1000) / 1000;
     const clamped = clamp(v);
     if(clamped !== v || String(clamped) !== input.value){
       input.value = clamped;
