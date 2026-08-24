@@ -1163,8 +1163,27 @@ function attachStepper(inputId, step, decimals){
     input.value = next;
     input.dispatchEvent(new Event('input', {bubbles:true}));
   }
-  dec.addEventListener('click', ()=>bump(-1));
-  inc.addEventListener('click', ()=>bump(1));
+  // 押し続けている間、連続で値が変わるようにする(最初は少し待ってから、その後は短い間隔で繰り返す)
+  let repeatTimer = null;
+  function startRepeat(dir){
+    bump(dir);
+    repeatTimer = setTimeout(function repeat(){
+      bump(dir);
+      repeatTimer = setTimeout(repeat, 90);
+    }, 400);
+  }
+  function stopRepeat(){
+    clearTimeout(repeatTimer);
+    repeatTimer = null;
+  }
+  [[dec,-1],[inc,1]].forEach(([btn,dir])=>{
+    btn.addEventListener('mousedown', e=>{ e.preventDefault(); startRepeat(dir); });
+    btn.addEventListener('touchstart', e=>{ e.preventDefault(); startRepeat(dir); }, {passive:false});
+  });
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>{
+    dec.addEventListener(evt, stopRepeat);
+    inc.addEventListener(evt, stopRepeat);
+  });
   input.insertAdjacentElement('afterend', inc);
   input.insertAdjacentElement('afterend', dec);
 }
