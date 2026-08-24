@@ -634,6 +634,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         rows[idx].nukishiro = parseFloat(e.target.value || '0');
         calc();
       });
+      attachStepperToElement(inp, 0.1, 1, 0);   // 抜きしろに+/-ボタン(0.1mm刻み・0未満なし)を付ける
     });
     rowsContainer.querySelectorAll('.row-clear').forEach(btn=>{
       btn.addEventListener('click', e=>{
@@ -845,6 +846,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         rows[idx].nukishiro = parseFloat(e.target.value || '0');
         calc();
       });
+      attachStepperToElement(inp, 0.1, 1, 0);   // 抜きしろに+/-ボタン(0.1mm刻み・0未満なし)を付ける
     });
     rowsContainer.querySelectorAll('.row-clear').forEach(btn=>{
       btn.addEventListener('click', e=>{
@@ -1099,6 +1101,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         rows[idx].nukishiro = parseFloat(e.target.value || '0');
         calc();
       });
+      attachStepperToElement(inp, 0.1, 1, 0);   // 抜きしろに+/-ボタン(0.1mm刻み・0未満なし)を付ける
     });
     rowsContainer.querySelectorAll('.row-clear').forEach(btn=>{
       btn.addEventListener('click', e=>{
@@ -1173,8 +1176,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
 
 
 /* ================= 数値欄への +/- ボタン追加 ================= */
-function attachStepper(inputId, step, decimals, min, max){
-  const input = document.getElementById(inputId);
+function attachStepperToElement(input, step, decimals, min, max){
   if(!input) return;
   min = (min===undefined) ? -Infinity : min;
   max = (max===undefined) ? Infinity : max;
@@ -1232,6 +1234,9 @@ function attachStepper(inputId, step, decimals, min, max){
   });
   input.insertAdjacentElement('afterend', inc);
   input.insertAdjacentElement('afterend', dec);
+}
+function attachStepper(inputId, step, decimals, min, max){
+  attachStepperToElement(document.getElementById(inputId), step, decimals, min, max);
 }
 attachStepper('bw_gapInput', 1, 0, 0, 20);
 attachStepper('bw_drawSize', 1, 0, 0);
