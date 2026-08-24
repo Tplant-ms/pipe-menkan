@@ -565,7 +565,11 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
 
   function renderRows(){
     rowsContainer.innerHTML = '';
+    const totalFilledCount = rows.filter(r=>r.type && r.size!=='').length;
     rows.forEach((r, idx)=>{
+      if((idx===0 || idx===1) && totalFilledCount!==1 && r.extraGap){
+        r.extraGap = false;   // 継手が2個以上になったら自動的にチェックを外す
+      }
       const card = document.createElement('div');
       card.className = 'row-card ' + (r.type && r.size!=='' ? 'filled' : 'empty');
       const menkanInfo = (r.type && r.size!=='') ? data[r.type][r.size] : null;
@@ -587,8 +591,22 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         ${r.type && diagramFor(r.type) ? `<div class="row-diagram"><img src="${diagramFor(r.type)}" alt="寸法基準図"></div>` : ''}
         ${menkanInfo && isFL ? `<div class="nukishiro-field"><label>抜きしろ(mm)</label>
           <input type="number" data-idx="${idx}" data-field="nukishiro" value="${r.nukishiro}" inputmode="decimal"></div>` : ''}
+        ${(idx===0 || idx===1) ? `<div style="margin-top:8px;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:.74rem; color:${totalFilledCount===1?'var(--ink)':'var(--ink-soft)'}; cursor:${totalFilledCount===1?'pointer':'default'};">
+            <input type="checkbox" data-idx="${idx}" data-field="extraGap" ${r.extraGap?'checked':''} ${totalFilledCount===1?'':'disabled'}>
+            反対側にもルートギャップを加算する
+          </label>
+        </div>` : ''}
       `;
       rowsContainer.appendChild(card);
+    });
+
+    rowsContainer.querySelectorAll('input[data-field="extraGap"]').forEach(inp=>{
+      inp.addEventListener('change', e=>{
+        const idx = parseInt(e.target.dataset.idx,10);
+        rows[idx].extraGap = e.target.checked;
+        calc();
+      });
     });
 
     rowsContainer.querySelectorAll('select[data-field="type"]').forEach(sel=>{
@@ -664,9 +682,11 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       const isTH = r.type==='TH';
       const isMiddle = isTH && idx > 0 && idx < filled.length-1;
       let m = isFL ? r.nukishiro : (isMiddle ? row[1]*2+gap : row[1]+gap);
+      const useExtraGap = r.extraGap && filled.length===1;
+      if(useExtraGap) m += gap;   // 反対側(継手を入力していない側)のルートギャップを追加で加算
       m = Math.round(m * 1000) / 1000;  // 浮動小数点の誤差(41.300000000000004など)を丸めて消す
       total += m;
-      parts.push(typeMeta[r.type].label+' '+row[0]+'('+m+')');
+      parts.push(typeMeta[r.type].label+' '+row[0]+'('+m+')'+(useExtraGap?'※反対側G込み':''));
     });
     const draw = parseFloat(drawSize.value);
     const cut = Math.round(draw-total);
