@@ -370,8 +370,9 @@ function renderFittingSequence(containerEl, filledRows, typeGetter, labelGetter,
       img.style.flex = '0 0 auto';
       containerEl.appendChild(img);
     }
-    // 継手1と継手2の間だけパイプを挟む(継手2-継手3は直接接続)
-    if(i === 0 && filledRows.length > 1){
+    // 継手1の右側には必ずパイプを挟む(継手が1個だけでも、パイプへ繋がることを示す)
+    // 継手2-継手3の間は直接接続なのでパイプを挟まない
+    if(i === 0){
       const pipeImg = document.createElement('img');
       pipeImg.src = pipeImgSrc;
       pipeImg.style.width = '150px';
