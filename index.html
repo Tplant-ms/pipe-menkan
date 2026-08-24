@@ -1148,9 +1148,16 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
 
 
 /* ================= 数値欄への +/- ボタン追加 ================= */
-function attachStepper(inputId, step, decimals){
+function attachStepper(inputId, step, decimals, min, max){
   const input = document.getElementById(inputId);
   if(!input) return;
+  min = (min===undefined) ? -Infinity : min;
+  max = (max===undefined) ? Infinity : max;
+  function clamp(v){
+    if(v < min) v = min;
+    if(v > max) v = max;
+    return v;
+  }
   const dec = document.createElement('button');
   dec.type = 'button'; dec.className = 'stepper-btn'; dec.textContent = '\u2212';
   const inc = document.createElement('button');
@@ -1160,6 +1167,7 @@ function attachStepper(inputId, step, decimals){
     let next = cur + dir*step;
     const factor = Math.pow(10, decimals);
     next = Math.round(next * factor) / factor;
+    next = clamp(next);
     input.value = next;
     input.dispatchEvent(new Event('input', {bubbles:true}));
   }
@@ -1184,16 +1192,29 @@ function attachStepper(inputId, step, decimals){
     dec.addEventListener(evt, stopRepeat);
     inc.addEventListener(evt, stopRepeat);
   });
+  // 直接キーボードで入力した値も、フィールドを離れた時点で範囲内に収める
+  input.addEventListener('blur', ()=>{
+    if(input.value === '') return;
+    let v = parseFloat(input.value);
+    if(isNaN(v)) return;
+    const factor = Math.pow(10, decimals);
+    v = Math.round(v*factor)/factor;
+    const clamped = clamp(v);
+    if(clamped !== v || String(clamped) !== input.value){
+      input.value = clamped;
+      input.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  });
   input.insertAdjacentElement('afterend', inc);
   input.insertAdjacentElement('afterend', dec);
 }
-attachStepper('bw_gapInput', 1, 0);
-attachStepper('bw_drawSize', 1, 0);
-attachStepper('sw_gapInput', 0.1, 1);
-attachStepper('sw_drawSize', 1, 0);
-attachStepper('mix_bwGapInput', 1, 0);
-attachStepper('mix_swGapInput', 0.1, 1);
-attachStepper('mix_drawSize', 1, 0);
+attachStepper('bw_gapInput', 1, 0, 0, 20);
+attachStepper('bw_drawSize', 1, 0, 0);
+attachStepper('sw_gapInput', 0.1, 1, 0, 5);
+attachStepper('sw_drawSize', 1, 0, 0);
+attachStepper('mix_bwGapInput', 1, 0, 0, 20);
+attachStepper('mix_swGapInput', 0.1, 1, 0, 5);
+attachStepper('mix_drawSize', 1, 0, 0);
 </script>
 </body>
 </html>
