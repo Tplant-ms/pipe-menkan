@@ -663,7 +663,8 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       // C寸法(面間)を両側分(2倍)消費する。端(最初/最後)にある側は図示寸法の端になるので消費しない。
       const isTH = r.type==='TH';
       const isMiddle = isTH && idx > 0 && idx < filled.length-1;
-      const m = isFL ? r.nukishiro : (isMiddle ? row[1]*2+gap : row[1]+gap);
+      let m = isFL ? r.nukishiro : (isMiddle ? row[1]*2+gap : row[1]+gap);
+      m = Math.round(m * 1000) / 1000;  // 浮動小数点の誤差(41.300000000000004など)を丸めて消す
       total += m;
       parts.push(typeMeta[r.type].label+' '+row[0]+'('+m+')');
     });
@@ -874,6 +875,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         }
         const sashikomi = row[2];
         net = menkan - sashikomi + (parseFloat(swGapInput.value) || 0);
+        net = Math.round(net * 1000) / 1000;
       }
       total += net;
       parts.push(typeMeta[r.type].label+' '+row[0]+'('+(Math.round(net*100)/100)+')');
@@ -1128,10 +1130,12 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         // C寸法(面間)を両側分(2倍)消費する。端(最初/最後)にある側は図示寸法の端になるので消費しない。
         const isMiddle = t.key==='TH' && idx > 0 && idx < filled.length-1;
         net = (t.key==='FL') ? r.nukishiro : (isMiddle ? row[1]*2+bwGapVal : row[1]+bwGapVal);
+        net = Math.round(net * 1000) / 1000;  // 浮動小数点の誤差を丸めて消す
       } else {
         let menkan = row[1];
         if(t.key==='SWBoss') menkan += BOKAN[r.bokan][1];
         net = menkan - row[2] + swGapVal;
+        net = Math.round(net * 1000) / 1000;  // 浮動小数点の誤差を丸めて消す
       }
       total += net;
       parts.push('['+t.src.toUpperCase()+'] '+t.meta.label+' '+row[0]+'('+(Math.round(net*100)/100)+')');
