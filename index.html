@@ -37,6 +37,7 @@ header p{margin:4px 0 12px; font-size:.7rem; color:#B7C7D6; letter-spacing:.06em
 .tabbtn.active{background:var(--paper); color:var(--blueprint);}
 .tabbtn.active.sw{color:var(--sw);}
 .tabbtn.active.mix{color:var(--accent);}
+.tabbtn.active.manual{color:var(--ink-soft);}
 main{max-width:560px; margin:0 auto; padding:16px 14px 0;}
 .panel{display:none;}
 .panel.active{display:block;}
@@ -134,6 +135,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <button class="tabbtn active" data-tab="bw">BW(突合せ)</button>
     <button class="tabbtn sw" data-tab="sw">SW(差込)</button>
     <button class="tabbtn mix" data-tab="mix">混合</button>
+    <button class="tabbtn manual" data-tab="manual">マニュアル</button>
   </div>
 </header>
 <div id="errorBanner" style="display:none; max-width:560px; margin:10px auto 0; padding:10px 12px; background:#FDEDED; border:1px solid #E08A8A; border-radius:4px; color:#8A2020; font-size:.75rem; line-height:1.6;"></div>
@@ -249,6 +251,55 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   </div>
   <button class="reset-link" id="mix_resetBtn">すべてクリア</button>
 </div>
+
+<div class="panel manual" id="panel-manual">
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">?</span><span class="step-title">これは何のツール?</span></div>
+    <p class="hint">配管の継手(エルボ・レジューサー・フランジなど)を組み合わせたときに、必要なパイプの切断寸法を自動で計算するツールです。スマホ・タブレット・PCのブラウザで、インストール不要で使えます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">1</span><span class="step-title">基本の使い方</span></div>
+    <p class="hint">画面上部のタブで「BW(突合せ)」「SW(差込)」「混合」のいずれかを選びます。継手の種類に合わせて選んでください。混合タブは、BWとSWの継手を1つのパイプに混ぜて使うときに選びます。</p>
+    <ol style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li>パイプサイズを選ぶ(両端に継手が付くパイプ本体のサイズ)</li>
+      <li>「1個目」「2個目」に、使う継手の種類とサイズを選ぶ(3個使う場合は「3個目」も)</li>
+      <li>図示寸法(mm)を入力する(図面に書かれている寸法)</li>
+      <li>一番下に「切断寸法」が自動で表示される</li>
+    </ol>
+    <p class="hint" style="margin-top:10px;">継手を選ぶと、面間(継手ごとの寸法)が自動で表示されます。特別な操作をしなくても、選ぶだけで計算されます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">2</span><span class="step-title">継手の略称一覧の出し方</span></div>
+    <p class="hint">「90°L」「FL」「RS(a寸法)」のような略称の意味がわからないときは確認できます。</p>
+    <p class="hint" style="margin-top:8px;"><strong>画面の一番上、「BW/SW/混合/マニュアル」のタブのすぐ下</strong>に「▸ 継手の略称一覧」という細長い帯が表示されています。文字だけに見えますが、<strong>そこをタップ(クリック)すると開きます</strong>。もう一度タップすると閉じます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">3</span><span class="step-title">3個目について</span></div>
+    <p class="hint">「3個目」は、2個目の継手と直接くっつく(間にパイプが入らない)場合に使います。例えば、レジューサーを2つ連続してつなげる場合などです。パイプサイズには縛られないので、自由に選べます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">4</span><span class="step-title">継手の並び図</span></div>
+    <p class="hint">継手を選ぶと、画面下の方に簡単な図(継手とパイプのイラスト)が表示されます。選んだ組み合わせが正しいか、見た目で確認できます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">5</span><span class="step-title">ルートギャップ・ギャップ</span></div>
+    <p class="hint">溶接のときに空ける隙間(ルートギャップ)は、数値欄に直接入力できます。横の「−」「＋」ボタンでも増減できます(押し続けると連続で変わります)。</p>
+    <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li>BW側:ルートギャップ(0〜20mm、1mm刻み)</li>
+      <li>SW側:ギャップ(0〜5mm、0.1mm刻み。標準は2mm)</li>
+    </ul>
+    <p class="hint" style="margin-top:10px;">BW側で継手が1個だけの場合、下に「反対側にもルートギャップを加算する」というチェックボックスが出ます。フランジなど、片側だけ継手を入力して反対側がパイプに続く場合にチェックしてください。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">6</span><span class="step-title">FL(フランジ)の抜きしろ</span></div>
+    <p class="hint">フランジを選ぶと「抜きしろ」の欄が出ます。パイプの厚みに応じて、0.1mm単位で数値を調整できます(初期値はサイズに応じて自動で入ります)。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--accent)">!</span><span class="step-title">困ったとき</span></div>
+    <p class="hint">入力した継手の並びがおかしく見える場合や、数字が想定と違う場合は、パイプサイズや継手のサイズの選び間違いがないか確認してください。それでも解決しない場合は、作成者にご相談ください。</p>
+  </div>
+</div>
+
 
 </main>
 <footer>
