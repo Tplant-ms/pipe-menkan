@@ -149,7 +149,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   <div class="card">
     <div class="step-label"><span class="step-num blue">P</span><span class="step-title">パイプサイズ</span></div>
     <select id="bw_pipeSizeSelect"><option value="">選択してください</option></select>
-    <p class="hint">両端に継手が付くパイプ本体のサイズです。各行のサイズ候補はここで自動的に絞り込まれます(3個目は対象外)。</p>
+    <p class="hint">両端に継手が付くパイプ本体のサイズです。各行のサイズ候補はここで自動的に絞り込まれます(3個目は、このサイズではなく2個目に繋がるサイズで絞り込まれます)。</p>
   </div>
   <div id="bw_rowsContainer"></div>
   <div class="card">
@@ -222,7 +222,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--accent)">P</span><span class="step-title">パイプサイズ</span></div>
     <select id="mix_pipeSizeSelect"><option value="">選択してください</option></select>
-    <p class="hint">1個目・2個目の候補をこのサイズで絞り込みます(3個目は対象外)。BW・SW両方の継手を混ぜて選べます。</p>
+    <p class="hint">1個目・2個目の候補をこのサイズで絞り込みます(3個目は、このサイズではなく2個目に繋がるサイズで絞り込まれます)。BW・SW両方の継手を混ぜて選べます。</p>
   </div>
   <div id="mix_rowsContainer"></div>
   <div class="card">
@@ -275,7 +275,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">3</span><span class="step-title">3個目について</span></div>
-    <p class="hint">「3個目」は、2個目の継手と直接くっつく(間にパイプが入らない)場合に使います。例えば、レジューサーを2つ連続してつなげる場合などです。パイプサイズには縛られないので、自由に選べます。</p>
+    <p class="hint">「3個目」は、2個目の継手と直接くっつく(間にパイプが入らない)場合に使います。例えば、レジューサーを2つ連続してつなげる場合などです。サイズの候補は、パイプサイズではなく<strong>2個目の継手から繋がる側の実際のサイズ</strong>で自動的に絞り込まれるので、繋がらない組み合わせは選べないようになっています。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">4</span><span class="step-title">継手の並び図</span></div>
@@ -478,7 +478,7 @@ const SW_FITTING_SEQ_MAP = {
 };
 const MIX_SEQ_MAP = Object.assign({}, FITTING_SEQ_MAP, SW_FITTING_SEQ_MAP);
 
-const ROW_NAMES = ['1個目','2個目','3個目(パイプサイズに縛られません)'];
+const ROW_NAMES = ['1個目','2個目','3個目(継手2に繋がるサイズのみ)'];
 const FL_FOR_SW = BW_MENKAN.FL.filter(row => SW_SIZE_LIST.includes(row[0]));
 
 /* ---------- 用語一覧(略称→正式名称) ---------- */
@@ -1056,6 +1056,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         }
       }
     });
+    revalidateRow3();
     renderRows(); calc();
   });
 
@@ -1092,10 +1093,43 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     html += '</optgroup>';
     return html;
   }
+  // 継手2(rows[1])の「継手3に繋がる側」の実サイズを計算する。
+  // 継手2が未入力なら制限なし('')。RC・RS(a)・RS(b)のように向きが変わる継手なら
+  // 主/枝どちらがパイプ側と一致するかで判定し、一致しなかった方を返す。
+  // それ以外(口径が変わらない継手)ならパイプサイズのまま。
+  function computeRow3TargetSize(){
+    const r1 = rows[1];
+    if(r1.typeIdx==='' || r1.size==='') return '';
+    const t1 = findType(r1.typeIdx);
+    if((t1.key==='RC' || t1.key==='SWRSa' || t1.key==='SWRSb') && pipeSize){
+      const row = dataOf(t1.src)[t1.key][r1.size];
+      const label = row[0];
+      const pos = label.indexOf('×');
+      if(pos !== -1){
+        const mainSize = label.slice(0,pos).trim();
+        const branchSize = label.slice(pos+1).trim();
+        if(mainSize === pipeSize) return branchSize;
+        if(branchSize === pipeSize) return mainSize;
+      }
+      return '';
+    }
+    return pipeSize;
+  }
+  function revalidateRow3(){
+    if(rows[2].typeIdx==='' || rows[2].size==='') return;
+    const t2 = findType(rows[2].typeIdx);
+    const target = computeRow3TargetSize();
+    const idxs = filterSizes(dataOf(t2.src), metaOf(t2.src), t2.key, target);
+    const stillValid = idxs.some(i2=>String(i2)===String(rows[2].size));
+    if(!stillValid){
+      rows[2].size = ''; rows[2].nukishiro = null;
+      if(t2.meta.mode===0 && idxs.length===1) rows[2].size = String(idxs[0]);
+    }
+  }
   function buildSizeOptions(typeKey, selected, rowIdx){
     if(!typeKey) return '<option value="">先に継手を選ぶ</option>';
     const t = findType(typeKey);
-    const effectiveSize = (rowIdx===2) ? '' : pipeSize;
+    const effectiveSize = (rowIdx===2) ? computeRow3TargetSize() : pipeSize;
     const idxs = filterSizes(dataOf(t.src), metaOf(t.src), t.key, effectiveSize);
     let html = '<option value="">サイズを選ぶ</option>';
     idxs.forEach(i=>{
@@ -1163,6 +1197,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
             if(idxs.length===1) rows[idx].size = String(idxs[0]);
           }
         }
+        if(idx===1) revalidateRow3();
         renderRows(); calc();
       });
     });
@@ -1170,6 +1205,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       sel.addEventListener('change', e=>{
         const idx = parseInt(e.target.dataset.idx,10);
         rows[idx].size = e.target.value; rows[idx].nukishiro = null;
+        if(idx===1) revalidateRow3();
         renderRows(); calc();
       });
     });
