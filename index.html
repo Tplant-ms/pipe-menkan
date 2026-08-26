@@ -593,6 +593,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         }
       }
     });
+    revalidateRow3();
     renderRows(); calc();
   });
 
@@ -603,9 +604,41 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     });
     return html;
   }
+  // 継手2(rows[1])の「継手3に繋がる側」の実サイズを計算する。
+  // 継手2が未入力なら制限なし('')。RCなら主/枝どちらがパイプ側と一致するかで判定し、
+  // 一致しなかった方を返す。RC以外(口径が変わらない継手)ならパイプサイズのまま。
+  function computeRow3TargetSize(){
+    const r1 = rows[1];
+    if(!r1.type || r1.size==='') return '';
+    if(r1.type === 'RC' && pipeSize){
+      const row = data[r1.type][r1.size];
+      const label = row[0];
+      const pos = label.indexOf('×');
+      if(pos !== -1){
+        const mainSize = label.slice(0,pos).trim();
+        const branchSize = label.slice(pos+1).trim();
+        if(mainSize === pipeSize) return branchSize;
+        if(branchSize === pipeSize) return mainSize;
+      }
+      return '';
+    }
+    return pipeSize;
+  }
+  // 継手2(rows[1])の内容が変わったら、継手3(rows[2])の選択済みサイズが
+  // まだ繋がるサイズか確認し、繋がらなくなっていればクリアする
+  function revalidateRow3(){
+    if(!rows[2].type || rows[2].size==='') return;
+    const target = computeRow3TargetSize();
+    const idxs = filterSizes(data, typeMeta, rows[2].type, target);
+    const stillValid = idxs.some(i2=>String(i2)===String(rows[2].size));
+    if(!stillValid){
+      rows[2].size = ''; rows[2].nukishiro = null;
+      if(typeMeta[rows[2].type].mode===0 && idxs.length===1) rows[2].size = String(idxs[0]);
+    }
+  }
   function buildSizeOptions(typeKey, selected, rowIdx){
     if(!typeKey) return '<option value="">先に継手を選ぶ</option>';
-    const effectiveSize = (rowIdx===2) ? '' : pipeSize;
+    const effectiveSize = (rowIdx===2) ? computeRow3TargetSize() : pipeSize;
     const idxs = filterSizes(data, typeMeta, typeKey, effectiveSize);
     let html = '<option value="">サイズを選ぶ</option>';
     idxs.forEach(i=>{
@@ -660,7 +693,6 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
         calc();
       });
     });
-
     rowsContainer.querySelectorAll('select[data-field="type"]').forEach(sel=>{
       sel.addEventListener('change', e=>{
         const idx = parseInt(e.target.dataset.idx,10);
@@ -669,6 +701,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
           const idxs = filterSizes(data, typeMeta, rows[idx].type, pipeSize);
           if(idxs.length===1) rows[idx].size = String(idxs[0]);
         }
+        if(idx===1) revalidateRow3();
         renderRows(); calc();
       });
     });
@@ -676,6 +709,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       sel.addEventListener('change', e=>{
         const idx = parseInt(e.target.dataset.idx,10);
         rows[idx].size = e.target.value; rows[idx].nukishiro = null;
+        if(idx===1) revalidateRow3();
         renderRows(); calc();
       });
     });
