@@ -269,20 +269,25 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <p class="hint" style="margin-top:10px;">継手を選ぶと、面間(継手ごとの寸法)が自動で表示されます。特別な操作をしなくても、選ぶだけで計算されます。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">2</span><span class="step-title">継手の略称一覧の出し方</span></div>
+    <div class="step-label"><span class="step-num" style="background:var(--accent)">2</span><span class="step-title">混合タブの使い方</span></div>
+    <p class="hint">混合タブは、<strong>1個目にSW(差込)継手、2個目・3個目にBW(突合せ)継手</strong>を組み合わせるための専用タブです。この順番以外は選べないようになっています(1個目の一覧にはSWだけ、2個目・3個目の一覧にはBWだけが表示されます)。</p>
+    <p class="hint" style="margin-top:8px;">例:小口径のSW継手(差込溶接)で分岐した先に、BW継手(突合せ溶接)の配管が続くような場合に使います。FL(フランジ)はBW・SW共通の部品なので、2個目・3個目の一覧に出てきます。</p>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">3</span><span class="step-title">継手の略称一覧の出し方</span></div>
     <p class="hint">「90°L」「FL」「RS(a寸法)」のような略称の意味がわからないときは確認できます。</p>
     <p class="hint" style="margin-top:8px;"><strong>画面の一番上、「BW/SW/混合/マニュアル」のタブのすぐ下</strong>に「▸ 継手の略称一覧」という細長い帯が表示されています。文字だけに見えますが、<strong>そこをタップ(クリック)すると開きます</strong>。もう一度タップすると閉じます。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">3</span><span class="step-title">3個目について</span></div>
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">4</span><span class="step-title">3個目について</span></div>
     <p class="hint">「3個目」は、2個目の継手と直接くっつく(間にパイプが入らない)場合に使います。例えば、レジューサーを2つ連続してつなげる場合などです。サイズの候補は、パイプサイズではなく<strong>2個目の継手から繋がる側の実際のサイズ</strong>で自動的に絞り込まれるので、繋がらない組み合わせは選べないようになっています。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">4</span><span class="step-title">継手の並び図</span></div>
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">5</span><span class="step-title">継手の並び図</span></div>
     <p class="hint">継手を選ぶと、画面下の方に簡単な図(継手とパイプのイラスト)が表示されます。選んだ組み合わせが正しいか、見た目で確認できます。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">5</span><span class="step-title">ルートギャップ・ギャップ</span></div>
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">6</span><span class="step-title">ルートギャップ・ギャップ</span></div>
     <p class="hint">溶接のときに空ける隙間(ルートギャップ)は、数値欄に直接入力できます。横の「−」「＋」ボタンでも増減できます(押し続けると連続で変わります)。</p>
     <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
       <li>BW側:ルートギャップ(0〜20mm、1mm刻み)</li>
@@ -291,7 +296,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <p class="hint" style="margin-top:10px;">BW側で継手が1個だけの場合、下に「反対側にもルートギャップを加算する」というチェックボックスが出ます。フランジなど、片側だけ継手を入力して反対側がパイプに続く場合にチェックしてください。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">6</span><span class="step-title">FL(フランジ)の抜きしろ</span></div>
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">7</span><span class="step-title">FL(フランジ)の抜きしろ</span></div>
     <p class="hint">フランジを選ぶと「抜きしろ」の欄が出ます。パイプの厚みに応じて、0.1mm単位で数値を調整できます(初期値はサイズに応じて自動で入ります)。</p>
   </div>
   <div class="card">
@@ -1079,18 +1084,19 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     drawSize.focus();
   });
 
-  function buildTypeOptions(selected){
+  // 継手1(rowIdx===0)はSW継手だけ、継手2・3(rowIdx===1,2)はBW継手だけを表示する
+  function buildTypeOptions(selected, rowIdx){
     let html = '<option value="">継手を選ぶ</option>';
-    html += '<optgroup label="SW(差込)">';
-    TYPES.filter(t=>t.src==='sw').forEach(t=>{
-      html += '<option value="'+t.key+'"'+(t.key===selected?' selected':'')+'>SW ' + t.meta.label+'</option>';
-    });
-    html += '</optgroup><optgroup label="BW(突合せ)">';
-    TYPES.filter(t=>t.src==='bw').forEach(t=>{
-      const label = (t.key==='FL') ? t.meta.label : ('BW ' + t.meta.label);  // FLはBW/SW共通部品なので接頭辞なし
-      html += '<option value="'+t.key+'"'+(t.key===selected?' selected':'')+'>'+label+'</option>';
-    });
-    html += '</optgroup>';
+    if(rowIdx === 0){
+      TYPES.filter(t=>t.src==='sw').forEach(t=>{
+        html += '<option value="'+t.key+'"'+(t.key===selected?' selected':'')+'>SW ' + t.meta.label+'</option>';
+      });
+    } else {
+      TYPES.filter(t=>t.src==='bw').forEach(t=>{
+        const label = (t.key==='FL') ? t.meta.label : ('BW ' + t.meta.label);  // FLはBW/SW共通部品なので接頭辞なし
+        html += '<option value="'+t.key+'"'+(t.key===selected?' selected':'')+'>'+label+'</option>';
+      });
+    }
     return html;
   }
   // 継手2(rows[1])の「継手3に繋がる側」の実サイズを計算する。
@@ -1165,7 +1171,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
           <button class="row-clear" data-idx="${idx}">クリア</button>
         </div>
         <div class="field-pair">
-          <select data-idx="${idx}" data-field="type">${buildTypeOptions(r.typeIdx)}</select>
+          <select data-idx="${idx}" data-field="type">${buildTypeOptions(r.typeIdx, idx)}</select>
           <select data-idx="${idx}" data-field="size" ${!t?'disabled':''}>${buildSizeOptions(r.typeIdx, r.size, idx)}</select>
         </div>
         ${isBoss ? `<div class="bokan-field"><label>母管サイズ(取り付く相手側のパイプ)</label>
