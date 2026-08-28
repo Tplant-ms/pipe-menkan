@@ -1,0 +1,729 @@
+<title>フランジ ボルト長さ選定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF3F8;--surface:#FFF;--surface2:#F4F8FC;
+  --border:#C4D4E4;--border-sub:#DCE8F2;
+  --text:#1A2B3C;--text2:#4A6478;--text3:#7898B0;
+  --accent:#1258A0;--accent-bg:#E6EFF9;--accent-dim:#4A8BC8;
+  --amber:#B86000;--amber-bg:#FEF0DC;
+  --green:#166840;--green-bg:#E4F4EC;
+  --purple:#6A3A9E;--purple-bg:#F0EAF9;
+  --shadow:0 1px 3px rgba(20,50,90,.10),0 2px 8px rgba(20,50,90,.07);
+  --r:6px;--rl:10px;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1925;--surface:#132030;--surface2:#1A2C3F;
+  --border:#243A54;--border-sub:#1C3048;
+  --text:#D4E4F4;--text2:#80A4C0;--text3:#5A7A98;
+  --accent:#4A9AE0;--accent-bg:#162840;--accent-dim:#2A78B0;
+  --amber:#F0A030;--amber-bg:#2A1E0C;
+  --green:#40C080;--green-bg:#0C2418;
+  --purple:#A080D0;--purple-bg:#1E1030;
+  --shadow:0 1px 3px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  --bg:#0B1925;--surface:#132030;--surface2:#1A2C3F;
+  --border:#243A54;--border-sub:#1C3048;
+  --text:#D4E4F4;--text2:#80A4C0;--text3:#5A7A98;
+  --accent:#4A9AE0;--accent-bg:#162840;--accent-dim:#2A78B0;
+  --amber:#F0A030;--amber-bg:#2A1E0C;
+  --green:#40C080;--green-bg:#0C2418;
+  --purple:#A080D0;--purple-bg:#1E1030;
+  --shadow:0 1px 3px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;}
+body{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh;}
+
+/* Header */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(20,50,90,.08);}
+.hdr-icon{font-size:20px;line-height:1;}
+.hdr h1{font-size:15px;font-weight:700;flex:1;}
+.hdr-sub{font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;}
+.theme-btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:4px 9px;color:var(--text2);cursor:pointer;font-size:12px;font-family:inherit;}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 45px);}
+.ctrl{background:var(--surface);border-right:1px solid var(--border);padding:16px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+.results{padding:18px;display:flex;flex-direction:column;gap:14px;}
+
+/* Section label */
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border-sub);}
+
+/* Rating tabs */
+.rtab{display:flex;gap:2px;background:var(--surface2);padding:2px;border-radius:var(--r);border:1px solid var(--border);}
+.rtab-btn{flex:1;padding:5px 2px;border:none;border-radius:calc(var(--r)-1px);background:transparent;color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;}
+.rtab-btn.active{background:var(--accent);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+
+/* Inputs */
+select{width:100%;padding:5px 24px 5px 7px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A9CB0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+input[type="number"]{width:100%;padding:5px 7px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--r);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+input[type="number"]:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+/* Seg (3-way button) */
+.seg{display:flex;gap:2px;background:var(--surface2);padding:2px;border-radius:var(--r);border:1px solid var(--border);}
+.seg-btn{flex:1;padding:4px 3px;border:none;border-radius:calc(var(--r)-1px);background:transparent;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;white-space:nowrap;text-align:center;transition:all .12s;}
+.seg-btn.active{background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,.08);}
+
+/* Extras */
+.extra-block{display:flex;flex-direction:column;gap:6px;}
+.extra-item{background:var(--surface2);border:1px solid var(--border-sub);border-radius:var(--r);padding:9px 10px;display:flex;flex-direction:column;gap:6px;}
+.extra-head{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.extra-title{font-size:12px;font-weight:600;color:var(--text);}
+.extra-tag{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--accent);}
+.extra-sub{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.extra-sub input{width:68px;}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--shadow);}
+.card-hdr{padding:10px 16px;border-bottom:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;}
+.card-hdr h2{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+
+/* Info strip (4 cells) */
+.info-strip{display:grid;grid-template-columns:repeat(4,1fr);}
+.info-cell{padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--border-sub);border-bottom:1px solid var(--border-sub);}
+.info-cell:last-child{border-right:none;}
+.info-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.info-cell-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:var(--text);line-height:1.2;}
+.info-cell-unit{font-size:10px;color:var(--text3);}
+/* Highlight last cell (base length) */
+.info-cell.base{background:var(--amber-bg);}
+.info-cell.base .info-cell-val{color:var(--amber);}
+
+/* Flow row: base → extras → minLen → selected */
+.flow-row{padding:12px 18px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--border-sub);font-size:13px;}
+.flow-box{padding:5px 11px;border-radius:var(--r);font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.flow-box.is-base{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
+.flow-box.is-extra{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
+.flow-box.is-result{background:var(--green-bg);border-color:var(--green);color:var(--green);font-size:15px;}
+.flow-box.is-no-extra{background:var(--green-bg);border-color:var(--green);color:var(--green);font-size:15px;}
+.flow-arrow{color:var(--text3);font-size:16px;padding:0 2px;}
+.flow-label{font-size:10px;color:var(--text3);display:block;margin-bottom:1px;letter-spacing:.04em;}
+
+/* Hero */
+.bolt-hero{padding:16px 18px 6px;display:flex;align-items:baseline;gap:6px;}
+.bolt-num{font-family:'IBM Plex Mono',monospace;font-size:62px;font-weight:600;color:var(--amber);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+.bolt-unit{font-family:'IBM Plex Mono',monospace;font-size:24px;color:var(--text2);}
+.bolt-meta{font-size:12px;color:var(--text3);padding:0 18px 12px;}
+.badges{padding:0 18px 14px;display:flex;gap:6px;flex-wrap:wrap;}
+.badge{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+.badge-blue{background:var(--accent-bg);color:var(--accent);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);}
+.badge-gray{background:var(--surface2);color:var(--text2);}
+
+/* Diagram */
+.diag-wrap{padding:10px 16px 14px;border-top:1px solid var(--border-sub);}
+.diag-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+#diag-svg{width:100%;overflow:visible;display:block;}
+
+/* Breakdown table */
+.bkdn{padding:0 18px 16px;border-top:1px solid var(--border-sub);}
+.bkdn-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:12px 0 7px;}
+.bkdn-table{width:100%;border-collapse:collapse;font-size:13px;}
+.bkdn-table td{padding:3px 0;color:var(--text2);vertical-align:top;}
+.bkdn-table td:last-child{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums;}
+.bkdn-table tr.row-base td{font-weight:600;color:var(--amber);}
+.bkdn-table tr.row-extra td{color:var(--accent);}
+.bkdn-table tr.row-sub td{border-top:1px solid var(--border-sub);padding-top:5px;font-weight:600;color:var(--text);}
+.bkdn-table tr.row-total td{border-top:2px solid var(--border);padding-top:6px;font-weight:700;font-size:14px;color:var(--text);}
+.bkdn-table tr.row-total td:last-child{color:var(--amber);font-size:16px;}
+
+/* Length card */
+.len-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--shadow);}
+.len-hdr{padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.len-hdr h2{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.len-hint{font-size:11px;color:var(--text3);}
+.len-grid{padding:12px 14px;display:flex;flex-wrap:wrap;gap:4px;}
+.len-btn{padding:4px 9px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface2);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:13px;cursor:pointer;transition:all .1s;font-variant-numeric:tabular-nums;}
+.len-btn:hover:not(.too-short){border-color:var(--accent-dim);color:var(--accent);}
+.len-btn.recommended{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:700;}
+.len-btn.selected{border-color:var(--amber)!important;background:var(--amber-bg)!important;color:var(--amber)!important;font-weight:700;}
+.len-btn.too-short{opacity:.30;cursor:default;}
+.len-btn.base-mark{border-color:var(--border);border-style:dashed;}
+.len-note{padding:3px 16px 10px;font-size:11px;color:var(--text3);}
+.custom-len-row{padding:8px 14px 12px;border-top:1px solid var(--border-sub);display:flex;align-items:center;gap:8px;}
+.custom-len-row label{font-size:12px;color:var(--text2);white-space:nowrap;}
+.custom-len-row input{width:76px;}
+.apply-btn{padding:5px 12px;background:var(--accent);color:white;border:none;border-radius:var(--r);font-family:inherit;font-size:12px;cursor:pointer;}
+
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.ctrl{border-right:none;border-bottom:1px solid var(--border);}}
+</style>
+
+<header class="hdr">
+  <span class="hdr-icon">🔩</span>
+  <h1>フランジ ボルト長さ選定</h1>
+  <span class="hdr-sub">JIS B 2220</span>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</header>
+
+<div class="layout">
+  <aside class="ctrl">
+
+    <!-- Rating -->
+    <div>
+      <div class="sec-lbl">フランジ レーティング</div>
+      <div class="rtab" id="rating-tabs">
+        <button class="rtab-btn" onclick="setRating(this,'2k')">2k</button>
+        <button class="rtab-btn" onclick="setRating(this,'5k')">5k</button>
+        <button class="rtab-btn active" onclick="setRating(this,'10k')">10k</button>
+        <button class="rtab-btn" onclick="setRating(this,'20k')">20k</button>
+      </div>
+    </div>
+
+    <!-- Size -->
+    <div>
+      <div class="sec-lbl">呼び径</div>
+      <select id="size-sel"></select>
+    </div>
+
+    <!-- Extras -->
+    <div>
+      <div class="sec-lbl">追加部材（表の基準長さに加算）</div>
+      <div class="extra-block">
+
+        <!-- Washer -->
+        <div class="extra-item">
+          <div class="extra-head">
+            <span class="extra-title">ワッシャー</span>
+            <span class="extra-tag" id="tag-washer">—</span>
+          </div>
+          <div class="seg" id="washer-seg">
+            <button class="seg-btn active" onclick="setWasher(this,0)">なし</button>
+            <button class="seg-btn" onclick="setWasher(this,1)">1枚<br><span style="font-size:9px;color:var(--text3)">ナット側</span></button>
+            <button class="seg-btn" onclick="setWasher(this,2)">2枚<br><span style="font-size:9px;color:var(--text3)">両側</span></button>
+          </div>
+        </div>
+
+        <!-- Double nut -->
+        <div class="extra-item">
+          <div class="extra-head">
+            <span class="extra-title">ダブルナット <span style="font-size:10px;font-weight:400;color:var(--text3)">（+1個分）</span></span>
+            <span class="extra-tag" id="tag-dnut">—</span>
+          </div>
+          <div class="seg" id="dnut-seg">
+            <button class="seg-btn active" onclick="setDnut(this,false)">なし</button>
+            <button class="seg-btn" onclick="setDnut(this,true)">あり</button>
+          </div>
+        </div>
+
+        <!-- Insulation washer -->
+        <div class="extra-item">
+          <div class="extra-head">
+            <span class="extra-title">絶縁ワッシャー</span>
+            <span class="extra-tag" id="tag-insul">—</span>
+          </div>
+          <div class="seg" id="insul-seg">
+            <button class="seg-btn active" onclick="setInsul(this,false)">なし</button>
+            <button class="seg-btn" onclick="setInsul(this,true)">あり</button>
+          </div>
+          <div class="extra-sub" id="row-insul" style="display:none;">
+            <label>厚み</label>
+            <input type="number" id="insul-h" value="3" min="0.5" max="50" step="0.5" onchange="resetLen();update()">
+            <span>mm</span>
+          </div>
+        </div>
+
+        <!-- Other -->
+        <div class="extra-item">
+          <div class="extra-head">
+            <span class="extra-title">その他追加</span>
+            <span class="extra-tag" id="tag-other">—</span>
+          </div>
+          <div class="seg" id="other-seg">
+            <button class="seg-btn active" onclick="setOther(this,false)">なし</button>
+            <button class="seg-btn" onclick="setOther(this,true)">あり</button>
+          </div>
+          <div class="extra-sub" id="row-other" style="display:none;">
+            <label>追加厚み</label>
+            <input type="number" id="other-h" value="5" min="0.5" max="200" step="1" onchange="resetLen();update()">
+            <span>mm</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="results">
+
+    <!-- Main result card -->
+    <div class="card">
+      <div class="card-hdr">
+        <h2>選定結果</h2>
+        <span id="result-tag" style="font-size:11px;"></span>
+      </div>
+
+      <!-- 4-cell info strip -->
+      <div class="info-strip">
+        <div class="info-cell">
+          <span class="info-cell-lbl">ボルト径</span>
+          <span class="info-cell-val" id="info-dia">—</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-cell-lbl">スパナ径</span>
+          <span class="info-cell-val" id="info-sp">—</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-cell-lbl">本数</span>
+          <span class="info-cell-val" id="info-cnt">—</span>
+        </div>
+        <div class="info-cell base">
+          <span class="info-cell-lbl">表の推奨長さ</span>
+          <span class="info-cell-val" id="info-base">—</span>
+        </div>
+      </div>
+
+      <!-- Flow row -->
+      <div class="flow-row" id="flow-row"></div>
+
+      <!-- Hero -->
+      <div class="bolt-hero">
+        <div class="bolt-num" id="result-len">—</div>
+        <div class="bolt-unit">mm</div>
+      </div>
+      <div class="bolt-meta" id="bolt-meta"></div>
+      <div class="badges" id="result-badges"></div>
+
+      <!-- Diagram -->
+      <div class="diag-wrap">
+        <div class="diag-title">断面模式図</div>
+        <svg id="diag-svg" viewBox="0 0 560 100" height="90"></svg>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="bkdn">
+        <div class="bkdn-title">計算内訳</div>
+        <table class="bkdn-table" id="bkdn-table"></table>
+      </div>
+    </div>
+
+    <!-- Length grid -->
+    <div class="len-card">
+      <div class="len-hdr">
+        <h2>長さ一覧（5mm刻み）</h2>
+        <span class="len-hint" id="len-hint"></span>
+      </div>
+      <div class="len-grid" id="len-grid"></div>
+      <div class="len-note">
+        <span style="display:inline-block;width:10px;height:10px;border:1px dashed var(--border);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>表の推奨 &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>追加込み推奨 &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:var(--amber-bg);border:1px solid var(--amber);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>選択中
+      </div>
+      <div class="custom-len-row">
+        <label>カスタム長さ：</label>
+        <input type="number" id="custom-len-input" placeholder="例: 88" min="20" max="600" step="1">
+        <span style="font-size:12px;color:var(--text3);">mm</span>
+        <button class="apply-btn" onclick="applyCustomLen()">選択</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── LOOKUP TABLE (JIS BN表より) ────────────────────────────────────────────
+const TABLE = {
+  '2k': {
+    '450A':  {cnt:16, dia:'M20', sp:30, base:75},
+    '500A':  {cnt:20, dia:'M20', sp:30, base:75},
+    '550A':  {cnt:20, dia:'M22', sp:32, base:80},
+    '600A':  {cnt:20, dia:'M22', sp:32, base:80},
+    '650A':  {cnt:22, dia:'M22', sp:32, base:80},
+    '700A':  {cnt:24, dia:'M22', sp:32, base:80},
+    '750A':  {cnt:24, dia:'M24', sp:36, base:80},
+    '800A':  {cnt:24, dia:'M24', sp:36, base:80},
+    '850A':  {cnt:24, dia:'M24', sp:36, base:80},
+    '900A':  {cnt:24, dia:'M24', sp:36, base:80},
+    '1000A': {cnt:28, dia:'M24', sp:36, base:85},
+    '1100A': {cnt:28, dia:'M24', sp:36, base:85},
+    '1200A': {cnt:32, dia:'M24', sp:36, base:85},
+    '1350A': {cnt:32, dia:'M24', sp:36, base:85},
+    '1500A': {cnt:36, dia:'M24', sp:36, base:90},
+  },
+  '5k': {
+    '10A':   {cnt:4,  dia:'M10', sp:17, base:35},
+    '15A':   {cnt:4,  dia:'M10', sp:17, base:35},
+    '20A':   {cnt:4,  dia:'M10', sp:17, base:35},
+    '25A':   {cnt:4,  dia:'M10', sp:17, base:35},
+    '32A':   {cnt:4,  dia:'M12', sp:19, base:45},
+    '40A':   {cnt:4,  dia:'M12', sp:19, base:45},
+    '50A':   {cnt:4,  dia:'M12', sp:19, base:50},
+    '65A':   {cnt:4,  dia:'M12', sp:19, base:50},
+    '80A':   {cnt:4,  dia:'M16', sp:24, base:50},
+    '100A':  {cnt:8,  dia:'M16', sp:24, base:55},
+    '125A':  {cnt:8,  dia:'M16', sp:24, base:55},
+    '150A':  {cnt:8,  dia:'M16', sp:24, base:60},
+    '200A':  {cnt:8,  dia:'M20', sp:30, base:70},
+    '250A':  {cnt:12, dia:'M20', sp:30, base:75},
+    '300A':  {cnt:12, dia:'M20', sp:30, base:75},
+    '350A':  {cnt:12, dia:'M22', sp:32, base:80},
+    '400A':  {cnt:16, dia:'M22', sp:32, base:80},
+    '450A':  {cnt:16, dia:'M22', sp:32, base:80},
+    '500A':  {cnt:20, dia:'M22', sp:32, base:80},
+    '550A':  {cnt:20, dia:'M24', sp:36, base:90},
+    '600A':  {cnt:20, dia:'M24', sp:36, base:90},
+    '650A':  {cnt:24, dia:'M24', sp:36, base:90},
+    '700A':  {cnt:24, dia:'M24', sp:36, base:90},
+    '750A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '800A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '900A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '1000A': {cnt:28, dia:'M30', sp:46, base:120},
+    '1200A': {cnt:32, dia:'M30', sp:46, base:120},
+    '1350A': {cnt:32, dia:'M30', sp:46, base:120},
+    '1500A': {cnt:36, dia:'M30', sp:46, base:120},
+  },
+  '10k': {
+    '10A':   {cnt:4,  dia:'M12', sp:19, base:45},
+    '15A':   {cnt:4,  dia:'M12', sp:19, base:45},
+    '20A':   {cnt:4,  dia:'M12', sp:19, base:45},
+    '25A':   {cnt:4,  dia:'M16', sp:24, base:50},
+    '32A':   {cnt:4,  dia:'M16', sp:24, base:55},
+    '40A':   {cnt:4,  dia:'M16', sp:24, base:55},
+    '50A':   {cnt:4,  dia:'M16', sp:24, base:55},
+    '65A':   {cnt:4,  dia:'M16', sp:24, base:60},
+    '80A':   {cnt:8,  dia:'M16', sp:24, base:60},
+    '100A':  {cnt:8,  dia:'M16', sp:24, base:60},
+    '125A':  {cnt:8,  dia:'M20', sp:30, base:70},
+    '150A':  {cnt:8,  dia:'M20', sp:30, base:75},
+    '200A':  {cnt:12, dia:'M20', sp:30, base:75},
+    '250A':  {cnt:12, dia:'M22', sp:32, base:80},
+    '300A':  {cnt:16, dia:'M22', sp:32, base:80},
+    '350A':  {cnt:16, dia:'M22', sp:32, base:85},
+    '400A':  {cnt:16, dia:'M24', sp:36, base:90},
+    '450A':  {cnt:20, dia:'M24', sp:36, base:100},
+    '500A':  {cnt:20, dia:'M24', sp:36, base:100},
+    '550A':  {cnt:20, dia:'M30', sp:46, base:110},
+    '600A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '650A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '700A':  {cnt:24, dia:'M30', sp:46, base:110},
+    '750A':  {cnt:24, dia:'M30', sp:46, base:120},
+    '800A':  {cnt:28, dia:'M30', sp:46, base:120},
+    '900A':  {cnt:28, dia:'M30', sp:46, base:120},
+    '1000A': {cnt:28, dia:'M36', sp:55, base:130},
+    '1200A': {cnt:32, dia:'M36', sp:55, base:140},
+    '1350A': {cnt:36, dia:'M42', sp:65, base:150},
+    '1500A': {cnt:40, dia:'M42', sp:65, base:160},
+  },
+  '20k': {
+    '10A':   {cnt:4,  dia:'M12', sp:19, base:50},
+    '15A':   {cnt:4,  dia:'M12', sp:19, base:50},
+    '20A':   {cnt:4,  dia:'M12', sp:19, base:55},
+    '25A':   {cnt:4,  dia:'M16', sp:24, base:60},
+    '32A':   {cnt:4,  dia:'M16', sp:24, base:60},
+    '40A':   {cnt:4,  dia:'M16', sp:24, base:60},
+    '50A':   {cnt:8,  dia:'M16', sp:24, base:60},
+    '65A':   {cnt:8,  dia:'M16', sp:24, base:65},
+    '80A':   {cnt:8,  dia:'M20', sp:30, base:75},
+    '100A':  {cnt:8,  dia:'M20', sp:30, base:80},
+    '125A':  {cnt:8,  dia:'M22', sp:32, base:85},
+    '150A':  {cnt:12, dia:'M22', sp:32, base:90},
+    '200A':  {cnt:12, dia:'M22', sp:32, base:95},
+    '250A':  {cnt:12, dia:'M24', sp:36, base:110},
+    '300A':  {cnt:16, dia:'M24', sp:36, base:110},
+    '350A':  {cnt:16, dia:'M30', sp:46, base:120},
+    '400A':  {cnt:16, dia:'M30', sp:46, base:130},
+    '450A':  {cnt:20, dia:'M30', sp:46, base:140},
+    '500A':  {cnt:20, dia:'M30', sp:46, base:140},
+    '550A':  {cnt:20, dia:'M36', sp:55, base:150},
+    '600A':  {cnt:24, dia:'M36', sp:55, base:160},
+  },
+};
+
+// ナット高さ・ワッシャー厚み（JIS規格値）
+const BPROPS = {
+  M10:  {nut:8,  washer:2.0},
+  M12:  {nut:10, washer:2.5},
+  M16:  {nut:13, washer:3.0},
+  M20:  {nut:16, washer:3.0},
+  M22:  {nut:18, washer:3.0},
+  M24:  {nut:19, washer:4.0},
+  M27:  {nut:22, washer:4.0},
+  M30:  {nut:24, washer:4.0},
+  M36:  {nut:29, washer:5.0},
+  M42:  {nut:34, washer:6.0},
+};
+
+// 5mm刻みで長さ生成 30〜300
+const ALL_LENS = [];
+for(let l=30; l<=300; l+=5) ALL_LENS.push(l);
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let state = {
+  rating: '10k',
+  washerCount: 0,   // 0=なし, 1=ナット側1枚, 2=両側2枚
+  dnut: false,
+  insul: false,
+  other: false,
+  selectedLen: null,
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+const si = id => document.getElementById(id);
+const cv = id => parseFloat(si(id).value) || 0;
+
+function ceil5(v){ return Math.ceil(v / 5) * 5; }
+
+function populateSizes(rating, keepSize) {
+  const sel = si('size-sel');
+  const prev = keepSize || sel.value;
+  const keys = Object.keys(TABLE[rating]);
+  sel.innerHTML = '';
+  keys.forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = k; sel.appendChild(o);
+  });
+  if(keys.includes(prev)) sel.value = prev;
+  else sel.value = keys[0];
+}
+
+function resolveParams() {
+  const size = si('size-sel').value;
+  const entry = TABLE[state.rating]?.[size];
+  if(!entry) return null;
+  const props = BPROPS[entry.dia] || {nut:16, washer:3.0};
+
+  const washerH = state.washerCount * props.washer;
+  const dnutH   = state.dnut  ? props.nut : 0;
+  const insulH  = state.insul ? cv('insul-h') : 0;
+  const otherH  = state.other ? cv('other-h') : 0;
+  const totalExtra = washerH + dnutH + insulH + otherH;
+
+  const baseLen = entry.base;
+  const minLen  = baseLen + totalExtra;
+  const rec     = ceil5(minLen);   // 5mm切り上げ
+
+  return {entry, props, size, washerH, dnutH, insulH, otherH, totalExtra, baseLen, minLen, rec};
+}
+
+// ── DIAGRAM ───────────────────────────────────────────────────────────────
+function drawDiagram(p, displayLen) {
+  const {entry, washerH, dnutH, insulH, otherH} = p;
+  const VW=560, PAD=14;
+  const CY=50, FL_TOP=28, FL_BOT=72, NUT_TOP=36, NUT_BOT=64, WSH_TOP=40, WSH_BOT=60;
+
+  const headW = Math.max(14, Math.round(entry.sp * 0.45));
+  const totalLen = Math.max(p.minLen, displayLen || p.minLen);
+  const scl = (VW - PAD*2 - headW - 6) / Math.max(totalLen, 40);
+  const x0  = PAD + headW + 4;
+
+  let svg = '';
+
+  // Centerline
+  svg+=`<line x1="${PAD}" y1="${CY}" x2="${x0+totalLen*scl+6}" y2="${CY}" stroke="var(--border)" stroke-width="0.8" stroke-dasharray="4,3"/>`;
+
+  // Length dimension
+  const DIM_Y = 13;
+  if(displayLen) {
+    const dW = displayLen*scl;
+    svg+=`<line x1="${x0}" y1="${DIM_Y}" x2="${x0+dW}" y2="${DIM_Y}" stroke="var(--accent-dim)" stroke-width="1.2"/>`;
+    svg+=`<line x1="${x0}" y1="${DIM_Y-5}" x2="${x0}" y2="${DIM_Y+5}" stroke="var(--accent-dim)" stroke-width="1.2"/>`;
+    svg+=`<line x1="${x0+dW}" y1="${DIM_Y-5}" x2="${x0+dW}" y2="${DIM_Y+5}" stroke="var(--accent-dim)" stroke-width="1.2"/>`;
+    svg+=`<text x="${x0+dW/2}" y="${DIM_Y-5}" text-anchor="middle" font-size="9.5" fill="var(--accent-dim)" font-family="'IBM Plex Mono',monospace" font-weight="600">L = ${displayLen} mm</text>`;
+  }
+
+  // Hex head
+  const hx=PAD, HT=FL_TOP-2, HB=FL_BOT+2, c=4;
+  svg+=`<polygon points="${hx+c},${HT} ${hx+headW},${HT+c} ${hx+headW},${HB-c} ${hx+c},${HB} ${hx},${HB-c} ${hx},${HT+c}" fill="#2A5C90" opacity="0.9"/>`;
+  svg+=`<rect x="${hx}" y="${HT+c}" width="${headW}" height="5" fill="white" opacity="0.14"/>`;
+  svg+=`<text x="${hx+headW/2}" y="${CY+3}" text-anchor="middle" font-size="7.5" fill="white" font-family="'IBM Plex Mono',monospace">六角</text>`;
+  svg+=`<text x="${hx+headW/2}" y="${HB+13}" text-anchor="middle" font-size="8" fill="var(--text3)" font-family="'IBM Plex Mono',monospace">${entry.sp}mm</text>`;
+
+  // Shaft
+  svg+=`<rect x="${x0}" y="${CY-4.5}" width="${totalLen*scl+4}" height="9" fill="#4A7A9E" rx="1" opacity="0.18"/>`;
+
+  // Base block
+  const baseW = p.baseLen * scl;
+  svg+=`<rect x="${x0}" y="${FL_TOP}" width="${baseW}" height="${FL_BOT-FL_TOP}" fill="#1258A0" rx="1" opacity="0.80"/>`;
+  svg+=`<rect x="${x0}" y="${FL_TOP}" width="${baseW}" height="4" fill="white" opacity="0.12"/>`;
+  const nH = Math.floor(baseW/9);
+  for(let i=0;i<=nH;i++){const hx2=x0+i*(baseW/(nH||1));svg+=`<line x1="${hx2}" y1="${FL_TOP+5}" x2="${hx2-10}" y2="${FL_BOT-5}" stroke="white" stroke-width="0.5" opacity="0.10"/>`;}
+  if(baseW>16) svg+=`<text x="${x0+baseW/2}" y="${CY+3}" text-anchor="middle" font-size="9" fill="white" font-family="'IBM Plex Mono',monospace">${p.baseLen}</text>`;
+  svg+=`<text x="${x0+baseW/2}" y="${FL_BOT+13}" text-anchor="middle" font-size="8" fill="var(--text3)" font-family="'IBM Plex Mono',monospace">基準</text>`;
+
+  // Extras
+  const extDefs = [];
+  if(p.washerH > 0) extDefs.push({h:p.washerH, fill:'#6A9FC0', label:'W'});
+  if(p.dnutH   > 0) extDefs.push({h:p.dnutH,   fill:'#3A8A6A', label:'N'});
+  if(p.insulH  > 0) extDefs.push({h:p.insulH,   fill:'#9A6AC0', label:'I'});
+  if(p.otherH  > 0) extDefs.push({h:p.otherH,   fill:'#C08030', label:'+'});
+
+  let ex = x0 + baseW;
+  extDefs.forEach(e => {
+    const ew = e.h * scl;
+    svg+=`<rect x="${ex}" y="${WSH_TOP}" width="${Math.max(ew,2)}" height="${WSH_BOT-WSH_TOP}" fill="${e.fill}" rx="1"/>`;
+    if(ew > 8) svg+=`<text x="${ex+ew/2}" y="${CY+3}" text-anchor="middle" font-size="8" fill="white" font-family="'IBM Plex Mono',monospace">${e.label}</text>`;
+    svg+=`<text x="${ex+ew/2}" y="${FL_BOT+13}" text-anchor="middle" font-size="8" fill="${e.fill}" font-family="'IBM Plex Mono',monospace">${e.h}</text>`;
+    ex += ew;
+  });
+
+  // Under-head dashed tick
+  svg+=`<line x1="${x0}" y1="${HT-3}" x2="${x0}" y2="${HB+3}" stroke="var(--text3)" stroke-width="0.6" stroke-dasharray="3,2"/>`;
+
+  const VH = FL_BOT + 22;
+  si('diag-svg').setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+  si('diag-svg').setAttribute('height', VH);
+  si('diag-svg').innerHTML = svg;
+}
+
+// ── UPDATE ────────────────────────────────────────────────────────────────
+function update() {
+  const p = resolveParams();
+  if(!p) return;
+
+  // Extra tag labels
+  const wLabel = state.washerCount === 0 ? '—'
+               : state.washerCount === 1 ? `+${p.washerH} mm（ナット側）`
+               : `+${p.washerH} mm（両側）`;
+  si('tag-washer').textContent = wLabel;
+  si('tag-washer').style.color = state.washerCount > 0 ? 'var(--accent)' : 'var(--text3)';
+  si('tag-dnut').textContent   = state.dnut  ? `+${p.dnutH} mm` : '—';
+  si('tag-dnut').style.color   = state.dnut  ? 'var(--accent)' : 'var(--text3)';
+  si('tag-insul').textContent  = state.insul ? `+${p.insulH} mm` : '—';
+  si('tag-insul').style.color  = state.insul ? 'var(--accent)' : 'var(--text3)';
+  si('tag-other').textContent  = state.other ? `+${p.otherH} mm` : '—';
+  si('tag-other').style.color  = state.other ? 'var(--accent)' : 'var(--text3)';
+
+  si('row-insul').style.display = state.insul ? 'flex' : 'none';
+  si('row-other').style.display = state.other ? 'flex' : 'none';
+
+  // Info strip
+  si('info-dia').textContent  = p.entry.dia;
+  si('info-sp').innerHTML     = `${p.entry.sp}<span class="info-cell-unit"> mm</span>`;
+  si('info-cnt').innerHTML    = `${p.entry.cnt}<span class="info-cell-unit"> 本</span>`;
+  si('info-base').innerHTML   = `${p.baseLen}<span class="info-cell-unit"> mm</span>`;
+
+  // Recommendation (5mm ceil)
+  const rec = p.rec;
+  if(state.selectedLen === null) state.selectedLen = rec;
+  const displayLen = state.selectedLen;
+  const warn = displayLen < p.minLen;
+
+  // Flow row
+  const flow = si('flow-row');
+  if(p.totalExtra === 0) {
+    flow.innerHTML = `
+      <div><span class="flow-label">表の推奨長さ</span><span class="flow-box is-base">${p.baseLen} mm</span></div>
+      <span class="flow-arrow">＝</span>
+      <div><span class="flow-label">追加部材なし</span><span class="flow-box is-no-extra">${rec} mm ✓</span></div>`;
+  } else {
+    const extraParts = [];
+    if(p.washerH > 0) extraParts.push(`W:${p.washerH}`);
+    if(p.dnutH   > 0) extraParts.push(`N:${p.dnutH}`);
+    if(p.insulH  > 0) extraParts.push(`絶:${p.insulH}`);
+    if(p.otherH  > 0) extraParts.push(`他:${p.otherH}`);
+    flow.innerHTML = `
+      <div><span class="flow-label">表の推奨</span><span class="flow-box is-base">${p.baseLen} mm</span></div>
+      <span class="flow-arrow">＋</span>
+      <div><span class="flow-label">追加（${extraParts.join('+')}）</span><span class="flow-box is-extra">+${p.totalExtra} mm</span></div>
+      <span class="flow-arrow">=</span>
+      <div><span class="flow-label">必要最小</span><span class="flow-box">${p.minLen} mm</span></div>
+      <span class="flow-arrow">→</span>
+      <div><span class="flow-label">5mm切り上げ推奨</span><span class="flow-box is-result">${rec} mm</span></div>`;
+  }
+
+  // Hero
+  si('result-len').textContent = displayLen;
+  si('result-tag').textContent = warn ? '⚠ 長さ不足' : '';
+  si('result-tag').style.color = warn ? 'var(--amber)' : 'var(--text3)';
+  si('bolt-meta').textContent = displayLen !== rec ? `推奨 ${rec} mm（手動で ${displayLen} mm を選択中）` : '';
+
+  si('result-badges').innerHTML = `
+    <span class="badge badge-blue">${p.entry.dia} × ${displayLen} mm</span>
+    <span class="badge badge-amber">${p.entry.cnt} 本</span>
+    <span class="badge badge-gray">スパナ ${p.entry.sp} mm</span>`;
+
+  // Breakdown table
+  let tbl = `<tr class="row-base"><td>表の推奨長さ（JIS BN表）</td><td>${p.baseLen} mm</td></tr>`;
+  if(p.washerH > 0){
+    const wn = state.washerCount===1 ? `ナット側 1枚 ${p.props.washer} mm` : `両側 2枚 ${p.props.washer}×2 mm`;
+    tbl += `<tr class="row-extra"><td>＋ ワッシャー（${wn}）</td><td>+ ${p.washerH} mm</td></tr>`;
+  }
+  if(p.dnutH   > 0) tbl += `<tr class="row-extra"><td>＋ ダブルナット（8割ナット 1個 ${p.props.nut} mm）</td><td>+ ${p.dnutH} mm</td></tr>`;
+  if(p.insulH  > 0) tbl += `<tr class="row-extra"><td>＋ 絶縁ワッシャー</td><td>+ ${p.insulH} mm</td></tr>`;
+  if(p.otherH  > 0) tbl += `<tr class="row-extra"><td>＋ その他追加</td><td>+ ${p.otherH} mm</td></tr>`;
+  if(p.totalExtra > 0) tbl += `<tr class="row-sub"><td>必要最小長さ</td><td>${p.minLen} mm</td></tr>`;
+  tbl += `<tr class="row-total"><td>選定ボルト長さ</td><td>${displayLen} mm</td></tr>`;
+  si('bkdn-table').innerHTML = tbl;
+
+  // Length grid (5mm steps, show range around base and rec)
+  const grid = si('len-grid');
+  grid.innerHTML = '';
+  ALL_LENS.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'len-btn';
+    btn.textContent = l;
+    if(l < p.minLen) btn.classList.add('too-short');
+    if(l === p.baseLen && p.totalExtra === 0) btn.classList.add('base-mark');
+    if(l === p.baseLen && p.totalExtra > 0)  btn.classList.add('base-mark');
+    if(l === rec) btn.classList.add('recommended');
+    if(l === displayLen) btn.classList.add('selected');
+    btn.onclick = () => {
+      if(l < p.minLen) return;
+      state.selectedLen = l; update();
+    };
+    grid.appendChild(btn);
+  });
+  si('len-hint').textContent = `推奨: ${rec} mm　表の基準: ${p.baseLen} mm`;
+
+  drawDiagram(p, displayLen);
+}
+
+// ── CONTROLS ─────────────────────────────────────────────────────────────
+function resetLen(){ state.selectedLen = null; }
+
+function setRating(btn, val) {
+  state.rating = val; resetLen();
+  si('rating-tabs').querySelectorAll('.rtab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  populateSizes(val);
+  update();
+}
+
+function setWasher(btn, count) {
+  state.washerCount = count; resetLen();
+  si('washer-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+}
+
+function setDnut(btn, val) {
+  state.dnut = val; resetLen();
+  si('dnut-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+}
+
+function setInsul(btn, val) {
+  state.insul = val; resetLen();
+  si('insul-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+}
+
+function setOther(btn, val) {
+  state.other = val; resetLen();
+  si('other-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+}
+
+function applyCustomLen() {
+  const v = parseInt(si('custom-len-input').value);
+  if(!isNaN(v) && v >= 20) { state.selectedLen = v; update(); }
+}
+
+function toggleTheme() {
+  const r = document.documentElement;
+  if(r.getAttribute('data-theme')==='dark'){ r.removeAttribute('data-theme'); si('theme-btn').textContent='🌙'; }
+  else { r.setAttribute('data-theme','dark'); si('theme-btn').textContent='☀️'; }
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
+populateSizes('10k', '50A');
+si('size-sel').onchange = () => { resetLen(); update(); };
+update();
+</script>
