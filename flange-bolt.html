@@ -185,48 +185,7 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .bkdn-tbl tr.r-total td{border-top:2px solid var(--ink);padding-top:8px;font-weight:700;font-size:1rem;}
 .bkdn-tbl tr.r-total td:last-child{color:var(--bp);font-size:1.05rem;}
 
-/* ── Diagram ── */
-.diag-wrap{padding:12px 14px 14px;border-top:1px solid var(--paper-line);}
-.diag-lbl{font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:8px;}
-#diag-svg{width:100%;display:block;overflow:visible;}
-
-/* ── Length grid ── */
-.len-grid{padding:12px 14px;display:flex;flex-wrap:wrap;gap:6px;}
-.len-btn{
-  padding:10px 10px;min-width:58px;
-  border:1.5px solid var(--paper-line);border-radius:4px;
-  background:var(--paper);color:var(--ink);
-  font-family:var(--mono);font-size:.95rem;font-weight:600;
-  cursor:pointer;transition:all .1s;text-align:center;
-  font-variant-numeric:tabular-nums;
-}
-.len-btn:hover:not(.too-short){border-color:var(--bp);color:var(--bp);}
-.len-btn.too-short{opacity:.22;cursor:default;}
-.len-btn.base-mark{border-style:dashed;}
-.len-btn.recommended{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
-.len-btn.selected{border-color:var(--bp)!important;background:var(--bp)!important;color:#fff!important;}
-.len-note{
-  padding:2px 14px 10px;
-  display:flex;flex-wrap:wrap;gap:10px;
-  font-size:.78rem;color:var(--ink-faint);
-}
-.len-legend{display:flex;align-items:center;gap:5px;}
-.lsq{width:12px;height:12px;border-radius:2px;display:inline-block;flex-shrink:0;}
-
-.custom-row{
-  padding:10px 14px 14px;border-top:1px solid var(--paper-line);
-  display:flex;align-items:center;gap:8px;
-}
-.custom-row label{font-size:.9rem;color:var(--ink-soft);white-space:nowrap;}
-.custom-row input{
-  width:90px;padding:8px 10px;
-  background:var(--paper);border:1.5px solid var(--paper-line);border-radius:4px;
-  font-family:var(--mono);font-size:1rem;color:var(--ink);
-}
-.apply-btn{
-  padding:9px 18px;background:var(--bp);color:#fff;
-  border:none;border-radius:4px;font-family:var(--sans);font-size:.9rem;font-weight:600;cursor:pointer;
-}
+/* ── Diagram (非表示) ── */
 </style>
 
 <header class="hdr">
@@ -366,33 +325,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
     </div>
     <div class="result-badges" id="result-badges"></div>
 
-    <!-- diagram -->
-    <div class="diag-wrap">
-      <div class="diag-lbl">断面模式図</div>
-      <svg id="diag-svg" viewBox="0 0 560 90" height="80"></svg>
-    </div>
-
     <!-- breakdown -->
     <div class="bkdn">
       <div class="bkdn-lbl">計算内訳</div>
       <table class="bkdn-tbl" id="bkdn-tbl"></table>
-    </div>
-  </div>
-
-  <!-- 長さ一覧 -->
-  <div class="card">
-    <div class="card-ttl">長さ一覧（5mm刻み） <span id="len-hint" style="font-size:.75rem;font-weight:400;letter-spacing:0;text-transform:none;opacity:.7;"></span></div>
-    <div class="len-grid" id="len-grid"></div>
-    <div class="len-note">
-      <span class="len-legend"><span class="lsq" style="border:1.5px dashed var(--paper-line);"></span>表の推奨</span>
-      <span class="len-legend"><span class="lsq" style="background:var(--accent-bg);border:1.5px solid var(--accent);"></span>追加込み推奨</span>
-      <span class="len-legend"><span class="lsq" style="background:var(--bp);"></span>選択中</span>
-    </div>
-    <div class="custom-row">
-      <label>カスタム：</label>
-      <input type="number" id="custom-len" placeholder="88" min="20" max="600" step="1">
-      <span style="font-size:.9rem;color:var(--ink-faint);">mm</span>
-      <button class="apply-btn" onclick="applyCustom()">選択</button>
     </div>
   </div>
 
@@ -521,9 +457,6 @@ const BPROPS = {
   M42:  {nut:34, washer:6.0},
 };
 
-// 5mm刻み
-const ALL_LENS = [];
-for(let l=30;l<=300;l+=5) ALL_LENS.push(l);
 
 // ── STATE ─────────────────────────────────────────────────────────────────
 let state = {
@@ -532,7 +465,6 @@ let state = {
   dnut: false,
   insul: false,
   other: false,
-  selectedLen: null,
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -571,70 +503,6 @@ function resolveParams() {
   return {entry, props, size, washerH, dnutH, insulH, otherH, totalExtra, baseLen, minLen, rec};
 }
 
-// ── DIAGRAM ───────────────────────────────────────────────────────────────
-function drawDiagram(p, displayLen) {
-  const VW=560, PAD=14, CY=45;
-  const FL_TOP=26, FL_BOT=64, NUT_TOP=34, NUT_BOT=56, WSH_TOP=38, WSH_BOT=52;
-  const headW = Math.max(14, Math.round(p.entry.sp * 0.42));
-  const totalLen = Math.max(p.minLen, displayLen||p.minLen);
-  const scl = (VW - PAD*2 - headW - 6) / Math.max(totalLen, 40);
-  const x0 = PAD + headW + 4;
-
-  let svg = '';
-  svg+=`<line x1="${PAD}" y1="${CY}" x2="${x0+totalLen*scl+6}" y2="${CY}" stroke="#D9D2BF" stroke-width="0.8" stroke-dasharray="4,3"/>`;
-
-  // Dimension line
-  if(displayLen){
-    const dW=displayLen*scl;
-    svg+=`<line x1="${x0}" y1="12" x2="${x0+dW}" y2="12" stroke="#4A6178" stroke-width="1.2"/>`;
-    svg+=`<line x1="${x0}" y1="7" x2="${x0}" y2="17" stroke="#4A6178" stroke-width="1.2"/>`;
-    svg+=`<line x1="${x0+dW}" y1="7" x2="${x0+dW}" y2="17" stroke="#4A6178" stroke-width="1.2"/>`;
-    svg+=`<text x="${x0+dW/2}" y="8" text-anchor="middle" font-size="9" fill="#4A6178" font-family="'JetBrains Mono',monospace" font-weight="600">L = ${displayLen} mm</text>`;
-  }
-
-  // Hex head
-  const hx=PAD, HT=FL_TOP-2, HB=FL_BOT+2, c=4;
-  svg+=`<polygon points="${hx+c},${HT} ${hx+headW},${HT+c} ${hx+headW},${HB-c} ${hx+c},${HB} ${hx},${HB-c} ${hx},${HT+c}" fill="#1B3A5C"/>`;
-  svg+=`<rect x="${hx}" y="${HT+c}" width="${headW}" height="4" fill="white" opacity="0.12"/>`;
-  svg+=`<text x="${hx+headW/2}" y="${CY+3}" text-anchor="middle" font-size="7" fill="white" font-family="'JetBrains Mono',monospace">六角</text>`;
-  svg+=`<text x="${hx+headW/2}" y="${HB+12}" text-anchor="middle" font-size="7.5" fill="#8AA0B2" font-family="'JetBrains Mono',monospace">${p.entry.sp}mm</text>`;
-
-  // Shaft
-  svg+=`<rect x="${x0}" y="${CY-4}" width="${totalLen*scl+4}" height="8" fill="#4A6178" rx="1" opacity="0.15"/>`;
-
-  // Base block
-  const baseW = p.baseLen*scl;
-  svg+=`<rect x="${x0}" y="${FL_TOP}" width="${baseW}" height="${FL_BOT-FL_TOP}" fill="#1B3A5C" rx="1" opacity="0.82"/>`;
-  svg+=`<rect x="${x0}" y="${FL_TOP}" width="${baseW}" height="4" fill="white" opacity="0.10"/>`;
-  const nH=Math.floor(baseW/9);
-  for(let i=0;i<=nH;i++){const hx2=x0+i*(baseW/(nH||1));svg+=`<line x1="${hx2}" y1="${FL_TOP+5}" x2="${hx2-9}" y2="${FL_BOT-5}" stroke="white" stroke-width="0.5" opacity="0.08"/>`;}
-  if(baseW>16) svg+=`<text x="${x0+baseW/2}" y="${CY+3}" text-anchor="middle" font-size="8.5" fill="white" font-family="'JetBrains Mono',monospace">${p.baseLen}</text>`;
-  svg+=`<text x="${x0+baseW/2}" y="${FL_BOT+12}" text-anchor="middle" font-size="7.5" fill="#8AA0B2" font-family="'JetBrains Mono',monospace">基準</text>`;
-
-  // Extras
-  const extDefs=[];
-  if(p.washerH>0) extDefs.push({h:p.washerH,fill:'#5A8AB0',label:'W'});
-  if(p.dnutH>0)   extDefs.push({h:p.dnutH,  fill:'#2A8060',label:'N'});
-  if(p.insulH>0)  extDefs.push({h:p.insulH, fill:'#8050A0',label:'I'});
-  if(p.otherH>0)  extDefs.push({h:p.otherH, fill:'#B07030',label:'+'});
-
-  let ex=x0+baseW;
-  extDefs.forEach(e=>{
-    const ew=e.h*scl;
-    svg+=`<rect x="${ex}" y="${WSH_TOP}" width="${Math.max(ew,2)}" height="${WSH_BOT-WSH_TOP}" fill="${e.fill}" rx="1"/>`;
-    if(ew>8) svg+=`<text x="${ex+ew/2}" y="${CY+3}" text-anchor="middle" font-size="8" fill="white" font-family="'JetBrains Mono',monospace">${e.label}</text>`;
-    svg+=`<text x="${ex+ew/2}" y="${FL_BOT+12}" text-anchor="middle" font-size="7.5" fill="${e.fill}" font-family="'JetBrains Mono',monospace">${e.h}</text>`;
-    ex+=ew;
-  });
-
-  svg+=`<line x1="${x0}" y1="${HT-3}" x2="${x0}" y2="${HB+3}" stroke="#8AA0B2" stroke-width="0.6" stroke-dasharray="3,2"/>`;
-
-  const VH = FL_BOT+20;
-  si('diag-svg').setAttribute('viewBox',`0 0 ${VW} ${VH}`);
-  si('diag-svg').setAttribute('height', VH);
-  si('diag-svg').innerHTML = svg;
-}
-
 // ── UPDATE ────────────────────────────────────────────────────────────────
 function update() {
   const p = resolveParams();
@@ -664,9 +532,8 @@ function update() {
 
   // Result
   const rec = p.rec;
-  if(state.selectedLen===null) state.selectedLen=rec;
-  const displayLen = state.selectedLen;
-  const warn = displayLen < p.minLen;
+  const displayLen = rec;
+  const warn = false;
 
   // Flow row
   const flow=si('flow-row');
@@ -693,8 +560,8 @@ function update() {
 
   // Hero
   si('result-num').textContent = displayLen;
-  si('result-sub').textContent = displayLen!==rec ? `推奨 ${rec} mm（手動で ${displayLen} mm を選択中）` : '';
-  si('result-warn').textContent = warn ? '⚠ 選択長さが必要最小を下回っています' : '';
+  si('result-sub').textContent = '';
+  si('result-warn').textContent = '';
 
   si('result-badges').innerHTML=`
     <span class="badge badge-a">${p.entry.dia} × ${displayLen} mm</span>
@@ -714,61 +581,37 @@ function update() {
   tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${displayLen} mm</td></tr>`;
   si('bkdn-tbl').innerHTML = tbl;
 
-  // Length grid
-  const grid=si('len-grid');
-  grid.innerHTML='';
-  ALL_LENS.forEach(l=>{
-    const btn=document.createElement('button');
-    btn.className='len-btn';
-    btn.textContent=l;
-    if(l<p.minLen) btn.classList.add('too-short');
-    if(l===p.baseLen) btn.classList.add('base-mark');
-    if(l===rec) btn.classList.add('recommended');
-    if(l===displayLen) btn.classList.add('selected');
-    btn.onclick=()=>{ if(l<p.minLen)return; state.selectedLen=l; update(); };
-    grid.appendChild(btn);
-  });
-  si('len-hint').textContent=`推奨 ${rec}mm　基準 ${p.baseLen}mm`;
-
-  drawDiagram(p, displayLen);
 }
 
 // ── CONTROLS ──────────────────────────────────────────────────────────────
-function resetLen(){ state.selectedLen=null; }
-
 function setRating(btn,val){
-  state.rating=val; resetLen();
+  state.rating=val;
   si('rating-tabs').querySelectorAll('.rtab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   populateSizes(val); update();
 }
 function setWasher(btn,n){
-  state.washerCount=n; resetLen();
+  state.washerCount=n;
   si('washer-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active'); update();
 }
 function setDnut(btn,v){
-  state.dnut=v; resetLen();
+  state.dnut=v;
   si('dnut-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active'); update();
 }
 function setInsul(btn,v){
-  state.insul=v; resetLen();
+  state.insul=v;
   si('insul-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active'); update();
 }
 function setOther(btn,v){
-  state.other=v; resetLen();
+  state.other=v;
   si('other-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active'); update();
 }
-function applyCustom(){
-  const v=parseInt(si('custom-len').value);
-  if(!isNaN(v)&&v>=20){ state.selectedLen=v; update(); }
-}
-
 // ── BOOT ──────────────────────────────────────────────────────────────────
 populateSizes('10k','50A');
-si('size-sel').onchange=()=>{ resetLen(); update(); };
+si('size-sel').onchange=()=>{ update(); };
 update();
 </script>
