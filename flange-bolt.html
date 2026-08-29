@@ -260,24 +260,6 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
       </div>
 
-      <!-- 絶縁ワッシャー（JISのみ表示） -->
-      <div id="ex-insul">
-        <div class="extra-item">
-          <div class="extra-head">
-            <div class="extra-title">絶縁ワッシャー</div>
-            <span class="extra-tag" id="tag-insul">—</span>
-          </div>
-          <div class="seg" id="insul-seg">
-            <button class="seg-btn active" onclick="setInsul(this,false)">なし</button>
-            <button class="seg-btn" onclick="setInsul(this,true)">あり</button>
-          </div>
-          <div class="sub-row" id="row-insul" style="display:none;">
-            <label>厚み</label>
-            <input type="number" id="insul-h" value="3" min="0.5" max="50" step="0.5" onchange="update()">
-            <span>mm</span>
-          </div>
-        </div>
-      </div>
 
       <!-- その他 -->
       <div class="extra-item">
@@ -562,7 +544,7 @@ let state = {
   lbRating:  '150lb',
   lbBolt:    'machine',
   washerCount:0,
-  dnut:false,insul:false,other:false,
+  dnut:false,other:false,
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -619,13 +601,12 @@ function resolveParams(){
   const dnutH    = state.dnut
     ? (isLbStud ? 2*(props.nut10??props.nut) : props.nut)
     : 0;
-  const insulH   = state.insul ? cv('insul-h') : 0;
   const otherH  = state.other ? cv('other-h') : 0;
-  const totalExtra = washerH+dnutH+insulH+otherH;
+  const totalExtra = washerH+dnutH+otherH;
   const minLen  = baseLen+totalExtra;
   const rec     = ceil5(minLen);
 
-  return {entry,props,baseLen,washerH,dnutH,insulH,otherH,totalExtra,minLen,rec};
+  return {entry,props,baseLen,washerH,dnutH,otherH,totalExtra,minLen,rec};
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -634,16 +615,11 @@ function resolveParams(){
 function update(){
   const p=resolveParams();
   if(!p) return;
-  const {entry,props,baseLen,washerH,dnutH,insulH,otherH,totalExtra,minLen,rec}=p;
+  const {entry,props,baseLen,washerH,dnutH,otherH,totalExtra,minLen,rec}=p;
 
   // washer/pvc visibility
   si('ex-washer').hidden     = (state.mainTab==='pvc');
   si('ex-washer-pvc').hidden = (state.mainTab!=='pvc');
-
-  // 絶縁ワッシャーはJISのみ表示
-  const showInsul = state.mainTab==='jis';
-  si('ex-insul').hidden = !showInsul;
-  if(!showInsul && state.insul){ state.insul=false; activateSeg(si('insul-seg'),0); }
 
   // DCIP L2 toggle: hide when 10K or entry has no l2
   if(state.mainTab==='dcip'){
@@ -659,9 +635,7 @@ function update(){
     setTag('tag-washer',wL,state.washerCount>0);
   }
   setTag('tag-dnut', state.dnut  ?`+${dnutH} mm`:'—',state.dnut);
-  setTag('tag-insul',state.insul ?`+${insulH} mm`:'—',state.insul);
   setTag('tag-other',state.other ?`+${otherH} mm`:'—',state.other);
-  si('row-insul').style.display=state.insul?'flex':'none';
   si('row-other').style.display=state.other?'flex':'none';
 
   // info strip
@@ -684,7 +658,6 @@ function update(){
     const pts=[];
     if(washerH>0) pts.push(`W:${washerH}`);
     if(dnutH>0)   pts.push(`N:${dnutH}`);
-    if(insulH>0)  pts.push(`絶:${insulH}`);
     if(otherH>0)  pts.push(`他:${otherH}`);
     flow.innerHTML=`
       <div class="flow-item"><span class="flow-lbl">表の推奨${pvcNote}</span><span class="flow-box base">${baseLen} mm</span></div>
@@ -720,7 +693,6 @@ function update(){
       : `8割ナット 1個 ${props.nut}mm`;
     tbl+=`<tr class="r-extra"><td>＋ ダブルナット（${dnutDesc}）</td><td>+${dnutH} mm</td></tr>`;
   }
-  if(insulH>0) tbl+=`<tr class="r-extra"><td>＋ 絶縁ワッシャー</td><td>+${insulH} mm</td></tr>`;
   if(otherH>0) tbl+=`<tr class="r-extra"><td>＋ その他追加</td><td>+${otherH} mm</td></tr>`;
   if(totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${minLen} mm</td></tr>`;
   tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${rec} mm</td></tr>`;
@@ -792,11 +764,6 @@ function setWasher(btn, n){
 function setDnut(btn, v){
   state.dnut=v;
   activateSeg(si('dnut-seg'), v?1:0);
-  update();
-}
-function setInsul(btn, v){
-  state.insul=v;
-  activateSeg(si('insul-seg'), v?1:0);
   update();
 }
 function setOther(btn, v){
