@@ -160,8 +160,8 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         <div>
           <div class="s-lbl">フランジ種類</div>
           <div class="pvc-tabs" id="pvc-ttabs">
-            <button class="pvc-tab-btn active" onclick="setPvcType(this,'ts5k')">TS-5K</button>
-            <button class="pvc-tab-btn" onclick="setPvcType(this,'ts10k')">TS-10K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'ts5k')">TS-5K</button>
+            <button class="pvc-tab-btn active" onclick="setPvcType(this,'ts10k')">TS-10K</button>
             <button class="pvc-tab-btn" onclick="setPvcType(this,'tsf12')">TS-F12</button>
             <button class="pvc-tab-btn" onclick="setPvcType(this,'w5k')">溶接-5K</button>
             <button class="pvc-tab-btn" onclick="setPvcType(this,'w10k')">溶接-10K</button>
@@ -556,7 +556,7 @@ const BPROPS = {
 let state = {
   mainTab:   'jis',
   jisRating: '10k',
-  pvcType:   'ts5k',
+  pvcType:   'ts10k',
   dcipRating:'7.5k',
   dcipLen:   'l1',
   lbRating:  '150lb',
@@ -809,7 +809,7 @@ function setOther(btn, v){
 // BOOT
 // ═══════════════════════════════════════════════════════════════════════════
 populateSelect('jis-size', Object.keys(JIS_TABLE['10k']));
-populateSelect('pvc-size', Object.keys(PVC_TABLE['ts5k']));
+populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']));
 populateDcipSizes();
 populateSelect('lb-size', Object.keys(LB_TABLE['150lb']));
 // set default jis size to 50A
