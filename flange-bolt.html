@@ -69,10 +69,13 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .info-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
 .info-cell.base-cell{background:var(--amber-bg);border-color:var(--amber);}
+.info-cell.accent-cell{background:var(--accent-bg);border-color:var(--accent);}
 .i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
 .base-cell .i-lbl{color:var(--amber);}
+.accent-cell .i-lbl{color:var(--accent);}
 .i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;}
 .base-cell .i-val{color:var(--amber);}
+.accent-cell .i-val{color:var(--accent);}
 .i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
 /* flow row */
 .flow-row{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:12px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;}
@@ -84,15 +87,6 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .flow-box.result{background:var(--bp);border-color:var(--bp-deep);color:#fff;font-size:1.05rem;}
 .flow-box.ok{background:var(--green-bg);border-color:var(--green);color:var(--green);font-size:1.05rem;}
 .flow-arr{color:var(--ink-faint);font-size:1.2rem;padding-bottom:6px;}
-/* hero */
-.result-hero{background:var(--bp-deep);padding:14px 16px 10px;text-align:center;}
-.result-num{font-family:var(--mono);font-size:3.2rem;font-weight:700;color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;display:inline;}
-.result-unit{font-family:var(--mono);font-size:1.3rem;color:rgba(255,255,255,.55);margin-left:5px;}
-.result-sub{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:6px;}
-.result-badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:6px 14px 10px;background:var(--bp);}
-.badge{padding:4px 12px;border-radius:20px;font-family:var(--mono);font-size:.82rem;font-weight:600;}
-.badge-w{background:rgba(255,255,255,.15);color:#fff;}
-.badge-a{background:var(--accent);color:#fff;}
 /* breakdown */
 .bkdn{padding:14px;border-top:1px solid var(--paper-line);}
 .bkdn-lbl{font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:8px;}
@@ -102,8 +96,8 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .bkdn-tbl tr.r-base td{font-weight:700;color:var(--amber);}
 .bkdn-tbl tr.r-extra td{color:var(--accent);}
 .bkdn-tbl tr.r-sub td{border-top:1px solid var(--paper-line);padding-top:6px;font-weight:600;color:var(--ink);}
-.bkdn-tbl tr.r-total td{border-top:2px solid var(--ink);padding-top:8px;font-weight:700;font-size:1rem;}
-.bkdn-tbl tr.r-total td:last-child{color:var(--bp);font-size:1.05rem;}
+.bkdn-tbl tr.r-total td{border-top:2px solid var(--bp);padding-top:8px;padding-bottom:4px;font-weight:700;font-size:1rem;background:var(--paper-mid);}
+.bkdn-tbl tr.r-total td:last-child{color:var(--bp);font-size:1.2rem;font-family:var(--mono);}
 /* pvc note box */
 .note-box{border:1.5px solid var(--amber);border-radius:5px;padding:10px 12px;background:var(--amber-bg);}
 .note-box-title{font-size:.88rem;font-weight:700;color:var(--amber);margin-bottom:3px;}
@@ -284,23 +278,19 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
   <!-- ④ 選定結果 -->
   <div class="card">
     <div class="card-ttl">選定結果</div>
-    <div style="padding:14px 14px 0;">
+    <div style="padding:14px 14px 0;display:flex;flex-direction:column;gap:6px;">
       <div class="info-strip">
-        <div class="info-cell"><span class="i-lbl">ボルト径</span><span class="i-val" id="info-dia">—</span></div>
-        <div class="info-cell"><span class="i-lbl">スパナ径</span><span class="i-val" id="info-sp">—</span></div>
+        <div class="info-cell base-cell"><span class="i-lbl">ボルト径</span><span class="i-val" id="info-dia">—</span></div>
+        <div class="info-cell base-cell"><span class="i-lbl">長さ</span><span class="i-val" id="info-len">—</span></div>
+      </div>
+      <div class="info-strip">
         <div class="info-cell"><span class="i-lbl">本数</span><span class="i-val" id="info-cnt">—</span></div>
-        <div class="info-cell base-cell"><span class="i-lbl">表の推奨長さ</span><span class="i-val" id="info-base">—</span></div>
+        <div class="info-cell"><span class="i-lbl">スパナ径</span><span class="i-val" id="info-sp">—</span></div>
       </div>
     </div>
     <div style="padding:10px 14px 0;">
       <div class="flow-row" id="flow-row"></div>
     </div>
-    <div class="result-hero" style="margin-top:12px;">
-      <span class="result-num" id="result-num">—</span>
-      <span class="result-unit">mm</span>
-      <div class="result-sub" id="result-sub"></div>
-    </div>
-    <div class="result-badges" id="result-badges"></div>
     <div class="bkdn">
       <div class="bkdn-lbl">計算内訳</div>
       <table class="bkdn-tbl" id="bkdn-tbl"></table>
@@ -648,11 +638,9 @@ function update(){
 
   // info strip
   si('info-dia').textContent = entry.dia;
+  si('info-len').innerHTML   = `${rec}<span class="i-unit"> mm</span>`;
   si('info-sp').innerHTML    = entry.sp ? `${entry.sp}<span class="i-unit"> mm</span>` : '—';
   si('info-cnt').innerHTML   = `${entry.cnt}<span class="i-unit"> 本</span>`;
-  // base label suffix for PVC
-  const baseSuffix = state.mainTab==='pvc' ? '<span class="i-unit">（W2枚込）</span>' : '<span class="i-unit"> mm</span>';
-  si('info-base').innerHTML  = `${baseLen}${baseSuffix}`;
 
   // flow row
   const flow=si('flow-row');
@@ -676,16 +664,6 @@ function update(){
       <span class="flow-arr">→</span>
       <div class="flow-item"><span class="flow-lbl">5mm切り上げ推奨</span><span class="flow-box result">${rec} mm</span></div>`;
   }
-
-  // hero
-  si('result-num').textContent=rec;
-
-  // badges
-  const boltLabel = state.mainTab==='lb' ? `${entry.dia} × ${rec} mm` : `${entry.dia} × ${rec} mm`;
-  si('result-badges').innerHTML=`
-    <span class="badge badge-a">${boltLabel}</span>
-    <span class="badge badge-w">${entry.cnt} 本</span>
-    ${entry.sp?`<span class="badge badge-w">スパナ ${entry.sp} mm</span>`:''}`;
 
   // breakdown
   const baseLblSuffix = state.mainTab==='pvc' ? '（ワッシャー2枚含む）' : '';
