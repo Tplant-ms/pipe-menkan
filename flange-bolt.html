@@ -34,146 +34,66 @@ body{
   min-height:100vh;
   padding-bottom:40px;
 }
-
-/* ── Header ── */
-.hdr{
-  background:var(--bp);
-  border-bottom:4px solid var(--accent);
-  padding:12px 16px;
-  position:sticky;top:0;z-index:10;
-}
+.hdr{background:var(--bp);border-bottom:4px solid var(--accent);padding:12px 16px;position:sticky;top:0;z-index:10;}
 .hdr h1{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:.02em;}
-.hdr-sub{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.12em;margin-top:1px;}
-
-/* ── Wrapper ── */
+.hdr-sub{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-top:1px;}
 .wrap{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
-
-/* ── Card ── */
 .card{background:#fff;border:1.5px solid var(--paper-line);border-radius:6px;overflow:hidden;}
-.card-ttl{
-  background:var(--bp);color:#fff;
-  font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  padding:6px 14px;
-}
+.card-ttl{background:var(--bp);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;}
 .card-body{padding:14px;display:flex;flex-direction:column;gap:14px;}
-
-/* ── Section label ── */
-.s-lbl{
-  font-size:.7rem;font-weight:700;
-  color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;
-  margin-bottom:6px;
-  padding-bottom:4px;border-bottom:1px solid var(--paper-line);
-}
-
-/* ── Rating tabs ── */
-.rtab{
-  display:flex;gap:2px;
-  background:var(--paper-mid);padding:2px;
-  border-radius:5px;border:1.5px solid var(--paper-line);
-}
-.rtab-btn{
-  flex:1;padding:11px 4px;border:none;border-radius:4px;
-  background:transparent;color:var(--ink-soft);
-  font-family:var(--mono);font-size:1rem;font-weight:600;
-  cursor:pointer;transition:all .12s;
-}
+.s-lbl{font-size:.7rem;font-weight:700;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--paper-line);}
+/* tabs */
+.rtab{display:flex;gap:2px;background:var(--paper-mid);padding:2px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.rtab-btn{flex:1;padding:11px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:1rem;font-weight:600;cursor:pointer;transition:all .12s;text-align:center;line-height:1.2;}
 .rtab-btn.active{background:var(--bp);color:#fff;}
-
-/* ── Select ── */
-select{
-  width:100%;padding:11px 34px 11px 12px;
-  background:var(--paper);color:var(--ink);
-  border:1.5px solid var(--paper-line);border-radius:5px;
-  font-family:var(--mono);font-size:1.1rem;font-weight:600;
-  cursor:pointer;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%234A6178'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center;
-}
-select:focus{outline:2px solid var(--bp);outline-offset:1px;}
-
-/* ── Seg ── */
-.seg{
-  display:flex;gap:2px;
-  background:var(--paper-mid);padding:2px;
-  border-radius:5px;border:1.5px solid var(--paper-line);
-}
-.seg-btn{
-  flex:1;padding:10px 4px;border:none;border-radius:4px;
-  background:transparent;color:var(--ink-soft);
-  font-family:var(--sans);font-size:.9rem;
-  cursor:pointer;text-align:center;line-height:1.3;transition:all .12s;
-}
+/* main tabs bigger */
+.main-tab-btn{flex:1;padding:13px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .12s;text-align:center;}
+.main-tab-btn.active{background:var(--bp);color:#fff;}
+/* seg */
+.seg{display:flex;gap:2px;background:var(--paper-mid);padding:2px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.seg-btn{flex:1;padding:10px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--sans);font-size:.9rem;cursor:pointer;text-align:center;line-height:1.3;transition:all .12s;}
 .seg-btn.active{background:#fff;color:var(--ink);border:1px solid var(--paper-line);font-weight:600;}
-
-/* ── Extra items ── */
-.extra-item{
-  border:1.5px solid var(--paper-line);border-radius:5px;
-  padding:12px;background:var(--paper);
-  display:flex;flex-direction:column;gap:8px;
-}
+/* select */
+select{width:100%;padding:11px 34px 11px 12px;background:var(--paper);color:var(--ink);border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--mono);font-size:1.1rem;font-weight:600;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%234A6178'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+select:focus{outline:2px solid var(--bp);outline-offset:1px;}
+/* extras */
+.extra-item{border:1.5px solid var(--paper-line);border-radius:5px;padding:12px;background:var(--paper);display:flex;flex-direction:column;gap:8px;}
 .extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .extra-title{font-size:.95rem;font-weight:600;}
 .extra-note{font-size:.78rem;color:var(--ink-faint);}
 .extra-tag{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--ink-faint);}
 .extra-tag.on{color:var(--accent);}
 .sub-row{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-soft);}
-.sub-row input{
-  width:82px;padding:7px 10px;
-  background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;
-  font-family:var(--mono);font-size:1rem;color:var(--ink);
-}
-.sub-row input:focus{outline:2px solid var(--bp);outline-offset:1px;}
-
-/* ── Info strip ── */
+.sub-row input{width:82px;padding:7px 10px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:1rem;color:var(--ink);}
+/* info strip */
 .info-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.info-cell{
-  background:var(--paper);border:1.5px solid var(--paper-line);
-  border-radius:5px;padding:10px 12px;
-}
+.info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
 .info-cell.base-cell{background:var(--amber-bg);border-color:var(--amber);}
 .i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
 .base-cell .i-lbl{color:var(--amber);}
 .i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;}
 .base-cell .i-val{color:var(--amber);}
 .i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
-
-/* ── Flow row ── */
-.flow-row{
-  background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;
-  padding:12px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;
-}
+/* flow row */
+.flow-row{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:12px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;}
 .flow-item{display:flex;flex-direction:column;}
 .flow-lbl{font-size:.65rem;color:var(--ink-faint);margin-bottom:3px;letter-spacing:.04em;}
-.flow-box{
-  padding:6px 13px;border-radius:4px;
-  font-family:var(--mono);font-size:.95rem;font-weight:700;
-  background:var(--paper-mid);border:1.5px solid var(--paper-line);color:var(--ink);
-}
+.flow-box{padding:6px 13px;border-radius:4px;font-family:var(--mono);font-size:.95rem;font-weight:700;background:var(--paper-mid);border:1.5px solid var(--paper-line);color:var(--ink);}
 .flow-box.base{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
 .flow-box.extra{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
 .flow-box.result{background:var(--bp);border-color:var(--bp-deep);color:#fff;font-size:1.05rem;}
 .flow-box.ok{background:var(--green-bg);border-color:var(--green);color:var(--green);font-size:1.05rem;}
 .flow-arr{color:var(--ink-faint);font-size:1.2rem;padding-bottom:6px;}
-
-/* ── Hero result ── */
+/* hero */
 .result-hero{background:var(--bp-deep);padding:20px 16px 14px;text-align:center;}
-.result-num{
-  font-family:var(--mono);font-size:3.2rem;font-weight:700;
-  color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;
-  display:inline;
-}
+.result-num{font-family:var(--mono);font-size:3.2rem;font-weight:700;color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;display:inline;}
 .result-unit{font-family:var(--mono);font-size:1.3rem;color:rgba(255,255,255,.55);margin-left:5px;}
 .result-sub{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:6px;}
-.result-warn{font-size:.85rem;color:#ffaa55;margin-top:4px;}
-.result-badges{
-  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
-  padding:10px 14px 14px;background:var(--bp);
-}
+.result-badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 14px 14px;background:var(--bp);}
 .badge{padding:4px 12px;border-radius:20px;font-family:var(--mono);font-size:.82rem;font-weight:600;}
 .badge-w{background:rgba(255,255,255,.15);color:#fff;}
 .badge-a{background:var(--accent);color:#fff;}
-
-/* ── Breakdown ── */
+/* breakdown */
 .bkdn{padding:14px;border-top:1px solid var(--paper-line);}
 .bkdn-lbl{font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:8px;}
 .bkdn-tbl{width:100%;border-collapse:collapse;font-size:.92rem;}
@@ -184,59 +104,151 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .bkdn-tbl tr.r-sub td{border-top:1px solid var(--paper-line);padding-top:6px;font-weight:600;color:var(--ink);}
 .bkdn-tbl tr.r-total td{border-top:2px solid var(--ink);padding-top:8px;font-weight:700;font-size:1rem;}
 .bkdn-tbl tr.r-total td:last-child{color:var(--bp);font-size:1.05rem;}
-
-/* ── Diagram (非表示) ── */
+/* pvc note box */
+.note-box{border:1.5px solid var(--amber);border-radius:5px;padding:10px 12px;background:var(--amber-bg);}
+.note-box-title{font-size:.88rem;font-weight:700;color:var(--amber);margin-bottom:3px;}
+.note-box-body{font-size:.8rem;color:var(--ink-soft);}
+/* pvc sub-tabs wrap */
+.pvc-tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--paper-mid);padding:4px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.pvc-tab-btn{padding:9px 12px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.pvc-tab-btn.active{background:var(--bp);color:#fff;}
 </style>
 
 <header class="hdr">
   <h1>🔩 フランジ ボルト長さ選定</h1>
-  <div class="hdr-sub">JIS B 2220 — 六角ボルト（マシンボルト）</div>
+  <div class="hdr-sub">JIS B 2220 / PVC / DCIP / LB</div>
 </header>
 
 <div class="wrap">
 
-  <!-- 入力 -->
+  <!-- ① メインタブ -->
   <div class="card">
-    <div class="card-ttl">入力</div>
+    <div style="padding:4px;">
+      <div class="rtab" id="main-tabs">
+        <button class="main-tab-btn active" onclick="setMainTab(this,'jis')">JIS</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'pvc')">PVC</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'dcip')">DCIP</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'lb')">LB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 入力 -->
+  <div class="card">
+    <div class="card-ttl" id="input-ttl">入力</div>
     <div class="card-body">
 
-      <div>
-        <div class="s-lbl">フランジ レーティング</div>
-        <div class="rtab" id="rating-tabs">
-          <button class="rtab-btn" onclick="setRating(this,'2k')">2k</button>
-          <button class="rtab-btn" onclick="setRating(this,'5k')">5k</button>
-          <button class="rtab-btn active" onclick="setRating(this,'10k')">10k</button>
-          <button class="rtab-btn" onclick="setRating(this,'20k')">20k</button>
+      <!-- JIS -->
+      <div id="in-jis">
+        <div>
+          <div class="s-lbl">フランジ レーティング</div>
+          <div class="rtab" id="jis-rtabs">
+            <button class="rtab-btn" onclick="setJisRating(this,'2k')">2k</button>
+            <button class="rtab-btn" onclick="setJisRating(this,'5k')">5k</button>
+            <button class="rtab-btn active" onclick="setJisRating(this,'10k')">10k</button>
+            <button class="rtab-btn" onclick="setJisRating(this,'20k')">20k</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="jis-size" onchange="update()"></select>
         </div>
       </div>
 
-      <div>
-        <div class="s-lbl">呼び径</div>
-        <select id="size-sel"></select>
+      <!-- PVC -->
+      <div id="in-pvc" hidden>
+        <div>
+          <div class="s-lbl">フランジ種類</div>
+          <div class="pvc-tabs" id="pvc-ttabs">
+            <button class="pvc-tab-btn active" onclick="setPvcType(this,'ts5k')">TS-5K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'ts10k')">TS-10K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'tsf12')">TS-F12</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'w5k')">溶接-5K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'w10k')">溶接-10K</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="pvc-size" onchange="update()"></select>
+        </div>
+      </div>
+
+      <!-- DCIP -->
+      <div id="in-dcip" hidden>
+        <div>
+          <div class="s-lbl">圧力クラス</div>
+          <div class="rtab" id="dcip-rtabs">
+            <button class="rtab-btn active" onclick="setDcipRating(this,'7.5k')">7.5K</button>
+            <button class="rtab-btn" onclick="setDcipRating(this,'10k')">10K</button>
+          </div>
+        </div>
+        <div id="dcip-ltype-row">
+          <div class="s-lbl">長さ区分</div>
+          <div class="seg" id="dcip-lseg">
+            <button class="seg-btn active" onclick="setDcipLen(this,'l1')">L1（フランジ-フランジ）</button>
+            <button class="seg-btn" onclick="setDcipLen(this,'l2')">L2（フランジ-仕切弁）</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="dcip-size" onchange="update()"></select>
+        </div>
+      </div>
+
+      <!-- LB -->
+      <div id="in-lb" hidden>
+        <div>
+          <div class="s-lbl">圧力クラス</div>
+          <div class="rtab" id="lb-rtabs">
+            <button class="rtab-btn active" onclick="setLbRating(this,'150lb')">150 LB</button>
+            <button class="rtab-btn" onclick="setLbRating(this,'300lb')">300 LB</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">ボルト種別</div>
+          <div class="seg" id="lb-bseg">
+            <button class="seg-btn active" onclick="setLbBolt(this,'machine')">マシンボルト</button>
+            <button class="seg-btn" onclick="setLbBolt(this,'stud')">全ネジボルト</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="lb-size" onchange="update()"></select>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- 追加部材 -->
+  <!-- ③ 追加部材 -->
   <div class="card">
-    <div class="card-ttl">追加部材（表の基準長さに加算）</div>
+    <div class="card-ttl">追加部材（基準長さに加算）</div>
     <div class="card-body">
 
-      <div class="extra-item">
-        <div class="extra-head">
-          <div>
+      <!-- ワッシャー（JIS/DCIP/LB用） -->
+      <div id="ex-washer">
+        <div class="extra-item">
+          <div class="extra-head">
             <div class="extra-title">ワッシャー <span class="extra-note">（JIS規格厚み自動）</span></div>
+            <span class="extra-tag" id="tag-washer">—</span>
           </div>
-          <span class="extra-tag" id="tag-washer">—</span>
-        </div>
-        <div class="seg" id="washer-seg">
-          <button class="seg-btn active" onclick="setWasher(this,0)">なし</button>
-          <button class="seg-btn" onclick="setWasher(this,1)">1枚<br><span style="font-size:.75rem;color:var(--ink-faint)">ナット側</span></button>
-          <button class="seg-btn" onclick="setWasher(this,2)">2枚<br><span style="font-size:.75rem;color:var(--ink-faint)">両側</span></button>
+          <div class="seg" id="washer-seg">
+            <button class="seg-btn active" onclick="setWasher(this,0)">なし</button>
+            <button class="seg-btn" onclick="setWasher(this,1)">1枚<br><span style="font-size:.75rem;color:var(--ink-faint)">ナット側</span></button>
+            <button class="seg-btn" onclick="setWasher(this,2)">2枚<br><span style="font-size:.75rem;color:var(--ink-faint)">両側</span></button>
+          </div>
         </div>
       </div>
 
+      <!-- PVC用：ワッシャー済み通知 -->
+      <div id="ex-washer-pvc" hidden>
+        <div class="note-box">
+          <div class="note-box-title">ℹ ワッシャー2枚（両側）含む</div>
+          <div class="note-box-body">PVCフランジのボルト長さはワッシャー2枚分を含んだ寸法です。追加ワッシャーが必要な場合は「その他追加」をご利用ください。</div>
+        </div>
+      </div>
+
+      <!-- ダブルナット -->
       <div class="extra-item">
         <div class="extra-head">
           <div class="extra-title">ダブルナット <span class="extra-note">（＋ナット1個分）</span></div>
@@ -248,22 +260,26 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
       </div>
 
-      <div class="extra-item">
-        <div class="extra-head">
-          <div class="extra-title">絶縁ワッシャー</div>
-          <span class="extra-tag" id="tag-insul">—</span>
-        </div>
-        <div class="seg" id="insul-seg">
-          <button class="seg-btn active" onclick="setInsul(this,false)">なし</button>
-          <button class="seg-btn" onclick="setInsul(this,true)">あり</button>
-        </div>
-        <div class="sub-row" id="row-insul" style="display:none;">
-          <label>厚み</label>
-          <input type="number" id="insul-h" value="3" min="0.5" max="50" step="0.5" onchange="resetLen();update()">
-          <span>mm</span>
+      <!-- 絶縁ワッシャー（JISのみ表示） -->
+      <div id="ex-insul">
+        <div class="extra-item">
+          <div class="extra-head">
+            <div class="extra-title">絶縁ワッシャー</div>
+            <span class="extra-tag" id="tag-insul">—</span>
+          </div>
+          <div class="seg" id="insul-seg">
+            <button class="seg-btn active" onclick="setInsul(this,false)">なし</button>
+            <button class="seg-btn" onclick="setInsul(this,true)">あり</button>
+          </div>
+          <div class="sub-row" id="row-insul" style="display:none;">
+            <label>厚み</label>
+            <input type="number" id="insul-h" value="3" min="0.5" max="50" step="0.5" onchange="update()">
+            <span>mm</span>
+          </div>
         </div>
       </div>
 
+      <!-- その他 -->
       <div class="extra-item">
         <div class="extra-head">
           <div class="extra-title">その他追加</div>
@@ -275,7 +291,7 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
         <div class="sub-row" id="row-other" style="display:none;">
           <label>追加厚み</label>
-          <input type="number" id="other-h" value="5" min="0.5" max="200" step="1" onchange="resetLen();update()">
+          <input type="number" id="other-h" value="5" min="0.5" max="200" step="1" onchange="update()">
           <span>mm</span>
         </div>
       </div>
@@ -283,49 +299,26 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
     </div>
   </div>
 
-  <!-- 選定結果 -->
+  <!-- ④ 選定結果 -->
   <div class="card">
     <div class="card-ttl">選定結果</div>
-
-    <!-- info strip -->
     <div style="padding:14px 14px 0;">
       <div class="info-strip">
-        <div class="info-cell">
-          <span class="i-lbl">ボルト径</span>
-          <span class="i-val" id="info-dia">—</span>
-        </div>
-        <div class="info-cell">
-          <span class="i-lbl">スパナ径</span>
-          <span class="i-val" id="info-sp">—</span>
-        </div>
-        <div class="info-cell">
-          <span class="i-lbl">本数</span>
-          <span class="i-val" id="info-cnt">—</span>
-        </div>
-        <div class="info-cell base-cell">
-          <span class="i-lbl">表の推奨長さ</span>
-          <span class="i-val" id="info-base">—</span>
-        </div>
+        <div class="info-cell"><span class="i-lbl">ボルト径</span><span class="i-val" id="info-dia">—</span></div>
+        <div class="info-cell"><span class="i-lbl">スパナ径</span><span class="i-val" id="info-sp">—</span></div>
+        <div class="info-cell"><span class="i-lbl">本数</span><span class="i-val" id="info-cnt">—</span></div>
+        <div class="info-cell base-cell"><span class="i-lbl">表の推奨長さ</span><span class="i-val" id="info-base">—</span></div>
       </div>
     </div>
-
-    <!-- flow row -->
     <div style="padding:10px 14px 0;">
       <div class="flow-row" id="flow-row"></div>
     </div>
-
-    <!-- hero number -->
     <div class="result-hero" style="margin-top:12px;">
-      <div>
-        <span class="result-num" id="result-num">—</span>
-        <span class="result-unit">mm</span>
-      </div>
+      <span class="result-num" id="result-num">—</span>
+      <span class="result-unit">mm</span>
       <div class="result-sub" id="result-sub"></div>
-      <div class="result-warn" id="result-warn"></div>
     </div>
     <div class="result-badges" id="result-badges"></div>
-
-    <!-- breakdown -->
     <div class="bkdn">
       <div class="bkdn-lbl">計算内訳</div>
       <table class="bkdn-tbl" id="bkdn-tbl"></table>
@@ -335,283 +328,476 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 </div><!-- /wrap -->
 
 <script>
-// ── TABLE ─────────────────────────────────────────────────────────────────
-const TABLE = {
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── JIS TABLE ─────────────────────────────────────────────────────────────
+const JIS_TABLE = {
   '2k': {
-    '450A':  {cnt:16, dia:'M20', sp:30, base:75},
-    '500A':  {cnt:20, dia:'M20', sp:30, base:75},
-    '550A':  {cnt:20, dia:'M22', sp:32, base:80},
-    '600A':  {cnt:20, dia:'M22', sp:32, base:80},
-    '650A':  {cnt:22, dia:'M22', sp:32, base:80},
-    '700A':  {cnt:24, dia:'M22', sp:32, base:80},
-    '750A':  {cnt:24, dia:'M24', sp:36, base:80},
-    '800A':  {cnt:24, dia:'M24', sp:36, base:80},
-    '850A':  {cnt:24, dia:'M24', sp:36, base:80},
-    '900A':  {cnt:24, dia:'M24', sp:36, base:80},
-    '1000A': {cnt:28, dia:'M24', sp:36, base:85},
-    '1100A': {cnt:28, dia:'M24', sp:36, base:85},
-    '1200A': {cnt:32, dia:'M24', sp:36, base:85},
-    '1350A': {cnt:32, dia:'M24', sp:36, base:85},
-    '1500A': {cnt:36, dia:'M24', sp:36, base:90},
+    '450A':{cnt:16,dia:'M20',sp:30,base:75},'500A':{cnt:20,dia:'M20',sp:30,base:75},
+    '550A':{cnt:20,dia:'M22',sp:32,base:80},'600A':{cnt:20,dia:'M22',sp:32,base:80},
+    '650A':{cnt:22,dia:'M22',sp:32,base:80},'700A':{cnt:24,dia:'M22',sp:32,base:80},
+    '750A':{cnt:24,dia:'M24',sp:36,base:80},'800A':{cnt:24,dia:'M24',sp:36,base:80},
+    '850A':{cnt:24,dia:'M24',sp:36,base:80},'900A':{cnt:24,dia:'M24',sp:36,base:80},
+    '1000A':{cnt:28,dia:'M24',sp:36,base:85},'1100A':{cnt:28,dia:'M24',sp:36,base:85},
+    '1200A':{cnt:32,dia:'M24',sp:36,base:85},'1350A':{cnt:32,dia:'M24',sp:36,base:85},
+    '1500A':{cnt:36,dia:'M24',sp:36,base:90},
   },
   '5k': {
-    '10A':   {cnt:4,  dia:'M10', sp:17, base:35},
-    '15A':   {cnt:4,  dia:'M10', sp:17, base:35},
-    '20A':   {cnt:4,  dia:'M10', sp:17, base:35},
-    '25A':   {cnt:4,  dia:'M10', sp:17, base:35},
-    '32A':   {cnt:4,  dia:'M12', sp:19, base:45},
-    '40A':   {cnt:4,  dia:'M12', sp:19, base:45},
-    '50A':   {cnt:4,  dia:'M12', sp:19, base:50},
-    '65A':   {cnt:4,  dia:'M12', sp:19, base:50},
-    '80A':   {cnt:4,  dia:'M16', sp:24, base:50},
-    '100A':  {cnt:8,  dia:'M16', sp:24, base:55},
-    '125A':  {cnt:8,  dia:'M16', sp:24, base:55},
-    '150A':  {cnt:8,  dia:'M16', sp:24, base:60},
-    '200A':  {cnt:8,  dia:'M20', sp:30, base:70},
-    '250A':  {cnt:12, dia:'M20', sp:30, base:75},
-    '300A':  {cnt:12, dia:'M20', sp:30, base:75},
-    '350A':  {cnt:12, dia:'M22', sp:32, base:80},
-    '400A':  {cnt:16, dia:'M22', sp:32, base:80},
-    '450A':  {cnt:16, dia:'M22', sp:32, base:80},
-    '500A':  {cnt:20, dia:'M22', sp:32, base:80},
-    '550A':  {cnt:20, dia:'M24', sp:36, base:90},
-    '600A':  {cnt:20, dia:'M24', sp:36, base:90},
-    '650A':  {cnt:24, dia:'M24', sp:36, base:90},
-    '700A':  {cnt:24, dia:'M24', sp:36, base:90},
-    '750A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '800A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '900A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '1000A': {cnt:28, dia:'M30', sp:46, base:120},
-    '1200A': {cnt:32, dia:'M30', sp:46, base:120},
-    '1350A': {cnt:32, dia:'M30', sp:46, base:120},
-    '1500A': {cnt:36, dia:'M30', sp:46, base:120},
+    '10A':{cnt:4,dia:'M10',sp:17,base:35},'15A':{cnt:4,dia:'M10',sp:17,base:35},
+    '20A':{cnt:4,dia:'M10',sp:17,base:35},'25A':{cnt:4,dia:'M10',sp:17,base:35},
+    '32A':{cnt:4,dia:'M12',sp:19,base:45},'40A':{cnt:4,dia:'M12',sp:19,base:45},
+    '50A':{cnt:4,dia:'M12',sp:19,base:50},'65A':{cnt:4,dia:'M12',sp:19,base:50},
+    '80A':{cnt:4,dia:'M16',sp:24,base:50},'100A':{cnt:8,dia:'M16',sp:24,base:55},
+    '125A':{cnt:8,dia:'M16',sp:24,base:55},'150A':{cnt:8,dia:'M16',sp:24,base:60},
+    '200A':{cnt:8,dia:'M20',sp:30,base:70},'250A':{cnt:12,dia:'M20',sp:30,base:75},
+    '300A':{cnt:12,dia:'M20',sp:30,base:75},'350A':{cnt:12,dia:'M22',sp:32,base:80},
+    '400A':{cnt:16,dia:'M22',sp:32,base:80},'450A':{cnt:16,dia:'M22',sp:32,base:80},
+    '500A':{cnt:20,dia:'M22',sp:32,base:80},'550A':{cnt:20,dia:'M24',sp:36,base:90},
+    '600A':{cnt:20,dia:'M24',sp:36,base:90},'650A':{cnt:24,dia:'M24',sp:36,base:90},
+    '700A':{cnt:24,dia:'M24',sp:36,base:90},'750A':{cnt:24,dia:'M30',sp:46,base:110},
+    '800A':{cnt:24,dia:'M30',sp:46,base:110},'900A':{cnt:24,dia:'M30',sp:46,base:110},
+    '1000A':{cnt:28,dia:'M30',sp:46,base:120},'1200A':{cnt:32,dia:'M30',sp:46,base:120},
+    '1350A':{cnt:32,dia:'M30',sp:46,base:120},'1500A':{cnt:36,dia:'M30',sp:46,base:120},
   },
   '10k': {
-    '10A':   {cnt:4,  dia:'M12', sp:19, base:45},
-    '15A':   {cnt:4,  dia:'M12', sp:19, base:45},
-    '20A':   {cnt:4,  dia:'M12', sp:19, base:45},
-    '25A':   {cnt:4,  dia:'M16', sp:24, base:50},
-    '32A':   {cnt:4,  dia:'M16', sp:24, base:55},
-    '40A':   {cnt:4,  dia:'M16', sp:24, base:55},
-    '50A':   {cnt:4,  dia:'M16', sp:24, base:55},
-    '65A':   {cnt:4,  dia:'M16', sp:24, base:60},
-    '80A':   {cnt:8,  dia:'M16', sp:24, base:60},
-    '100A':  {cnt:8,  dia:'M16', sp:24, base:60},
-    '125A':  {cnt:8,  dia:'M20', sp:30, base:70},
-    '150A':  {cnt:8,  dia:'M20', sp:30, base:75},
-    '200A':  {cnt:12, dia:'M20', sp:30, base:75},
-    '250A':  {cnt:12, dia:'M22', sp:32, base:80},
-    '300A':  {cnt:16, dia:'M22', sp:32, base:80},
-    '350A':  {cnt:16, dia:'M22', sp:32, base:85},
-    '400A':  {cnt:16, dia:'M24', sp:36, base:90},
-    '450A':  {cnt:20, dia:'M24', sp:36, base:100},
-    '500A':  {cnt:20, dia:'M24', sp:36, base:100},
-    '550A':  {cnt:20, dia:'M30', sp:46, base:110},
-    '600A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '650A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '700A':  {cnt:24, dia:'M30', sp:46, base:110},
-    '750A':  {cnt:24, dia:'M30', sp:46, base:120},
-    '800A':  {cnt:28, dia:'M30', sp:46, base:120},
-    '900A':  {cnt:28, dia:'M30', sp:46, base:120},
-    '1000A': {cnt:28, dia:'M36', sp:55, base:130},
-    '1200A': {cnt:32, dia:'M36', sp:55, base:140},
-    '1350A': {cnt:36, dia:'M42', sp:65, base:150},
-    '1500A': {cnt:40, dia:'M42', sp:65, base:160},
+    '10A':{cnt:4,dia:'M12',sp:19,base:45},'15A':{cnt:4,dia:'M12',sp:19,base:45},
+    '20A':{cnt:4,dia:'M12',sp:19,base:45},'25A':{cnt:4,dia:'M16',sp:24,base:50},
+    '32A':{cnt:4,dia:'M16',sp:24,base:55},'40A':{cnt:4,dia:'M16',sp:24,base:55},
+    '50A':{cnt:4,dia:'M16',sp:24,base:55},'65A':{cnt:4,dia:'M16',sp:24,base:60},
+    '80A':{cnt:8,dia:'M16',sp:24,base:60},'100A':{cnt:8,dia:'M16',sp:24,base:60},
+    '125A':{cnt:8,dia:'M20',sp:30,base:70},'150A':{cnt:8,dia:'M20',sp:30,base:75},
+    '200A':{cnt:12,dia:'M20',sp:30,base:75},'250A':{cnt:12,dia:'M22',sp:32,base:80},
+    '300A':{cnt:16,dia:'M22',sp:32,base:80},'350A':{cnt:16,dia:'M22',sp:32,base:85},
+    '400A':{cnt:16,dia:'M24',sp:36,base:90},'450A':{cnt:20,dia:'M24',sp:36,base:100},
+    '500A':{cnt:20,dia:'M24',sp:36,base:100},'550A':{cnt:20,dia:'M30',sp:46,base:110},
+    '600A':{cnt:24,dia:'M30',sp:46,base:110},'650A':{cnt:24,dia:'M30',sp:46,base:110},
+    '700A':{cnt:24,dia:'M30',sp:46,base:110},'750A':{cnt:24,dia:'M30',sp:46,base:120},
+    '800A':{cnt:28,dia:'M30',sp:46,base:120},'900A':{cnt:28,dia:'M30',sp:46,base:120},
+    '1000A':{cnt:28,dia:'M36',sp:55,base:130},'1200A':{cnt:32,dia:'M36',sp:55,base:140},
+    '1350A':{cnt:36,dia:'M42',sp:65,base:150},'1500A':{cnt:40,dia:'M42',sp:65,base:160},
   },
   '20k': {
-    '10A':   {cnt:4,  dia:'M12', sp:19, base:50},
-    '15A':   {cnt:4,  dia:'M12', sp:19, base:50},
-    '20A':   {cnt:4,  dia:'M12', sp:19, base:55},
-    '25A':   {cnt:4,  dia:'M16', sp:24, base:60},
-    '32A':   {cnt:4,  dia:'M16', sp:24, base:60},
-    '40A':   {cnt:4,  dia:'M16', sp:24, base:60},
-    '50A':   {cnt:8,  dia:'M16', sp:24, base:60},
-    '65A':   {cnt:8,  dia:'M16', sp:24, base:65},
-    '80A':   {cnt:8,  dia:'M20', sp:30, base:75},
-    '100A':  {cnt:8,  dia:'M20', sp:30, base:80},
-    '125A':  {cnt:8,  dia:'M22', sp:32, base:85},
-    '150A':  {cnt:12, dia:'M22', sp:32, base:90},
-    '200A':  {cnt:12, dia:'M22', sp:32, base:95},
-    '250A':  {cnt:12, dia:'M24', sp:36, base:110},
-    '300A':  {cnt:16, dia:'M24', sp:36, base:110},
-    '350A':  {cnt:16, dia:'M30', sp:46, base:120},
-    '400A':  {cnt:16, dia:'M30', sp:46, base:130},
-    '450A':  {cnt:20, dia:'M30', sp:46, base:140},
-    '500A':  {cnt:20, dia:'M30', sp:46, base:140},
-    '550A':  {cnt:20, dia:'M36', sp:55, base:150},
-    '600A':  {cnt:24, dia:'M36', sp:55, base:160},
+    '10A':{cnt:4,dia:'M12',sp:19,base:50},'15A':{cnt:4,dia:'M12',sp:19,base:50},
+    '20A':{cnt:4,dia:'M12',sp:19,base:55},'25A':{cnt:4,dia:'M16',sp:24,base:60},
+    '32A':{cnt:4,dia:'M16',sp:24,base:60},'40A':{cnt:4,dia:'M16',sp:24,base:60},
+    '50A':{cnt:8,dia:'M16',sp:24,base:60},'65A':{cnt:8,dia:'M16',sp:24,base:65},
+    '80A':{cnt:8,dia:'M20',sp:30,base:75},'100A':{cnt:8,dia:'M20',sp:30,base:80},
+    '125A':{cnt:8,dia:'M22',sp:32,base:85},'150A':{cnt:12,dia:'M22',sp:32,base:90},
+    '200A':{cnt:12,dia:'M22',sp:32,base:95},'250A':{cnt:12,dia:'M24',sp:36,base:110},
+    '300A':{cnt:16,dia:'M24',sp:36,base:110},'350A':{cnt:16,dia:'M30',sp:46,base:120},
+    '400A':{cnt:16,dia:'M30',sp:46,base:130},'450A':{cnt:20,dia:'M30',sp:46,base:140},
+    '500A':{cnt:20,dia:'M30',sp:46,base:140},'550A':{cnt:20,dia:'M36',sp:55,base:150},
+    '600A':{cnt:24,dia:'M36',sp:55,base:160},
   },
 };
 
-// ── ナット高さ・ワッシャー厚み（JIS規格値） ────────────────────────────────
+// ── PVC TABLE（ワッシャー2枚込み寸法）───────────────────────────────────
+const PVC_TABLE = {
+  'ts5k': {
+    '10A':{cnt:4,dia:'M10',base:40},'15A':{cnt:4,dia:'M10',base:40},
+    '20A':{cnt:4,dia:'M10',base:40},'25A':{cnt:4,dia:'M10',base:40},
+    '32A':{cnt:4,dia:'M12',base:45},'40A':{cnt:4,dia:'M12',base:45},
+    '50A':{cnt:4,dia:'M12',base:50},'65A':{cnt:4,dia:'M12',base:50},
+    '80A':{cnt:4,dia:'M16',base:55},'100A':{cnt:8,dia:'M16',base:60},
+    '125A':{cnt:8,dia:'M16',base:60},'150A':{cnt:8,dia:'M16',base:65},
+    '200A':{cnt:8,dia:'M20',base:90},'250A':{cnt:12,dia:'M20',base:90},
+    '300A':{cnt:12,dia:'M20',base:90},'350A':{cnt:12,dia:'M22',base:100},
+  },
+  'ts10k': {
+    '10A':{cnt:4,dia:'M12',base:50},'15A':{cnt:4,dia:'M12',base:50},
+    '20A':{cnt:4,dia:'M12',base:55},'25A':{cnt:4,dia:'M16',base:60},
+    '32A':{cnt:4,dia:'M16',base:60},'40A':{cnt:4,dia:'M16',base:60},
+    '50A':{cnt:4,dia:'M16',base:70},'65A':{cnt:4,dia:'M16',base:75},
+    '80A':{cnt:8,dia:'M16',base:75},'100A':{cnt:8,dia:'M16',base:75},
+    '125A':{cnt:8,dia:'M20',base:80},'150A':{cnt:8,dia:'M20',base:85},
+    '200A':{cnt:12,dia:'M20',base:90},'250A':{cnt:12,dia:'M22',base:95},
+    '300A':{cnt:16,dia:'M22',base:95},'350A':{cnt:16,dia:'M22',base:105},
+  },
+  'tsf12': {
+    '50A':{cnt:4,dia:'M16',base:70},'80A':{cnt:4,dia:'M16',base:70},
+    '100A':{cnt:4,dia:'M16',base:75},'125A':{cnt:6,dia:'M16',base:80},
+    '150A':{cnt:6,dia:'M16',base:85},'200A':{cnt:8,dia:'M16',base:90},
+    '250A':{cnt:8,dia:'M20',base:100},'300A':{cnt:10,dia:'M20',base:105},
+  },
+  'w5k': {
+    '10A':{cnt:4,dia:'M10',base:40},'15A':{cnt:4,dia:'M10',base:40},
+    '20A':{cnt:4,dia:'M10',base:40},'25A':{cnt:4,dia:'M10',base:40},
+    '32A':{cnt:4,dia:'M12',base:45},'40A':{cnt:4,dia:'M12',base:45},
+    '50A':{cnt:4,dia:'M12',base:50},'65A':{cnt:4,dia:'M12',base:50},
+    '80A':{cnt:4,dia:'M16',base:55},'100A':{cnt:8,dia:'M16',base:60},
+    '125A':{cnt:8,dia:'M16',base:60},'150A':{cnt:8,dia:'M16',base:65},
+    '200A':{cnt:8,dia:'M20',base:75},'250A':{cnt:12,dia:'M20',base:80},
+    '300A':{cnt:12,dia:'M20',base:80},
+  },
+  'w10k': {
+    '10A':{cnt:4,dia:'M12',base:50},'15A':{cnt:4,dia:'M12',base:50},
+    '20A':{cnt:4,dia:'M12',base:55},'25A':{cnt:4,dia:'M16',base:60},
+    '32A':{cnt:4,dia:'M16',base:60},'40A':{cnt:4,dia:'M16',base:60},
+    '50A':{cnt:4,dia:'M16',base:60},'65A':{cnt:4,dia:'M16',base:65},
+    '80A':{cnt:8,dia:'M16',base:65},'100A':{cnt:8,dia:'M16',base:65},
+    '125A':{cnt:8,dia:'M20',base:75},'150A':{cnt:8,dia:'M20',base:80},
+    '200A':{cnt:12,dia:'M20',base:80},'250A':{cnt:12,dia:'M22',base:85},
+    '300A':{cnt:16,dia:'M22',base:85},
+  },
+};
+
+// ── DCIP TABLE ────────────────────────────────────────────────────────────
+const DCIP_TABLE = {
+  '7.5k': {
+    'φ75':{cnt:4,dia:'M16',sp:24,l1:75,l2:75},'φ100':{cnt:4,dia:'M16',sp:24,l1:75,l2:75},
+    'φ150':{cnt:6,dia:'M16',sp:24,l1:75,l2:75},'φ200':{cnt:8,dia:'M16',sp:24,l1:80,l2:80},
+    'φ250':{cnt:8,dia:'M20',sp:30,l1:85,l2:85},'φ300':{cnt:10,dia:'M20',sp:30,l1:85,l2:90},
+    'φ350':{cnt:10,dia:'M22',sp:32,l1:95,l2:95},'φ400':{cnt:12,dia:'M22',sp:32,l1:95,l2:95},
+    'φ450':{cnt:12,dia:'M24',sp:36,l1:100,l2:100},'φ500':{cnt:12,dia:'M24',sp:36,l1:100,l2:110},
+    'φ600':{cnt:16,dia:'M24',sp:36,l1:100,l2:120},'φ700':{cnt:16,dia:'M30',sp:46,l1:110,l2:130},
+    'φ800':{cnt:20,dia:'M30',sp:46,l1:120,l2:130},'φ900':{cnt:20,dia:'M30',sp:46,l1:120,l2:140},
+    'φ1000':{cnt:24,dia:'M30',sp:46,l1:130,l2:150},'φ1100':{cnt:24,dia:'M30',sp:46,l1:130},
+    'φ1200':{cnt:28,dia:'M30',sp:46,l1:140},'φ1350':{cnt:28,dia:'M36',sp:55,l1:150},
+    'φ1500':{cnt:32,dia:'M36',sp:55,l1:150},
+  },
+  '10k': {
+    'φ50':{cnt:4,dia:'M16',sp:24,l1:65},'φ75':{cnt:8,dia:'M16',sp:24,l1:65},
+    'φ100':{cnt:8,dia:'M16',sp:24,l1:65},'φ150':{cnt:8,dia:'M20',sp:30,l1:75},
+    'φ200':{cnt:12,dia:'M20',sp:30,l1:75},'φ250':{cnt:12,dia:'M22',sp:32,l1:80},
+    'φ300':{cnt:16,dia:'M22',sp:32,l1:80},'φ350':{cnt:16,dia:'M22',sp:32,l1:85},
+    'φ400':{cnt:16,dia:'M24',sp:36,l1:100},'φ450':{cnt:20,dia:'M24',sp:36,l1:100},
+    'φ500':{cnt:20,dia:'M24',sp:36,l1:100},'φ600':{cnt:24,dia:'M30',sp:46,l1:110},
+    'φ700':{cnt:24,dia:'M30',sp:46,l1:110},'φ800':{cnt:28,dia:'M30',sp:46,l1:120},
+    'φ900':{cnt:28,dia:'M30',sp:46,l1:120},'φ1000':{cnt:28,dia:'M36',sp:55,l1:140},
+    'φ1100':{cnt:28,dia:'M36',sp:55,l1:140},'φ1200':{cnt:32,dia:'M36',sp:55,l1:140},
+    'φ1350':{cnt:36,dia:'M42',sp:65,l1:160},'φ1500':{cnt:40,dia:'M42',sp:65,l1:160},
+  },
+};
+
+// ── LB TABLE ──────────────────────────────────────────────────────────────
+const LB_TABLE = {
+  '150lb': {
+    '3/8B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:60},
+    '1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:60},
+    '3/4B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:65},
+    '1B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:70},
+    '1 1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:50,stud:75},
+    '2B':{cnt:4,dia:'W 5/8',sp:26,machine:65,stud:85},
+    '2 1/2B':{cnt:4,dia:'W 5/8',sp:26,machine:65,stud:90},
+    '3B':{cnt:4,dia:'W 5/8',sp:26,machine:70,stud:95},
+    '4B':{cnt:8,dia:'W 5/8',sp:26,machine:70,stud:95},
+    '5B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:105},
+    '6B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:110},
+    '8B':{cnt:8,dia:'W 3/4',sp:32,machine:85,stud:115},
+    '10B':{cnt:12,dia:'W 7/8',sp:35,machine:90,stud:125},
+    '12B':{cnt:12,dia:'W 7/8',sp:35,machine:100,stud:125},
+    '14B':{cnt:12,dia:'W 1',sp:41,machine:110,stud:140},
+    '16B':{cnt:16,dia:'W 1',sp:41,machine:110,stud:140},
+    '18B':{cnt:16,dia:'W 1 1/8',sp:46,machine:125,stud:155},
+    '20B':{cnt:20,dia:'W 1 1/8',sp:46,machine:125,stud:160},
+    '22B':{cnt:20,dia:'W 1 1/4',sp:50,machine:140,stud:160},
+    '24B':{cnt:20,dia:'W 1 1/4',sp:50,machine:140,stud:160},
+    '26B':{cnt:24,dia:'W 1 1/4',sp:50,machine:160,stud:180},
+    '28B':{cnt:28,dia:'W 1 1/4',sp:50,machine:160,stud:180},
+    '30B':{cnt:28,dia:'W 1 1/4',sp:50,machine:160,stud:190},
+    '32B':{cnt:28,dia:'W 1 1/2',sp:58,machine:160,stud:200},
+  },
+  '300lb': {
+    '3/8B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:70},
+    '1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:70},
+    '3/4B':{cnt:4,dia:'W 5/8',sp:26,machine:55,stud:80},
+    '1B':{cnt:4,dia:'W 5/8',sp:26,machine:55,stud:80},
+    '1 1/2B':{cnt:4,dia:'W 3/4',sp:32,machine:65,stud:100},
+    '2B':{cnt:8,dia:'W 5/8',sp:26,machine:70,stud:90},
+    '2 1/2B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:100},
+    '3B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:115},
+    '4B':{cnt:8,dia:'W 3/4',sp:32,machine:85,stud:120},
+    '5B':{cnt:8,dia:'W 3/4',sp:32,machine:100,stud:125},
+    '6B':{cnt:12,dia:'W 3/4',sp:32,machine:110,stud:130},
+    '8B':{cnt:12,dia:'W 7/8',sp:35,machine:125,stud:145},
+    '10B':{cnt:16,dia:'W 1',sp:41,machine:140,stud:165},
+    '12B':{cnt:16,dia:'W 1 1/8',sp:46,machine:140,stud:175},
+    '14B':{cnt:20,dia:'W 1 1/8',sp:46,machine:160,stud:180},
+    '16B':{cnt:20,dia:'W 1 1/4',sp:50,machine:160,stud:195},
+    '18B':{cnt:24,dia:'W 1 1/4',sp:50,machine:180,stud:200},
+    '20B':{cnt:24,dia:'W 1 1/4',sp:50,machine:180,stud:210},
+    '22B':{cnt:24,dia:'W 1 1/2',sp:58,machine:200,stud:240},
+    '24B':{cnt:24,dia:'W 1 1/2',sp:58,machine:200,stud:240},
+  },
+};
+
+// ── BPROPS（ナット高さ・ワッシャー厚み）──────────────────────────────────
 const BPROPS = {
-  M10:  {nut:8,  washer:2.0},
-  M12:  {nut:10, washer:2.5},
-  M16:  {nut:13, washer:3.0},
-  M20:  {nut:16, washer:3.0},
-  M22:  {nut:18, washer:3.0},
-  M24:  {nut:19, washer:4.0},
-  M27:  {nut:22, washer:4.0},
-  M30:  {nut:24, washer:4.0},
-  M36:  {nut:29, washer:5.0},
-  M42:  {nut:34, washer:6.0},
+  M10:{nut:8,washer:2.0},M12:{nut:10,washer:2.5},M16:{nut:13,washer:3.0},
+  M20:{nut:16,washer:3.0},M22:{nut:18,washer:3.0},M24:{nut:19,washer:4.0},
+  M27:{nut:22,washer:4.0},M30:{nut:24,washer:4.0},M36:{nut:29,washer:5.0},M42:{nut:34,washer:6.0},
+  // LB インチボルト：nut=8割（マシンボルト用）、nut10=10割（全ネジ用 JPI参考値）
+  'W 1/2':{nut:11,nut10:14,washer:2.5},'W 5/8':{nut:14,nut10:17,washer:3.0},
+  'W 3/4':{nut:17,nut10:21,washer:3.5},'W 7/8':{nut:19,nut10:24,washer:4.0},
+  'W 1':{nut:22,nut10:28,washer:4.5},'W 1 1/8':{nut:25,nut10:31,washer:5.0},
+  'W 1 1/4':{nut:28,nut10:35,washer:5.0},'W 1 1/2':{nut:33,nut10:41,washer:6.0},
 };
 
-
-// ── STATE ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
 let state = {
-  rating: '10k',
-  washerCount: 0,
-  dnut: false,
-  insul: false,
-  other: false,
+  mainTab:   'jis',
+  jisRating: '10k',
+  pvcType:   'ts5k',
+  dcipRating:'7.5k',
+  dcipLen:   'l1',
+  lbRating:  '150lb',
+  lbBolt:    'machine',
+  washerCount:0,
+  dnut:false,insul:false,other:false,
 };
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
-const si = id => document.getElementById(id);
-const cv = id => parseFloat(si(id).value) || 0;
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+const si  = id => document.getElementById(id);
+const cv  = id => parseFloat(si(id).value)||0;
 function ceil5(v){ return Math.ceil(v/5)*5; }
 
-function populateSizes(rating, keep) {
-  const sel = si('size-sel');
-  const prev = keep || sel.value;
-  const keys = Object.keys(TABLE[rating]);
-  sel.innerHTML = '';
-  keys.forEach(k => {
-    const o = document.createElement('option');
-    o.value = k; o.textContent = k; sel.appendChild(o);
-  });
-  sel.value = keys.includes(prev) ? prev : keys[0];
+function populateSelect(selId, keys) {
+  const sel=si(selId);
+  const prev=sel.value;
+  sel.innerHTML='';
+  keys.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); });
+  if(keys.includes(prev)) sel.value=prev; else sel.value=keys[0];
 }
 
-function resolveParams() {
-  const size = si('size-sel').value;
-  const entry = TABLE[state.rating]?.[size];
+// ── current entry ──────────────────────────────────────────────────────────
+function getEntry() {
+  switch(state.mainTab){
+    case 'jis': return JIS_TABLE[state.jisRating]?.[si('jis-size').value];
+    case 'pvc': return PVC_TABLE[state.pvcType]?.[si('pvc-size').value];
+    case 'dcip':return DCIP_TABLE[state.dcipRating]?.[si('dcip-size').value];
+    case 'lb':  return LB_TABLE[state.lbRating]?.[si('lb-size').value];
+  }
+}
+function getBaseLen(entry){
   if(!entry) return null;
-  const props = BPROPS[entry.dia] || {nut:16, washer:3.0};
+  switch(state.mainTab){
+    case 'jis': return entry.base;
+    case 'pvc': return entry.base;
+    case 'dcip':{
+      const lt = state.dcipLen;
+      if(lt==='l2' && entry.l2!=null) return entry.l2;
+      return entry.l1;
+    }
+    case 'lb':  return entry[state.lbBolt];
+  }
+}
 
-  const washerH = state.washerCount * props.washer;
-  const dnutH   = state.dnut  ? props.nut : 0;
-  const insulH  = state.insul ? cv('insul-h') : 0;
+// ─────────────────────────────────────────────────────────────────────────
+function resolveParams(){
+  const entry=getEntry();
+  if(!entry) return null;
+  const baseLen=getBaseLen(entry);
+  if(baseLen==null) return null;
+  const props=BPROPS[entry.dia]||{nut:16,washer:3.0};
+
+  const isPvc    = state.mainTab==='pvc';
+  const isLbStud = state.mainTab==='lb' && state.lbBolt==='stud';
+  const washerH  = isPvc ? 0 : state.washerCount*props.washer;
+  // 全ネジ＋ダブルナット：両端各1個追加＝2個（10割ナット）
+  // マシンボルト＋ダブルナット：ナット端1個追加（8割ナット）
+  const dnutH    = state.dnut
+    ? (isLbStud ? 2*(props.nut10??props.nut) : props.nut)
+    : 0;
+  const insulH   = state.insul ? cv('insul-h') : 0;
   const otherH  = state.other ? cv('other-h') : 0;
-  const totalExtra = washerH + dnutH + insulH + otherH;
-
-  const baseLen = entry.base;
-  const minLen  = baseLen + totalExtra;
+  const totalExtra = washerH+dnutH+insulH+otherH;
+  const minLen  = baseLen+totalExtra;
   const rec     = ceil5(minLen);
 
-  return {entry, props, size, washerH, dnutH, insulH, otherH, totalExtra, baseLen, minLen, rec};
+  return {entry,props,baseLen,washerH,dnutH,insulH,otherH,totalExtra,minLen,rec};
 }
 
-// ── UPDATE ────────────────────────────────────────────────────────────────
-function update() {
-  const p = resolveParams();
+// ═══════════════════════════════════════════════════════════════════════════
+// UPDATE
+// ═══════════════════════════════════════════════════════════════════════════
+function update(){
+  const p=resolveParams();
   if(!p) return;
+  const {entry,props,baseLen,washerH,dnutH,insulH,otherH,totalExtra,minLen,rec}=p;
 
-  // Tag labels
-  const wLabel = state.washerCount===0 ? '—'
-               : state.washerCount===1 ? `+${p.washerH} mm（ナット側）`
-               : `+${p.washerH} mm（両側）`;
-  const setTag = (id, val, on) => {
-    const el=si(id); el.textContent=val;
-    el.className='extra-tag'+(on?' on':'');
-  };
-  setTag('tag-washer', wLabel,        state.washerCount>0);
-  setTag('tag-dnut',   state.dnut  ? `+${p.dnutH} mm`  : '—', state.dnut);
-  setTag('tag-insul',  state.insul ? `+${p.insulH} mm` : '—', state.insul);
-  setTag('tag-other',  state.other ? `+${p.otherH} mm` : '—', state.other);
+  // washer/pvc visibility
+  si('ex-washer').hidden     = (state.mainTab==='pvc');
+  si('ex-washer-pvc').hidden = (state.mainTab!=='pvc');
 
-  si('row-insul').style.display = state.insul ? 'flex' : 'none';
-  si('row-other').style.display = state.other ? 'flex' : 'none';
+  // 絶縁ワッシャーはJISのみ表示
+  const showInsul = state.mainTab==='jis';
+  si('ex-insul').hidden = !showInsul;
+  if(!showInsul && state.insul){ state.insul=false; activateSeg(si('insul-seg'),0); }
 
-  // Info strip
-  si('info-dia').textContent  = p.entry.dia;
-  si('info-sp').innerHTML     = `${p.entry.sp}<span class="i-unit"> mm</span>`;
-  si('info-cnt').innerHTML    = `${p.entry.cnt}<span class="i-unit"> 本</span>`;
-  si('info-base').innerHTML   = `${p.baseLen}<span class="i-unit"> mm</span>`;
+  // DCIP L2 toggle: hide when 10K or entry has no l2
+  if(state.mainTab==='dcip'){
+    const has_l2 = state.dcipRating==='7.5k' && entry.l2!=null;
+    si('dcip-ltype-row').hidden = !has_l2;
+    if(!has_l2 && state.dcipLen==='l2'){ state.dcipLen='l1'; activateSeg(si('dcip-lseg'),0); }
+  }
 
-  // Result
-  const rec = p.rec;
-  const displayLen = rec;
-  const warn = false;
+  // tags
+  const setTag=(id,val,on)=>{const e=si(id);e.textContent=val;e.className='extra-tag'+(on?' on':'');};
+  if(state.mainTab!=='pvc'){
+    const wL=state.washerCount===0?'—':state.washerCount===1?`+${washerH} mm（ナット側）`:`+${washerH} mm（両側）`;
+    setTag('tag-washer',wL,state.washerCount>0);
+  }
+  setTag('tag-dnut', state.dnut  ?`+${dnutH} mm`:'—',state.dnut);
+  setTag('tag-insul',state.insul ?`+${insulH} mm`:'—',state.insul);
+  setTag('tag-other',state.other ?`+${otherH} mm`:'—',state.other);
+  si('row-insul').style.display=state.insul?'flex':'none';
+  si('row-other').style.display=state.other?'flex':'none';
 
-  // Flow row
+  // info strip
+  si('info-dia').textContent = entry.dia;
+  si('info-sp').innerHTML    = entry.sp ? `${entry.sp}<span class="i-unit"> mm</span>` : '—';
+  si('info-cnt').innerHTML   = `${entry.cnt}<span class="i-unit"> 本</span>`;
+  // base label suffix for PVC
+  const baseSuffix = state.mainTab==='pvc' ? '<span class="i-unit">（W2枚込）</span>' : '<span class="i-unit"> mm</span>';
+  si('info-base').innerHTML  = `${baseLen}${baseSuffix}`;
+
+  // flow row
   const flow=si('flow-row');
-  if(p.totalExtra===0){
+  const pvcNote = state.mainTab==='pvc' ? '（W2枚込）' : '';
+  if(totalExtra===0){
     flow.innerHTML=`
-      <div class="flow-item"><span class="flow-lbl">表の推奨長さ</span><span class="flow-box base">${p.baseLen} mm</span></div>
+      <div class="flow-item"><span class="flow-lbl">表の推奨長さ${pvcNote}</span><span class="flow-box base">${baseLen} mm</span></div>
       <span class="flow-arr">＝</span>
       <div class="flow-item"><span class="flow-lbl">追加部材なし</span><span class="flow-box ok">${rec} mm ✓</span></div>`;
   } else {
     const pts=[];
-    if(p.washerH>0) pts.push(`W:${p.washerH}`);
-    if(p.dnutH>0)   pts.push(`N:${p.dnutH}`);
-    if(p.insulH>0)  pts.push(`絶:${p.insulH}`);
-    if(p.otherH>0)  pts.push(`他:${p.otherH}`);
+    if(washerH>0) pts.push(`W:${washerH}`);
+    if(dnutH>0)   pts.push(`N:${dnutH}`);
+    if(insulH>0)  pts.push(`絶:${insulH}`);
+    if(otherH>0)  pts.push(`他:${otherH}`);
     flow.innerHTML=`
-      <div class="flow-item"><span class="flow-lbl">表の推奨</span><span class="flow-box base">${p.baseLen} mm</span></div>
+      <div class="flow-item"><span class="flow-lbl">表の推奨${pvcNote}</span><span class="flow-box base">${baseLen} mm</span></div>
       <span class="flow-arr">＋</span>
-      <div class="flow-item"><span class="flow-lbl">追加（${pts.join('+')}）</span><span class="flow-box extra">+${p.totalExtra} mm</span></div>
+      <div class="flow-item"><span class="flow-lbl">追加（${pts.join('+')}）</span><span class="flow-box extra">+${totalExtra} mm</span></div>
       <span class="flow-arr">＝</span>
-      <div class="flow-item"><span class="flow-lbl">必要最小</span><span class="flow-box">${p.minLen} mm</span></div>
+      <div class="flow-item"><span class="flow-lbl">必要最小</span><span class="flow-box">${minLen} mm</span></div>
       <span class="flow-arr">→</span>
       <div class="flow-item"><span class="flow-lbl">5mm切り上げ推奨</span><span class="flow-box result">${rec} mm</span></div>`;
   }
 
-  // Hero
-  si('result-num').textContent = displayLen;
-  si('result-sub').textContent = '';
-  si('result-warn').textContent = '';
+  // hero
+  si('result-num').textContent=rec;
 
+  // badges
+  const boltLabel = state.mainTab==='lb' ? `${entry.dia} × ${rec} mm` : `${entry.dia} × ${rec} mm`;
   si('result-badges').innerHTML=`
-    <span class="badge badge-a">${p.entry.dia} × ${displayLen} mm</span>
-    <span class="badge badge-w">${p.entry.cnt} 本</span>
-    <span class="badge badge-w">スパナ ${p.entry.sp} mm</span>`;
+    <span class="badge badge-a">${boltLabel}</span>
+    <span class="badge badge-w">${entry.cnt} 本</span>
+    ${entry.sp?`<span class="badge badge-w">スパナ ${entry.sp} mm</span>`:''}`;
 
-  // Breakdown
-  let tbl=`<tr class="r-base"><td>表の推奨長さ（JIS BN表）</td><td>${p.baseLen} mm</td></tr>`;
-  if(p.washerH>0){
-    const wn=state.washerCount===1?`ナット側 1枚 ${p.props.washer}mm`:`両側 2枚 ${p.props.washer}×2mm`;
-    tbl+=`<tr class="r-extra"><td>＋ ワッシャー（${wn}）</td><td>+${p.washerH} mm</td></tr>`;
+  // breakdown
+  const baseLblSuffix = state.mainTab==='pvc' ? '（ワッシャー2枚含む）' : '';
+  let tbl=`<tr class="r-base"><td>表の推奨長さ${baseLblSuffix}</td><td>${baseLen} mm</td></tr>`;
+  if(washerH>0){
+    const wn=state.washerCount===1?`ナット側 1枚 ${props.washer}mm`:`両側 2枚 ${props.washer}×2mm`;
+    tbl+=`<tr class="r-extra"><td>＋ ワッシャー（${wn}）</td><td>+${washerH} mm</td></tr>`;
   }
-  if(p.dnutH>0)  tbl+=`<tr class="r-extra"><td>＋ ダブルナット（8割ナット 1個 ${p.props.nut}mm）</td><td>+${p.dnutH} mm</td></tr>`;
-  if(p.insulH>0) tbl+=`<tr class="r-extra"><td>＋ 絶縁ワッシャー</td><td>+${p.insulH} mm</td></tr>`;
-  if(p.otherH>0) tbl+=`<tr class="r-extra"><td>＋ その他追加</td><td>+${p.otherH} mm</td></tr>`;
-  if(p.totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${p.minLen} mm</td></tr>`;
-  tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${displayLen} mm</td></tr>`;
-  si('bkdn-tbl').innerHTML = tbl;
-
+  if(dnutH>0){
+    const isLS = state.mainTab==='lb' && state.lbBolt==='stud';
+    const dnutDesc = isLS
+      ? `10割ナット 両端各1個追加 ${props.nut10??props.nut}×2mm`
+      : `8割ナット 1個 ${props.nut}mm`;
+    tbl+=`<tr class="r-extra"><td>＋ ダブルナット（${dnutDesc}）</td><td>+${dnutH} mm</td></tr>`;
+  }
+  if(insulH>0) tbl+=`<tr class="r-extra"><td>＋ 絶縁ワッシャー</td><td>+${insulH} mm</td></tr>`;
+  if(otherH>0) tbl+=`<tr class="r-extra"><td>＋ その他追加</td><td>+${otherH} mm</td></tr>`;
+  if(totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${minLen} mm</td></tr>`;
+  tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${rec} mm</td></tr>`;
+  si('bkdn-tbl').innerHTML=tbl;
 }
 
-// ── CONTROLS ──────────────────────────────────────────────────────────────
-function setRating(btn,val){
-  state.rating=val;
-  si('rating-tabs').querySelectorAll('.rtab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  populateSizes(val); update();
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════════════════════
+function activateSeg(seg, idx){ seg.querySelectorAll('.seg-btn').forEach((b,i)=>b.classList.toggle('active',i===idx)); }
+function activateRtab(tabs, btn){ tabs.querySelectorAll('.rtab-btn,.main-tab-btn,.pvc-tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+
+function setMainTab(btn, tab){
+  state.mainTab=tab;
+  activateRtab(si('main-tabs'), btn);
+  ['jis','pvc','dcip','lb'].forEach(t=>{ si('in-'+t).hidden=(t!==tab); });
+  // populate sizes for the newly active tab
+  switch(tab){
+    case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating])); break;
+    case 'pvc':  populateSelect('pvc-size', Object.keys(PVC_TABLE[state.pvcType])); break;
+    case 'dcip': populateDcipSizes(); break;
+    case 'lb':   populateSelect('lb-size', Object.keys(LB_TABLE[state.lbRating])); break;
+  }
+  update();
 }
-function setWasher(btn,n){
+
+function setJisRating(btn, rating){
+  state.jisRating=rating;
+  activateRtab(si('jis-rtabs'), btn);
+  populateSelect('jis-size', Object.keys(JIS_TABLE[rating]));
+  update();
+}
+function setPvcType(btn, type){
+  state.pvcType=type;
+  activateRtab(si('pvc-ttabs'), btn);
+  populateSelect('pvc-size', Object.keys(PVC_TABLE[type]));
+  update();
+}
+function setDcipRating(btn, rating){
+  state.dcipRating=rating;
+  activateRtab(si('dcip-rtabs'), btn);
+  populateDcipSizes();
+  update();
+}
+function populateDcipSizes(){
+  populateSelect('dcip-size', Object.keys(DCIP_TABLE[state.dcipRating]));
+}
+function setDcipLen(btn, len){
+  state.dcipLen=len;
+  activateSeg(si('dcip-lseg'), len==='l1'?0:1);
+  update();
+}
+function setLbRating(btn, rating){
+  state.lbRating=rating;
+  activateRtab(si('lb-rtabs'), btn);
+  populateSelect('lb-size', Object.keys(LB_TABLE[rating]));
+  update();
+}
+function setLbBolt(btn, type){
+  state.lbBolt=type;
+  activateSeg(si('lb-bseg'), type==='machine'?0:1);
+  update();
+}
+function setWasher(btn, n){
   state.washerCount=n;
-  si('washer-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); update();
+  si('washer-seg').querySelectorAll('.seg-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  update();
 }
-function setDnut(btn,v){
+function setDnut(btn, v){
   state.dnut=v;
-  si('dnut-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); update();
+  activateSeg(si('dnut-seg'), v?1:0);
+  update();
 }
-function setInsul(btn,v){
+function setInsul(btn, v){
   state.insul=v;
-  si('insul-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); update();
+  activateSeg(si('insul-seg'), v?1:0);
+  update();
 }
-function setOther(btn,v){
+function setOther(btn, v){
   state.other=v;
-  si('other-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); update();
+  activateSeg(si('other-seg'), v?1:0);
+  update();
 }
-// ── BOOT ──────────────────────────────────────────────────────────────────
-populateSizes('10k','50A');
-si('size-sel').onchange=()=>{ update(); };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════════════════
+populateSelect('jis-size', Object.keys(JIS_TABLE['10k']));
+populateSelect('pvc-size', Object.keys(PVC_TABLE['ts5k']));
+populateDcipSizes();
+populateSelect('lb-size', Object.keys(LB_TABLE['150lb']));
+// set default jis size to 50A
+si('jis-size').value='50A';
 update();
 </script>
