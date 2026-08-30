@@ -59,6 +59,8 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 /* extras */
 .extra-item{border:1.5px solid var(--paper-line);border-radius:5px;padding:10px;background:var(--paper);display:flex;flex-direction:column;gap:6px;}
 .extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.extra-clear{border:none;background:none;color:var(--ink-faint);font-size:.7rem;text-decoration:underline;cursor:pointer;padding:2px 4px;line-height:1;margin-left:auto;}
+.reset-link{display:block;text-align:center;margin:2px 0 4px;font-size:.78rem;color:var(--ink-soft);text-decoration:underline;background:none;border:none;cursor:pointer;}
 .extra-title{font-size:.95rem;font-weight:600;}
 .extra-note{font-size:.78rem;color:var(--ink-faint);}
 .extra-tag{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--ink-faint);}
@@ -272,6 +274,9 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
       </div>
 
+    </div>
+    <div style="padding:4px 14px 10px;">
+      <button class="reset-link" onclick="clearAllExtras()">追加項目をすべてクリア</button>
     </div>
   </div>
 
@@ -757,6 +762,10 @@ function setOther(btn, v){
   activateSeg(si('other-seg'), v?1:0);
   update();
 }
+function clearWasher(){ state.washerCount=0; activateSeg(si('washer-seg'),0); update(); }
+function clearDnut(){   state.dnut=false;    activateSeg(si('dnut-seg'),0);   update(); }
+function clearOther(){  state.other=false;   activateSeg(si('other-seg'),0);  update(); }
+function clearAllExtras(){ clearWasher(); clearDnut(); clearOther(); }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BOOT
