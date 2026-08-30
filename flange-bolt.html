@@ -704,6 +704,8 @@ function setMainTab(btn, tab){
   state.mainTab=tab;
   activateRtab(si('main-tabs'), btn);
   ['jis','pvc','dcip','lb'].forEach(t=>{ si('in-'+t).hidden=(t!==tab); });
+  // タブ切替時に追加オプションをリセット
+  clearAllExtras();
   // populate sizes for the newly active tab
   switch(tab){
     case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating])); break;
