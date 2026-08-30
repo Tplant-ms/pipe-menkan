@@ -66,7 +66,11 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .extra-tag{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--ink-faint);}
 .extra-tag.on{color:var(--accent);}
 .sub-row{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-soft);}
-.sub-row input{width:82px;padding:7px 10px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:1rem;color:var(--ink);}
+.sub-row input{width:72px;padding:7px 10px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:1rem;color:var(--ink);}
+.sub-row input::-webkit-inner-spin-button,.sub-row input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.sub-row input{-moz-appearance:textfield;}
+.stepper-btn{flex:0 0 auto;width:36px;height:36px;border:1.5px solid var(--paper-line);background:#fff;color:var(--ink);border-radius:4px;font-size:1.1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;}
+.stepper-btn:active{background:var(--paper);}
 /* info strip */
 .info-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
@@ -269,7 +273,7 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
         <div class="sub-row" id="row-other" style="display:none;">
           <label>追加厚み</label>
-          <input type="number" id="other-h" value="5" min="0.5" max="200" step="1" onchange="update()">
+          <input type="number" id="other-h" value="3" min="0" max="200" step="0.1" oninput="update()">
           <span>mm</span>
         </div>
       </div>
@@ -777,4 +781,33 @@ populateSelect('lb-size', Object.keys(LB_TABLE['150lb']));
 // set default jis size to 50A
 si('jis-size').value='50A';
 update();
+
+/* ── その他追加 ステッパーボタン ── */
+(function(){
+  const input = si('other-h');
+  if(!input) return;
+  const step = 0.1, decimals = 1, min = 0, max = 200;
+  function clamp(v){ return Math.max(min, Math.min(max, v)); }
+  const dec = document.createElement('button');
+  dec.type='button'; dec.className='stepper-btn'; dec.textContent='−';
+  const inc = document.createElement('button');
+  inc.type='button'; inc.className='stepper-btn'; inc.textContent='+';
+  function bump(dir){
+    const cur = parseFloat(input.value||'0');
+    const factor = Math.pow(10, decimals);
+    const next = clamp(Math.round((cur + dir*step)*factor)/factor);
+    input.value = next;
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  let repeatTimer = null;
+  function startRepeat(dir){ bump(dir); repeatTimer = setTimeout(function repeat(){ bump(dir); repeatTimer = setTimeout(repeat,90); },400); }
+  function stopRepeat(){ clearTimeout(repeatTimer); repeatTimer = null; }
+  [[dec,-1],[inc,1]].forEach(([btn,dir])=>{
+    btn.addEventListener('mousedown', e=>{ e.preventDefault(); startRepeat(dir); });
+    btn.addEventListener('touchstart', e=>{ e.preventDefault(); startRepeat(dir); },{passive:false});
+  });
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>{ dec.addEventListener(evt,stopRepeat); inc.addEventListener(evt,stopRepeat); });
+  input.insertAdjacentElement('afterend', inc);
+  input.insertAdjacentElement('afterend', dec);
+})();
 </script>
