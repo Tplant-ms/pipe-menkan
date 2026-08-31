@@ -634,12 +634,14 @@ const si  = id => document.getElementById(id);
 const cv  = id => parseFloat(si(id).value)||0;
 function ceil5(v){ return Math.ceil(v/5)*5; }
 
-function populateSelect(selId, keys) {
+function populateSelect(selId, keys, preferred) {
   const sel=si(selId);
   const prev=sel.value;
   sel.innerHTML='';
   keys.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); });
-  if(keys.includes(prev)) sel.value=prev; else sel.value=keys[0];
+  if(keys.includes(prev)) sel.value=prev;
+  else if(preferred && keys.includes(preferred)) sel.value=preferred;
+  else sel.value=keys[0];
 }
 
 // ── current entry ──────────────────────────────────────────────────────────
@@ -814,9 +816,7 @@ function update(){
       }
     }
 
-    // タイトル：JISのみ「3mm厚シートガスケット」を表示
-    const titleSuffix = tab==='jis' ? '（3mm厚シートガスケット）' : '';
-    si('gk-section').querySelector('.gk-ttl').textContent = '🔵 ガスケット参考寸法' + titleSuffix;
+    si('gk-section').querySelector('.gk-ttl').textContent = '🔵 ガスケット参考寸法';
 
     const hasRf = rfD1!=null && rfD2!=null;
     const hasFf = rfD1!=null && ffD2!=null;
@@ -854,7 +854,7 @@ function setMainTab(btn, tab){
     case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating])); break;
     case 'pvc':  populateSelect('pvc-size', Object.keys(PVC_TABLE[state.pvcType])); break;
     case 'dcip': populateDcipSizes(); break;
-    case 'lb':   populateSelect('lb-size', Object.keys(LB_TABLE[state.lbRating])); break;
+    case 'lb':   populateSelect('lb-size', Object.keys(LB_TABLE[state.lbRating]), '1/2B'); break;
   }
   update();
 }
@@ -888,7 +888,7 @@ function setDcipLen(btn, len){
 function setLbRating(btn, rating){
   state.lbRating=rating;
   activateRtab(si('lb-rtabs'), btn);
-  populateSelect('lb-size', Object.keys(LB_TABLE[rating]));
+  populateSelect('lb-size', Object.keys(LB_TABLE[rating]), '1/2B');
   update();
 }
 function setLbBolt(btn, type){
@@ -922,7 +922,7 @@ function clearAllExtras(){ clearWasher(); clearDnut(); clearOther(); }
 populateSelect('jis-size', Object.keys(JIS_TABLE['10k']));
 populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']));
 populateDcipSizes();
-populateSelect('lb-size', Object.keys(LB_TABLE['150lb']));
+populateSelect('lb-size', Object.keys(LB_TABLE['150lb']), '1/2B');
 // set default jis size to 50A
 si('jis-size').value='50A';
 update();
