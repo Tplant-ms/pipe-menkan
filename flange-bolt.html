@@ -112,6 +112,12 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .pvc-tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--paper-mid);padding:4px;border-radius:5px;border:1.5px solid var(--paper-line);}
 .pvc-tab-btn{padding:7px 10px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;}
 .pvc-tab-btn.active{background:var(--bp);color:#fff;}
+/* gasket reference */
+.gk-section{padding:10px 14px 12px;border-top:1px solid var(--paper-line);}
+.gk-ttl{font-size:.68rem;font-weight:700;letter-spacing:.1em;color:var(--green);text-transform:uppercase;margin-bottom:6px;}
+.gk-row{display:flex;align-items:baseline;gap:8px;font-size:.82rem;color:var(--ink-soft);padding:2px 0;}
+.gk-face{font-weight:700;min-width:7.5em;color:var(--ink-soft);}
+.gk-dim{font-family:var(--mono);font-size:.92rem;color:var(--ink);}
 </style>
 
 <header class="hdr">
@@ -304,6 +310,15 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
       <div class="bkdn-lbl">計算内訳</div>
       <table class="bkdn-tbl" id="bkdn-tbl"></table>
     </div>
+    <div class="gk-section" id="gk-section" style="display:none;">
+      <div class="gk-ttl">🔵 ガスケット参考寸法（3mm厚シートガスケット）</div>
+      <div class="gk-row" id="gk-rf-row" style="display:none;">
+        <span class="gk-face">平面座(RF)</span><span class="gk-dim" id="gk-rf-dim">—</span>
+      </div>
+      <div class="gk-row" id="gk-ff-row" style="display:none;">
+        <span class="gk-face">全面座(FF)</span><span class="gk-dim" id="gk-ff-dim">—</span>
+      </div>
+    </div>
   </div>
 
   <!-- 免責事項 -->
@@ -420,7 +435,7 @@ const PVC_TABLE = {
     '300A':{cnt:16,dia:'M22',sp:32,base:95},'350A':{cnt:16,dia:'M22',sp:32,base:105},
   },
   'tsf12': {
-    '50A':{cnt:4,dia:'M16',sp:24,base:70},'80A':{cnt:4,dia:'M16',sp:24,base:70},
+    '80A':{cnt:4,dia:'M16',sp:24,base:70},
     '100A':{cnt:4,dia:'M16',sp:24,base:75},'125A':{cnt:6,dia:'M16',sp:24,base:80},
     '150A':{cnt:6,dia:'M16',sp:24,base:85},'200A':{cnt:8,dia:'M16',sp:24,base:90},
     '250A':{cnt:8,dia:'M20',sp:30,base:100},'300A':{cnt:10,dia:'M20',sp:30,base:105},
@@ -538,6 +553,64 @@ const BPROPS = {
   'W 1':{nut:22,nut10:28,washer:4.5},'W 1 1/8':{nut:25,nut10:31,washer:5.0},
   'W 1 1/4':{nut:28,nut10:35,washer:5.0},'W 1 1/2':{nut:33,nut10:41,washer:6.0},
 };
+
+// ── GASKET TABLES ─────────────────────────────────────────────────────────
+// JIS RF/FF ガスケット内径 D1（レーティング共通）
+const JIS_GK_D1 = {
+  '10A':18,'15A':22,'20A':28,'25A':35,'32A':43,'40A':49,'50A':61,'65A':84,
+  '80A':90,'100A':115,'125A':141,'150A':167,'200A':218,'250A':270,'300A':321,
+  '350A':359,'400A':410,'450A':460,'500A':513,'550A':564,'600A':615,'650A':667,
+  '700A':718,'750A':770,'800A':820,'850A':872,'900A':923,'1000A':1025,
+  '1100A':1130,'1200A':1230,'1350A':1385,'1500A':1540,
+};
+// JIS 平面座(RF) ガスケット外径 D2
+const JIS_RF_D2 = {
+  '2k': {'450A':535,'500A':585,'550A':643,'600A':693,'650A':748,'700A':798,'750A':856,'800A':906,'850A':956,'900A':1006,'1000A':1106,'1100A':1216,'1200A':1326,'1350A':1481,'1500A':1636},
+  '5k': {'10A':45,'15A':50,'20A':55,'25A':65,'32A':78,'40A':83,'50A':93,'65A':118,'80A':129,'100A':149,'125A':184,'150A':214,'200A':260,'250A':325,'300A':370,'350A':413,'400A':473,'450A':533,'500A':583,'550A':641,'600A':691,'650A':746,'700A':796,'750A':850,'800A':900,'850A':950,'900A':1000,'1000A':1100,'1100A':1210,'1200A':1320,'1350A':1475,'1500A':1630},
+  '10k':{'10A':53,'15A':58,'20A':63,'25A':74,'32A':84,'40A':89,'50A':104,'65A':124,'80A':134,'100A':159,'125A':190,'150A':220,'200A':270,'250A':333,'300A':378,'350A':423,'400A':486,'450A':541,'500A':596,'550A':650,'600A':700,'650A':750,'700A':810,'750A':870,'800A':920,'850A':970,'900A':1020,'1000A':1124,'1100A':1234,'1200A':1344,'1350A':1498,'1500A':1658},
+  '20k':{'10A':53,'15A':58,'20A':63,'25A':74,'32A':84,'40A':89,'50A':104,'65A':124,'80A':140,'100A':165,'125A':203,'150A':238,'200A':283,'250A':356,'300A':406,'350A':450,'400A':510,'450A':575,'500A':630,'550A':684,'600A':734},
+};
+// JIS 全面座(FF) ガスケット外径 D2（20Kはデータなし）
+const JIS_FF_D2 = {
+  '2k': {'450A':605,'500A':655,'550A':720,'600A':770,'650A':825,'700A':875,'750A':945,'800A':995,'850A':1045,'900A':1095,'1000A':1195,'1100A':1305,'1200A':1420,'1350A':1575,'1500A':1730},
+  '5k': {'10A':75,'15A':80,'20A':85,'25A':95,'32A':115,'40A':120,'50A':130,'65A':155,'80A':180,'100A':200,'125A':235,'150A':265,'200A':320,'250A':385,'300A':430,'350A':480,'400A':540,'450A':605,'500A':655,'550A':720,'600A':770,'650A':825,'700A':875,'750A':945,'800A':995,'850A':1045,'900A':1095,'1000A':1195,'1100A':1305,'1200A':1420,'1350A':1575,'1500A':1730},
+  '10k':{'10A':90,'15A':95,'20A':100,'25A':125,'32A':135,'40A':140,'50A':155,'65A':175,'80A':185,'100A':210,'125A':250,'150A':280,'200A':330,'250A':400,'300A':445,'350A':490,'400A':560,'450A':620,'500A':675,'550A':745,'600A':795,'650A':845,'700A':905,'750A':970,'800A':1020,'850A':1070,'900A':1120,'1000A':1235,'1100A':1345,'1200A':1465,'1350A':1630,'1500A':1795},
+};
+// LB(JPI) 内径 D1
+const LB_GK_D1 = {
+  '15A':22,'20A':28,'25A':34,'32A':44,'40A':49,'50A':61,'65A':77,'80A':90,
+  '100A':116,'125A':143,'150A':169,'200A':220,'250A':275,'300A':326,'350A':358,
+  '400A':408,'450A':459,'500A':510,'600A':612,'650A':663,'700A':714,'750A':765,'800A':816,
+};
+// LB 平面座(RF) ガスケット外径
+const LB_RF_D2 = {
+  '150':{'15A':47,'20A':56,'25A':66,'32A':75,'40A':85,'50A':104,'65A':123,'80A':135,'100A':173,'125A':196,'150A':221,'200A':277,'250A':338,'300A':408,'350A':449,'400A':512,'450A':547,'500A':604,'600A':715,'650A':722,'700A':773,'750A':824,'800A':878},
+  '300':{'15A':53,'20A':66,'25A':72,'32A':82,'40A':94,'50A':110,'65A':129,'80A':148,'100A':180,'125A':215,'150A':250,'200A':306,'250A':360,'300A':420,'350A':484,'400A':538,'450A':595,'500A':651,'600A':772,'650A':768,'700A':822,'750A':883,'800A':937},
+};
+// LB 全面座(FF) ガスケット外径
+const LB_FF_D2 = {
+  '150':{'15A':89,'20A':98,'25A':108,'32A':117,'40A':127,'50A':152,'65A':178,'80A':191,'100A':229,'125A':254,'150A':279,'200A':343,'250A':406,'300A':483,'350A':535,'400A':595,'450A':635,'500A':700,'600A':815},
+  '300':{'15A':95,'20A':117,'25A':124,'32A':133,'40A':156,'50A':165,'65A':191,'80A':210,'100A':254,'125A':279,'150A':318,'200A':381,'250A':445,'300A':520,'350A':585,'400A':650,'450A':710,'500A':775,'600A':915},
+};
+// LB B呼び→A呼び変換
+const LB_B_TO_A = {
+  '3/8B':null,'1/2B':'15A','3/4B':'20A','1B':'25A','1 1/2B':'40A',
+  '2B':'50A','2 1/2B':'65A','3B':'80A','4B':'100A','5B':'125A','6B':'150A',
+  '8B':'200A','10B':'250A','12B':'300A','14B':'350A','16B':'400A','18B':'450A',
+  '20B':'500A','22B':null,'24B':'600A','26B':'650A','28B':'700A','30B':'750A','32B':'800A',
+};
+// DCIP ガスケット（7.5K）※A呼びで検索。φ75は80Aと同一値
+const DCIP_GASKET = {
+  '75A':{d1:90,rf:152,ff:211},'80A':{d1:90,rf:152,ff:211},'100A':{d1:115,rf:179,ff:238},'125A':{d1:141,rf:null,ff:263},
+  '150A':{d1:167,rf:231,ff:290},'200A':{d1:218,rf:283,ff:342},'250A':{d1:270,rf:340,ff:410},
+  '300A':{d1:321,rf:394,ff:464},'350A':{d1:359,rf:450,ff:530},'400A':{d1:410,rf:502,ff:582},
+  '450A':{d1:460,rf:561,ff:652},'500A':{d1:513,rf:615,ff:706},'600A':{d1:615,rf:719,ff:810},
+  '700A':{d1:718,rf:824,ff:928},'800A':{d1:820,rf:930,ff:1034},'900A':{d1:923,rf:1043,ff:1156},
+  '1000A':{d1:1025,rf:1149,ff:1262},'1100A':{d1:1130,rf:1253,ff:1366},
+  '1200A':{d1:1230,rf:1357,ff:1470},'1350A':{d1:1385,rf:1516,ff:1642},'1500A':{d1:1540,rf:1674,ff:1800},
+};
+// PVC種別→JIS レーティング変換
+const PVC_TO_JIS_RATING = {ts5k:'5k',ts10k:'10k',tsf12:'10k',w5k:'5k',w10k:'10k'};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // STATE
@@ -692,6 +765,76 @@ function update(){
   if(totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${minLen} mm</td></tr>`;
   tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${rec} mm</td></tr>`;
   si('bkdn-tbl').innerHTML=tbl;
+
+  // ── ガスケット参考寸法 ──────────────────────────────────────────────────
+  (function(){
+    let rfD1=null, rfD2=null, ffD2=null;
+    const tab=state.mainTab;
+    const sizeKey = tab==='jis'  ? si('jis-size').value
+                  : tab==='pvc'  ? si('pvc-size').value
+                  : tab==='dcip' ? si('dcip-size').value
+                  :                si('lb-size').value;
+
+    if(tab==='jis'){
+      rfD1 = JIS_GK_D1[sizeKey] ?? null;
+      rfD2 = JIS_RF_D2[state.jisRating]?.[sizeKey] ?? null;
+      ffD2 = JIS_FF_D2[state.jisRating]?.[sizeKey] ?? null;
+    } else if(tab==='pvc'){
+      // PVCはRFなし（全面座FFのみ）
+      if(state.pvcType==='tsf12'){
+        // TS-F12はDCIP 7.5K FF寸法を使用
+        const g = DCIP_GASKET[sizeKey];
+        if(g){ rfD1=g.d1; ffD2=g.ff; }
+      } else {
+        const rat = PVC_TO_JIS_RATING[state.pvcType];
+        rfD1 = JIS_GK_D1[sizeKey] ?? null;
+        ffD2 = JIS_FF_D2[rat]?.[sizeKey] ?? null;
+      }
+      rfD2 = null; // PVCはRFなし
+    } else if(tab==='dcip'){
+      // φXX → XXA（φ75は75A→DCIP_GAKETに75A追加済み）
+      const aKey = sizeKey.replace('φ','')+'A';
+      if(state.dcipRating==='7.5k'){
+        const g = DCIP_GASKET[aKey];
+        if(g){ rfD1=g.d1; rfD2=g.rf; ffD2=g.ff; }
+      } else {
+        // 10K → JIS 10K寸法を使用（φ75は80Aにマップ）
+        const jisKey = aKey==='75A' ? '80A' : aKey;
+        rfD1 = JIS_GK_D1[jisKey] ?? null;
+        rfD2 = JIS_RF_D2['10k']?.[jisKey] ?? null;
+        ffD2 = JIS_FF_D2['10k']?.[jisKey] ?? null;
+      }
+    } else if(tab==='lb'){
+      const aKey = LB_B_TO_A[sizeKey];
+      const clsKey = state.lbRating==='150lb' ? '150' : '300';
+      if(aKey){
+        rfD1 = LB_GK_D1[aKey] ?? null;
+        rfD2 = LB_RF_D2[clsKey]?.[aKey] ?? null;
+        ffD2 = LB_FF_D2[clsKey]?.[aKey] ?? null;
+      }
+    }
+
+    // タイトル：JISのみ「3mm厚シートガスケット」を表示
+    const titleSuffix = tab==='jis' ? '（3mm厚シートガスケット）' : '';
+    si('gk-section').querySelector('.gk-ttl').textContent = '🔵 ガスケット参考寸法' + titleSuffix;
+
+    const hasRf = rfD1!=null && rfD2!=null;
+    const hasFf = rfD1!=null && ffD2!=null;
+    const showSec = hasRf || hasFf;
+    si('gk-section').style.display = showSec ? '' : 'none';
+    if(hasRf){
+      si('gk-rf-row').style.display='';
+      si('gk-rf-dim').textContent=`内径 ${rfD1} × 外径 ${rfD2} mm`;
+    } else {
+      si('gk-rf-row').style.display='none';
+    }
+    if(hasFf){
+      si('gk-ff-row').style.display='';
+      si('gk-ff-dim').textContent=`内径 ${rfD1} × 外径 ${ffD2} mm`;
+    } else {
+      si('gk-ff-row').style.display='none';
+    }
+  })();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
