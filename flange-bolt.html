@@ -863,8 +863,8 @@ function setMainTab(btn, tab){
   clearAllExtras();
   // populate sizes for the newly active tab
   switch(tab){
-    case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating])); break;
-    case 'pvc':  populateSelect('pvc-size', Object.keys(PVC_TABLE[state.pvcType])); break;
+    case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating]), '15A'); break;
+    case 'pvc':  populateSelect('pvc-size', Object.keys(PVC_TABLE[state.pvcType]), '15A'); break;
     case 'dcip': populateDcipSizes(); break;
     case 'lb':   populateSelect('lb-size', Object.keys(LB_TABLE[state.lbRating]), '1/2B'); break;
   }
@@ -874,13 +874,13 @@ function setMainTab(btn, tab){
 function setJisRating(btn, rating){
   state.jisRating=rating;
   activateRtab(si('jis-rtabs'), btn);
-  populateSelect('jis-size', Object.keys(JIS_TABLE[rating]));
+  populateSelect('jis-size', Object.keys(JIS_TABLE[rating]), '15A');
   update();
 }
 function setPvcType(btn, type){
   state.pvcType=type;
   activateRtab(si('pvc-ttabs'), btn);
-  populateSelect('pvc-size', Object.keys(PVC_TABLE[type]));
+  populateSelect('pvc-size', Object.keys(PVC_TABLE[type]), '15A');
   update();
 }
 function setDcipRating(btn, rating){
@@ -931,8 +931,8 @@ function clearAllExtras(){ clearWasher(); clearDnut(); clearOther(); }
 // ═══════════════════════════════════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════════════════════════════════
-populateSelect('jis-size', Object.keys(JIS_TABLE['10k']));
-populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']));
+populateSelect('jis-size', Object.keys(JIS_TABLE['10k']), '15A');
+populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']), '15A');
 populateDcipSizes();
 populateSelect('lb-size', Object.keys(LB_TABLE['150lb']), '1/2B');
 // set default jis size to 50A
