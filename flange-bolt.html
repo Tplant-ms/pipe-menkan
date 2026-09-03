@@ -160,7 +160,7 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         </div>
         <div>
           <div class="s-lbl">呼び径</div>
-          <select id="jis-size" onchange="update()"></select>
+          <select id="jis-size" onchange="update()" autocomplete="off"></select>
         </div>
       </div>
 
@@ -935,8 +935,6 @@ populateSelect('jis-size', Object.keys(JIS_TABLE['10k']), '15A');
 populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']), '15A');
 populateDcipSizes();
 populateSelect('lb-size', Object.keys(LB_TABLE['150lb']), '1/2B');
-// set default jis size to 50A
-si('jis-size').value='50A';
 update();
 
 /* ── その他追加 ステッパーボタン ── */
