@@ -457,8 +457,10 @@ function renderFittingSequence(containerEl, filledRows, typeGetter, labelGetter,
       const img = document.createElement('img');
       img.src = src;
       // TEE(V)とFLは今まで通りの大きさ、それ以外は少し小さくする(スマホで3個並んだ時に切れないように)
+      // レジューサー(RC_left/RC_right)はひと回り小さく
+      const isReducer = src && (src === FITTING_IMG['RC_left'] || src === FITTING_IMG['RC_right']);
       const isBigType = (typeKey === 'TV' || typeKey === 'SWTV' || typeKey === 'FL');
-      img.style.height = isBigType ? '50px' : '38px';
+      img.style.height = isReducer ? '30px' : (isBigType ? '50px' : '38px');
       img.style.width = 'auto';
       img.style.flex = '0 0 auto';
       containerEl.appendChild(img);
