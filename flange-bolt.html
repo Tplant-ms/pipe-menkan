@@ -349,14 +349,6 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
     </div>
   </div>
 
-  <!-- 関連ツール -->
-  <div style="text-align:center;padding:8px 0 4px;">
-    <a href="https://tplant-ms.github.io/pipe-menkan/"
-       style="font-size:.82rem;color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--paper-line);padding-bottom:1px;letter-spacing:.02em;">
-      🔗 配管切断寸法計算ツールはこちら
-    </a>
-  </div>
-
 </div><!-- /wrap -->
 
 <script>
@@ -966,3 +958,31 @@ update();
   input.insertAdjacentElement('afterend', dec);
 })();
 </script>
+<style>
+.site-nav{
+  background:var(--bp);
+  border-top:3px solid var(--bp-deep);
+  padding:12px 16px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.site-nav a{
+  color:#aac4df;
+  font-size:.78rem;
+  text-decoration:none;
+  padding:6px 14px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:4px;
+  transition:all .15s;
+}
+.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+</style>
+<nav class="site-nav">
+  <a href="index.html">🏠 トップ</a>
+  <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="pipe-weight.html">⚖️ 重量計算</a>
+  <a href="flange-bolt.html" class="current">🔩 ボルト寸法</a>
+</nav>
