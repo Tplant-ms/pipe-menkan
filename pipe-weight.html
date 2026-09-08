@@ -155,6 +155,11 @@ select:focus{outline:none;border-color:var(--blueprint)}
   align-items:center;
   gap:6px;
 }
+.length-row-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
 .adj-btn{
   width:38px;height:38px;
   border:1.5px solid var(--paper-line);
@@ -399,13 +404,15 @@ select:focus{outline:none;border-color:var(--blueprint)}
     <span class="step-label">長さを入力</span>
   </div>
   <div class="length-row">
-    <input class="length-input" type="number" id="length-input" value="1000" min="0" step="1">
+    <input class="length-input" type="number" id="length-input" value="" min="0" step="1" placeholder="0">
     <button class="adj-btn" id="btn-minus">−</button>
     <button class="adj-btn" id="btn-plus">＋</button>
     <span class="length-unit">mm</span>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+    <span class="note">±ボタンは 1 mm 単位で増減します</span>
     <button class="clear-btn" id="len-clear">クリア</button>
   </div>
-  <div class="note" style="margin-top:8px">±ボタンは 1 mm 単位で増減します</div>
 </div>
 
 <!-- 結果 -->
