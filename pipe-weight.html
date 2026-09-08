@@ -25,6 +25,7 @@ header{
   position:sticky;top:0;z-index:10;
   padding:10px 16px;
   border-bottom:4px solid var(--accent);
+  text-align:center;
 }
 header h1{
   color:#fff;
@@ -313,13 +314,8 @@ select:focus{outline:none;border-color:var(--blueprint)}
 <body>
 
 <header>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-    <div>
-      <h1>配管重量計算</h1>
-      <p>材質・スケジュール・サイズ → 単位重量 × 長さ</p>
-    </div>
-    <button class="all-clear-btn" id="all-clear">全クリア</button>
-  </div>
+  <h1>配管重量計算</h1>
+  <p>材質・スケジュール・サイズ → 単位重量 × 長さ</p>
 </header>
 
 <main>
@@ -413,6 +409,11 @@ select:focus{outline:none;border-color:var(--blueprint)}
     <span class="note">±ボタンは 1 mm 単位で増減します</span>
     <button class="clear-btn" id="len-clear">クリア</button>
   </div>
+</div>
+
+<!-- 全クリア -->
+<div style="text-align:center;margin-bottom:14px">
+  <button class="all-clear-btn" id="all-clear" style="background:var(--blueprint);border-color:rgba(255,255,255,.3);color:#aac4df;padding:7px 24px;font-size:.8rem">⟳ 全クリア</button>
 </div>
 
 <!-- 結果 -->
