@@ -399,6 +399,9 @@ select:focus{outline:none;border-color:var(--blueprint)}
     <span class="step-num blue" id="step5-num">STEP 4</span>
     <span class="step-label">長さを入力</span>
   </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
+    <button class="clear-btn" id="teishaku-btn">定尺</button>
+  </div>
   <div class="length-row">
     <input class="length-input" type="number" id="length-input" value="" min="0" step="1" placeholder="0">
     <button class="adj-btn" id="btn-minus">−</button>
@@ -733,6 +736,12 @@ document.getElementById('size-clear').addEventListener('click', () => {
 
 document.getElementById('len-clear').addEventListener('click', () => {
   lenInput.value = '';
+  updateDims();
+});
+
+document.getElementById('teishaku-btn').addEventListener('click', () => {
+  const val = (curMat === 'SGP' || curMat === 'STPG') ? 5500 : 4000;
+  lenInput.value = val;
   updateDims();
 });
 
