@@ -538,39 +538,15 @@ function startAdj(btn){
 }
 function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
 
-// イベント委任（動的生成ボタンに対応）
-// タッチ操作中フラグ — touchstart後の合成mousedownを無視する
-let _touchActive=false;
-
-document.addEventListener('touchstart',e=>{
+// イベント委任 — Pointer Events APIでtouch/mouseを統一処理（二重発火なし）
+document.addEventListener('pointerdown',e=>{
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
-  e.preventDefault(); // adj-btnのときだけ合成クリックを止める
-  _touchActive=true;
+  e.preventDefault(); // adj-btnのみ。他のボタンのclickは妨げない
   startAdj(btn);
 },{passive:false});
 
-document.addEventListener('touchend',e=>{
-  if(!_touchActive) return; // adj-btn操作中でなければ素通り（セクション開閉等を妨げない）
-  e.preventDefault();
-  stopAdj();
-  setTimeout(()=>{_touchActive=false;},300);
-},{passive:false});
-
-document.addEventListener('touchcancel',()=>{
-  stopAdj();
-  _touchActive=false;
-});
-
-document.addEventListener('mousedown',e=>{
-  if(_touchActive) return;
-  const btn=e.target.closest('.adj-btn');
-  if(!btn) return;
-  e.preventDefault();
-  startAdj(btn);
-},{passive:false});
-
-['mouseup','mouseleave'].forEach(ev=>{
+['pointerup','pointercancel','pointerleave'].forEach(ev=>{
   document.addEventListener(ev,()=>stopAdj());
 });
 
