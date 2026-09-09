@@ -110,7 +110,8 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
   border-radius:3px;padding:7px 8px;
 }
 .row-l1{display:flex;align-items:center;gap:5px}
-.row-l2{display:flex;align-items:center;gap:4px;margin-top:5px;flex-wrap:wrap}
+.row-l2,.row-l3{display:flex;align-items:center;gap:6px;margin-top:5px}
+.row-lbl{font-size:.68rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;width:2.2em;flex-shrink:0}
 
 /* ─── 結果重量（大きくオレンジ）─── */
 .row-wt{
@@ -347,12 +348,15 @@ function rowHTML(sec,row){
         <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
       </div>
       <div class="row-l2">
+        <span class="row-lbl">長さ</span>
         ${tBtn}
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="-1" data-step="1">−</button>
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
         <span class="unit-txt">mm</span>
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="1" data-step="1">＋</button>
-        <span class="unit-txt">×</span>
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
@@ -369,12 +373,15 @@ function rowHTML(sec,row){
         <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
       </div>
       <div class="row-l2">
+        <span class="row-lbl">長さ</span>
         ${tBtn}
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="-1" data-step="1">−</button>
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
         <span class="unit-txt">mm</span>
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="1" data-step="1">＋</button>
-        <span class="unit-txt">×</span>
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
         <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
@@ -392,6 +399,7 @@ function rowHTML(sec,row){
       <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
     </div>
     <div class="row-l2">
+      <span class="row-lbl">個数</span>
       <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
       <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
       <span class="unit-txt">個</span>
@@ -531,19 +539,37 @@ function startAdj(btn){
 function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
 
 // イベント委任（動的生成ボタンに対応）
-document.addEventListener('mousedown',e=>{
-  const btn=e.target.closest('.adj-btn');
-  if(!btn) return;
-  e.preventDefault();
-  startAdj(btn);
-},{passive:false});
+// タッチ操作中フラグ — touchstart後の合成mousedownを無視する
+let _touchActive=false;
+
 document.addEventListener('touchstart',e=>{
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
   e.preventDefault();
+  _touchActive=true;
   startAdj(btn);
 },{passive:false});
-['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=>{
+
+document.addEventListener('touchend',e=>{
+  e.preventDefault(); // 合成mousedownを発火させない
+  stopAdj();
+  setTimeout(()=>{_touchActive=false;},300);
+},{passive:false});
+
+document.addEventListener('touchcancel',()=>{
+  stopAdj();
+  _touchActive=false;
+});
+
+document.addEventListener('mousedown',e=>{
+  if(_touchActive) return; // タッチ操作の場合はスキップ
+  const btn=e.target.closest('.adj-btn');
+  if(!btn) return;
+  e.preventDefault();
+  startAdj(btn);
+},{passive:false});
+
+['mouseup','mouseleave'].forEach(ev=>{
   document.addEventListener(ev,()=>stopAdj());
 });
 
