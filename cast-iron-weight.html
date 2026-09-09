@@ -160,6 +160,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:background .1s;-webkit-tap-highlight-color:transparent;
   touch-action:none;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
 }
 .adj-btn:active{background:var(--accent-soft)}
 
@@ -556,20 +557,31 @@ function startAdj(btn){
 }
 function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
 
-// イベント委任 — pipe-weight.htmlと同じ方式（touch+mouse両対応）
+// イベント委任
+// lastTouchMs: タッチ操作の直後に来る合成mousedownを時刻で弾く
+let lastTouchMs=0;
+
 document.addEventListener('touchstart',e=>{
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
-  e.preventDefault(); // 合成mousedownを抑止
+  e.preventDefault();
+  lastTouchMs=Date.now();
   startAdj(btn);
 },{passive:false});
 
 document.addEventListener('mousedown',e=>{
+  // タッチ操作から500ms以内の合成mousedownは無視
+  if(Date.now()-lastTouchMs<500) return;
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
   e.preventDefault();
   startAdj(btn);
 },{passive:false});
+
+// コンテキストメニュー（長押し）でタイマーが残らないよう止める
+document.addEventListener('contextmenu',e=>{
+  if(e.target.closest('.adj-btn')){e.preventDefault();stopAdj();}
+});
 
 ['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>{
   document.addEventListener(ev,()=>stopAdj());
