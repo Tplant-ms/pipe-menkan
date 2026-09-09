@@ -545,13 +545,14 @@ let _touchActive=false;
 document.addEventListener('touchstart',e=>{
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
-  e.preventDefault();
+  e.preventDefault(); // adj-btnのときだけ合成クリックを止める
   _touchActive=true;
   startAdj(btn);
 },{passive:false});
 
 document.addEventListener('touchend',e=>{
-  e.preventDefault(); // 合成mousedownを発火させない
+  if(!_touchActive) return; // adj-btn操作中でなければ素通り（セクション開閉等を妨げない）
+  e.preventDefault();
   stopAdj();
   setTimeout(()=>{_touchActive=false;},300);
 },{passive:false});
@@ -562,7 +563,7 @@ document.addEventListener('touchcancel',()=>{
 });
 
 document.addEventListener('mousedown',e=>{
-  if(_touchActive) return; // タッチ操作の場合はスキップ
+  if(_touchActive) return;
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
   e.preventDefault();
