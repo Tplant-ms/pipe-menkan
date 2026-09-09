@@ -538,15 +538,22 @@ function startAdj(btn){
 }
 function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
 
-// イベント委任 — Pointer Events APIでtouch/mouseを統一処理（二重発火なし）
-document.addEventListener('pointerdown',e=>{
+// イベント委任 — pipe-weight.htmlと同じ方式（touch+mouse両対応）
+document.addEventListener('touchstart',e=>{
   const btn=e.target.closest('.adj-btn');
   if(!btn) return;
-  e.preventDefault(); // adj-btnのみ。他のボタンのclickは妨げない
+  e.preventDefault(); // 合成mousedownを抑止
   startAdj(btn);
 },{passive:false});
 
-['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+document.addEventListener('mousedown',e=>{
+  const btn=e.target.closest('.adj-btn');
+  if(!btn) return;
+  e.preventDefault();
+  startAdj(btn);
+},{passive:false});
+
+['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>{
   document.addEventListener(ev,()=>stopAdj());
 });
 
