@@ -358,6 +358,12 @@ function rowHTML(sec,row){
   // 定尺ボタン（長さ入力セクション用）
   const tBtn=`<button class="teishaku-btn" data-sec="${s}" data-uid="${u}" onclick="setTeishaku('${s}','${u}')">定尺</button>`;
 
+  // ±ボタン共通インラインハンドラ生成
+  const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();startAdjInline('${s}','${u}','${fld}',${dir},1)"
+    onmousedown="event.preventDefault();startAdjInline('${s}','${u}','${fld}',${dir},1)"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+
   if(sec.type==='meka'){
     return `<div class="entry-row" id="er-${u}">
       <div class="row-l1">
@@ -369,17 +375,17 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         ${tBtn}
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="-1" data-step="1">−</button>
+        ${adjBtn('len',-1,'−')}
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
         <span class="unit-txt">mm</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="1" data-step="1">＋</button>
+        ${adjBtn('len',1,'＋')}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
+        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="1" data-step="1">＋</button>
+        ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
   }
@@ -394,17 +400,17 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         ${tBtn}
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="-1" data-step="1">−</button>
+        ${adjBtn('len',-1,'−')}
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
         <span class="unit-txt">mm</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="len" data-dir="1" data-step="1">＋</button>
+        ${adjBtn('len',1,'＋')}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
+        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
-        <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="1" data-step="1">＋</button>
+        ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
   }
@@ -419,10 +425,10 @@ function rowHTML(sec,row){
     </div>
     <div class="row-l2">
       <span class="row-lbl">個数</span>
-      <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="-1" data-step="1">−</button>
+      ${adjBtn('qty',-1,'−')}
       <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
       <span class="unit-txt">個</span>
-      <button class="adj-btn" data-sec="${s}" data-uid="${u}" data-fld="qty" data-dir="1" data-step="1">＋</button>
+      ${adjBtn('qty',1,'＋')}
     </div>
   </div>`;
 }
@@ -530,12 +536,15 @@ function toggleCard(secId){document.getElementById('card-'+secId).classList.togg
 
 /* =====================================================
    ±ボタン 長押し連続変化
+   ※ボタン要素にインラインハンドラを直接付与する方式（document委任を廃止）
+   　これによりAndroid Chromeの合成mousedownに起因する止まらない問題を解消
 ===================================================== */
 let repeatTimer=null;
+let _curAdj=null;
 
-function doAdj(btn){
-  const secId=btn.dataset.sec, uid=btn.dataset.uid;
-  const fld=btn.dataset.fld, dir=+btn.dataset.dir, step=+btn.dataset.step||1;
+function doAdjCur(){
+  if(!_curAdj) return;
+  const {secId,uid,fld,dir,step}=_curAdj;
   const sec=SECTIONS.find(s=>s.id===secId);
   const row=findRow(secId,uid); if(!row) return;
   if(fld==='len'){
@@ -550,42 +559,13 @@ function doAdj(btn){
   updateRowWt(sec,row);
 }
 
-function startAdj(btn){
+function startAdjInline(secId,uid,fld,dir,step){
   stopAdj();
-  doAdj(btn);
-  repeatTimer=setTimeout(function rpt(){doAdj(btn);repeatTimer=setTimeout(rpt,85);},380);
+  _curAdj={secId,uid,fld,dir,step};
+  doAdjCur();
+  repeatTimer=setTimeout(function rpt(){doAdjCur();repeatTimer=setTimeout(rpt,85);},380);
 }
 function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
-
-// イベント委任
-// lastTouchMs: タッチ操作の直後に来る合成mousedownを時刻で弾く
-let lastTouchMs=0;
-
-document.addEventListener('touchstart',e=>{
-  const btn=e.target.closest('.adj-btn');
-  if(!btn) return;
-  e.preventDefault();
-  lastTouchMs=Date.now();
-  startAdj(btn);
-},{passive:false});
-
-document.addEventListener('mousedown',e=>{
-  // タッチ操作から500ms以内の合成mousedownは無視
-  if(Date.now()-lastTouchMs<500) return;
-  const btn=e.target.closest('.adj-btn');
-  if(!btn) return;
-  e.preventDefault();
-  startAdj(btn);
-},{passive:false});
-
-// コンテキストメニュー（長押し）でタイマーが残らないよう止める
-document.addEventListener('contextmenu',e=>{
-  if(e.target.closest('.adj-btn')){e.preventDefault();stopAdj();}
-});
-
-['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>{
-  document.addEventListener(ev,()=>stopAdj());
-});
 
 /* =====================================================
    DOM生成
