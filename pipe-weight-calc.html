@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>配管重量拾い出し</title>
+<style>
+:root{
+  --paper:#F3EFE6; --paper-line:#D9D2BF; --ink:#16324F; --ink-soft:#4A6178;
+  --blueprint:#1B3A5C; --blueprint-deep:#0F2843;
+  --accent:#C1541F; --accent-soft:#F0DCC9;
+  --sw:#5C6B1B; --sw-soft:#E8ECD3;
+  --card:#fff; --row:#f8f8f6; --row-hover:#f1efe9;
+  font-size:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--paper-line) 1px,transparent 1px);
+  background-size:100% 28px;
+  color:var(--ink);
+  font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;
+  min-height:100vh;
+}
+header{
+  background:var(--blueprint);
+  position:sticky;top:0;z-index:20;
+  padding:10px 16px;
+  border-bottom:4px solid var(--accent);
+}
+.hdr-inner{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+header h1{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:1;text-align:center}
+.all-clear-btn{
+  padding:5px 11px;border:1.5px solid rgba(255,255,255,.3);border-radius:4px;
+  background:var(--paper);color:var(--ink);font-size:.75rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.all-clear-btn:hover{border-color:#fff;background:#fff;color:var(--blueprint)}
+.total-bar{
+  background:var(--blueprint-deep);padding:10px 16px;
+  position:sticky;top:53px;z-index:19;border-bottom:2px solid var(--accent);
+}
+.total-bar-inner{max-width:560px;margin:0 auto;display:flex;align-items:baseline;gap:8px;}
+.total-label{color:#aac4df;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.total-value{font-family:'Courier New',monospace;font-size:2.2rem;font-weight:700;color:#fff;line-height:1;flex:1;text-align:right;font-variant-numeric:tabular-nums;}
+.total-unit{color:#aac4df;font-size:.85rem}
+main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+.group-label{
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;
+  color:#fff;
+  background:var(--blueprint);
+  padding:7px 12px;
+  border-radius:4px;
+  margin-bottom:8px;
+  margin-top:4px;
+}
+.group-note{
+  font-size:.73rem;color:var(--dim);
+  padding:2px 12px 8px;
+  font-style:italic;
+}
+.sec-card{background:var(--card);border:1px solid var(--paper-line);border-radius:4px;margin-bottom:8px;overflow:hidden;}
+.sec-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.sec-head:hover{background:var(--row-hover)}
+.sec-chevron{font-size:.65rem;color:var(--ink-soft);transition:transform .2s;flex-shrink:0}
+.sec-card.open .sec-chevron{transform:rotate(90deg)}
+.sec-name{font-size:.875rem;font-weight:700;flex:1;color:var(--ink)}
+.sec-sub{font-family:'Courier New',monospace;font-size:.82rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.sec-sub.has-data{color:var(--accent);font-size:.9rem}
+.sec-body{display:none;padding:0 10px 10px}
+.sec-card.open .sec-body{display:block}
+.entry-list{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.entry-row{background:var(--row);border:1px solid var(--paper-line);border-radius:3px;padding:7px 8px;}
+.row-l1,.row-l2,.row-l3{display:flex;align-items:center;gap:5px}
+.row-l2,.row-l3{margin-top:5px}
+.row-lbl{font-size:.68rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;width:2.2em;flex-shrink:0}
+.row-wt{font-family:'Courier New',monospace;font-size:1rem;font-weight:700;color:var(--accent);white-space:nowrap;text-align:right;min-width:62px;flex-shrink:0;font-variant-numeric:tabular-nums;}
+.row-wt.empty{color:var(--paper-line)}
+.wt-unit{font-size:.68rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.sz-sel{flex:1;min-width:0;padding:7px 22px 7px 8px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:.85rem;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%234A6178' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;}
+.sz-sel:focus{outline:none;border-color:var(--blueprint)}
+.sch-sel{flex-shrink:0;width:72px;padding:7px 6px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:.78rem;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%234A6178' d='M4 5L0 0h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;cursor:pointer;text-align:center;}
+.sch-sel:focus{outline:none;border-color:var(--blueprint)}
+.num-inp{border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--blueprint);font-family:'Courier New',monospace;font-size:.9rem;font-weight:700;text-align:right;padding:7px 5px;appearance:none;-webkit-appearance:none;}
+.num-inp:focus{outline:none;border-color:var(--blueprint)}
+.num-inp::-webkit-inner-spin-button,.num-inp::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num-inp[type=number]{-moz-appearance:textfield}
+.len-inp{width:68px}
+.qty-inp{width:46px}
+.adj-btn{width:32px;height:32px;flex-shrink:0;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.adj-btn:active{background:var(--accent-soft)}
+.teishaku-btn{padding:5px 7px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--sw-soft);color:var(--sw);font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.teishaku-btn:hover{border-color:var(--sw);background:var(--sw);color:#fff}
+.del-btn{width:28px;height:28px;flex-shrink:0;border:1px solid var(--paper-line);border-radius:3px;background:transparent;color:var(--ink-soft);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}
+.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.add-btn{width:100%;padding:7px;border:1.5px dashed var(--paper-line);border-radius:4px;background:transparent;color:var(--ink-soft);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.add-btn:hover{border-color:var(--blueprint);color:var(--blueprint);background:var(--row-hover)}
+.empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}
+.site-nav{background:var(--blueprint);border-top:3px solid var(--blueprint-deep);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.site-nav a{color:#aac4df;font-size:.78rem;text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:4px;transition:all .15s;}
+.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <h1>配管重量　拾い出し</h1>
+    <button class="all-clear-btn" onclick="clearAll()">⟳ 全クリア</button>
+  </div>
+</header>
+
+<div class="total-bar">
+  <div class="total-bar-inner">
+    <span class="total-label">合計重量</span>
+    <span class="total-value" id="grand-total">0.0</span>
+    <span class="total-unit">kg</span>
+  </div>
+</div>
+
+<main id="main-wrap"></main>
+
+<div style="max-width:560px;margin:0 auto;padding:0 14px 24px">
+  <div style="background:#fff;border:1px solid var(--paper-line);border-radius:4px;padding:14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="background:var(--ink-soft);color:#fff;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:3px">!</span>
+      <span style="font-size:.8rem;font-weight:700;color:var(--ink-soft);letter-spacing:.05em">免責事項</span>
+    </div>
+    <div style="font-size:.78rem;color:var(--ink-soft);line-height:1.75">
+      <p style="margin:0 0 8px">本ツールの計算結果は重量の参考値としてのみご使用ください。</p>
+      <ul style="margin:0 0 8px 1.2em;padding:0;list-style:disc">
+        <li>配管重量: W=K×t×(D-t)　K＝SGP/STPG:0.02466、SUS304:0.02491、SUS316:0.02507</li>
+        <li>継手重量: BENKAN KIKOH カタログ参考値（JIS B2312相当）</li>
+        <li>フランジ重量: JIS B2220・G3443-2 参考値（SS400・SUS共通）</li>
+        <li>計算結果の誤りに起因するいかなる損害についても制作者は責任を負いません。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html">🏠 トップ</a>
+  <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="flange-bolt.html">🔩 ボルト寸法</a>
+  <a href="cast-iron-weight.html">🏭 鋳鉄管拾い出し</a>
+  <a href="pipe-weight-calc.html" class="current">📦 配管拾い出し</a>
+</nav>
+
+<script>
+/* ======================================================
+   外径・肉厚データ
+====================================================== */
+const OD={10:17.3,15:21.7,20:27.2,25:34.0,32:42.7,40:48.6,50:60.5,65:76.3,80:89.1,100:114.3,125:139.8,150:165.2,200:216.3,250:267.4,300:318.5,350:355.6,400:406.4,450:457.2,500:508.0,550:558.8,600:609.6,650:660.4};
+const T={
+  SGP:{10:2.3,15:2.8,20:2.8,25:3.2,32:3.5,40:3.5,50:3.8,65:4.2,80:4.2,100:4.5,125:4.5,150:5.0,200:5.8,250:6.6,300:6.9,350:7.9,400:7.9,450:7.9,500:7.9},
+  STPG:{
+    Sch40:{10:2.3,15:2.8,20:2.9,25:3.4,32:3.6,40:3.7,50:3.9,65:5.2,80:5.5,100:6.0,125:6.6,150:7.1,200:8.2,250:9.3,300:10.3,350:11.1,400:12.7,450:14.3,500:15.1,550:15.9,600:17.5,650:18.9},
+    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0},
+    Sch160:{15:4.7,20:5.5,25:6.4,32:6.4,40:7.1,50:8.7,65:9.5,200:23.0,250:28.6,300:33.3,350:35.7,400:40.5,450:45.2,500:50.0,550:54.0,600:59.5,650:64.2}
+  },
+  SUS:{
+    Sch10:{10:1.65,15:2.1,20:2.1,25:2.8,32:2.8,40:2.8,50:2.8,65:3.0,80:3.0,100:3.0,125:3.4,150:3.4,200:4.0,250:4.0,300:4.5},
+    Sch20:{10:2.0,15:2.5,20:2.5,25:3.0,32:3.0,40:3.0,50:3.5,65:3.5,80:4.0,100:4.0,125:5.0,150:5.0,200:6.5,250:6.5,300:6.5},
+    Sch40:{10:2.3,15:2.8,20:2.9,25:3.4,32:3.6,40:3.7,50:3.9,65:5.2,80:5.5,100:6.0,125:6.6,150:7.1,200:8.2,250:9.3,300:10.3,350:11.1,400:12.7,450:14.3,500:15.1,550:15.9,600:17.5,650:18.9},
+    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0}
+  }
+};
+const K_PIPE={SGP:0.02466,STPG:0.02466,SUS304:0.02491,SUS316:0.02507};
+const TEISHAKU={SGP:5500,STPG:5500,SUS304:4000,SUS316:4000,STPY400:6000};
+
+/* STPY400 大口径直管 kg/m 直読 */
+const STPY_KGM={
+  LG: {400:77.6,450:87.5,500:97.4,550:107,600:117,650:127,700:137,750:147,800:157,850:167,900:177,1000:196,1100:216,1200:236,1350:266,1500:295},
+  STD:{400:93,450:105,500:117,550:129,600:141,650:152,700:164,750:176,800:188,850:200,900:212,1000:236,1100:260,1200:283,1350:319,1500:355}
+};
+
+function pipeKgM(mat,sch,sz){
+  if(mat==='STPY400'){
+    const kgm=(STPY_KGM[sch]||{})[+sz];
+    return kgm!=null?kgm:null;
+  }
+  const d=OD[+sz]; if(!d) return null;
+  let t=null;
+  if(mat==='SGP') t=(T.SGP[+sz]);
+  else if(mat==='STPG') t=(T.STPG[sch]||{})[+sz];
+  else {
+    const schKey=sch.replace(/S$/,'');
+    t=(T.SUS[schKey]||{})[+sz];
+  }
+  if(!t) return null;
+  return K_PIPE[mat]*t*(d-t);
+}
+
+/* ======================================================
+   継手重量データ (BENKAN KIKOH カタログ / JIS B2312相当)
+   レジューサーは1段落ち・大口径側サイズのみ
+====================================================== */
+const FSIZES=[15,20,25,32,40,50,65,80,100,125,150,200,250,300,350,400,450,500,550,600];
+const FIT={
+  e90:{
+    sgp:{
+      SGP:   {15:0.078,20:0.1,25:0.146,32:0.252,40:0.35,50:0.634,65:1.12,80:1.58,100:2.91,125:4.49,150:7.09,200:14.4,250:25.4,300:38.1,350:56.7,400:74.3,450:94.2,500:117},
+      Sch40: {15:0.078,20:0.103,25:0.154,32:0.26,40:0.368,50:0.652,65:1.37,80:2.04,100:3.84,125:6.48,150:9.94,200:20.1,250:35.4,300:56.2,350:79,400:118,450:168,500:220},
+      Sch80: {15:0.099,20:0.134,25:0.196,32:0.341,40:0.492,50:0.891,65:1.79,80:2.74,100:5.36,125:9.13,150:15,200:30.5,250:56.2,300:92.7,350:132,400:194,450:274,500:372},
+      Sch160:{15:0.118,20:0.176,25:0.26,32:0.427,40:0.653,50:1.33,65:2.34,80:3.83,100:8.03,125:14.5,150:23.7,200:52.5,250:101,300:168,350:236,400:350}
+    },
+    sus:{
+      Sch5S: {15:0.049,20:0.062,25:0.078,32:0.125,40:0.17,50:0.286,65:0.576,80:0.81,100:1.39,125:2.83,150:4.03,200:7.06,250:13.2,300:22.3},
+      Sch10S:{15:0.061,20:0.079,25:0.13,32:0.208,40:0.287,50:0.482,65:0.82,80:1.16,100:1.99,125:3.46,150:4.92,200:10.1,250:15.7,300:25.3,350:36.6,400:47.9,450:60.7,500:82.4},
+      Sch20S:{15:0.072,20:0.092,25:0.139,32:0.222,40:0.306,50:0.595,65:0.95,80:1.52,100:2.63,125:5.02,150:7.17,200:16.3,250:25.3,300:36.3,350:58,400:76,450:96.4,500:141.2},
+      Sch40S:{15:0.079,20:0.105,25:0.155,32:0.262,40:0.372,50:0.658,65:1.38,80:2.06,100:3.88,125:6.55,150:10,200:20.4,250:35.8,300:56.8},
+      Sch80S:{15:0.099,20:0.135,25:0.198,32:0.345,40:0.497,50:0.902,65:1.81,80:2.77,100:5.42,125:9.23,150:15.2,200:30.8,250:56.8,300:93.7}
+    }
+  },
+  e45:{
+    sgp:{
+      SGP:   {15:0.039,20:0.05,25:0.073,32:0.126,40:0.175,50:0.317,65:0.559,80:0.79,100:1.46,125:2.25,150:3.54,200:7.2,250:12.7,300:19,350:28.4,400:37.1,450:47.1,500:58.3},
+      Sch40: {15:0.039,20:0.052,25:0.077,32:0.13,40:0.184,50:0.326,65:0.683,80:1.02,100:1.92,125:3.24,150:4.97,200:10.1,250:17.7,300:28.1,350:39.5,400:59,450:84.1,500:110},
+      Sch80: {15:0.049,20:0.067,25:0.098,32:0.17,40:0.246,50:0.445,65:0.895,80:1.37,100:2.68,125:4.57,150:7.5,200:15.3,250:28.1,300:46.4,350:66,400:97.2,450:137,500:186},
+      Sch160:{15:0.059,20:0.088,25:0.13,32:0.214,40:0.327,50:0.665,65:1.17,80:1.92,100:4.01,125:7.27,150:11.8,200:26.2,250:50.4,300:84,350:118,400:175}
+    },
+    sus:{
+      Sch5S: {15:0.024,20:0.031,25:0.039,32:0.063,40:0.085,50:0.143,65:0.288,80:0.405,100:0.696,125:1.42,150:2.01,200:3.53,250:6.62,300:11.1},
+      Sch10S:{15:0.031,20:0.039,25:0.065,32:0.104,40:0.144,50:0.241,65:0.41,80:0.578,100:0.996,125:1.73,150:2.46,200:5.06,250:7.85,300:12.6},
+      Sch20S:{15:0.036,20:0.046,25:0.069,32:0.111,40:0.153,50:0.297,65:0.475,80:0.761,100:1.32,125:2.51,150:3.58,200:8.13,250:12.6,300:18.1},
+      Sch40S:{15:0.039,20:0.053,25:0.078,32:0.131,40:0.186,50:0.329,65:0.689,80:1.03,100:1.94,125:3.28,150:5.02,200:10.2,250:17.9,300:28.4},
+      Sch80S:{15:0.05,20:0.068,25:0.099,32:0.173,40:0.248,50:0.451,65:0.905,80:1.39,100:2.71,125:4.61,150:7.59,200:15.4,250:28.4,300:46.9}
+    }
+  },
+  tee:{
+    sgp:{
+      SGP:   {15:0.085,20:0.122,25:0.236,32:0.411,40:0.573,50:0.851,65:1.42,80:1.87,100:3.13,125:4.53,150:6.84,200:12.8,250:21.8,300:32,350:44.7,400:55.2,450:70,500:86.6},
+      Sch40: {15:0.085,20:0.126,25:0.25,32:0.422,40:0.604,50:0.872,65:1.74,80:2.41,100:4.12,125:6.54,150:9.58,200:17.9,250:30.4,300:47.2,350:62.3,400:87.7,450:125,500:163,550:208,600:253},
+      Sch80: {15:0.107,20:0.162,25:0.319,32:0.555,40:0.806,50:1.2,65:2.28,80:3.25,100:5.77,125:9.2,150:14.5,200:27.1,250:48.3,300:77.9,350:105,400:144,450:203,500:277,550:366,600:438},
+      Sch160:{32:0.695,40:1.07,50:1.78,65:2.98,80:4.54,100:8.63,125:14.6,150:22.8,200:46.6,250:86.6,300:141,350:186,400:260,450:367,500:502,550:657,600:799}
+    },
+    sus:{
+      Sch5S: {15:0.053,20:0.075,25:0.128,32:0.203,40:0.281,50:0.384,65:0.732,80:0.958,100:1.49,125:2.85,150:3.88,200:6.27,250:11.4,300:18.7},
+      Sch10S:{15:0.067,20:0.095,25:0.212,32:0.338,40:0.471,50:0.645,65:1.04,80:1.37,100:2.14,125:3.48,150:4.74,200:9,250:13.5,300:21.2,350:28.8,400:35.6,450:45.1,500:61.2,550:74.1,600:96.7},
+      Sch20S:{15:0.078,20:0.111,25:0.225,32:0.36,40:0.502,50:0.796,65:1.21,80:1.8,100:2.83,125:5.06,150:6.91,200:14.4,250:21.7,300:30.5,350:45.8,400:56.5,450:71.6,500:104.9,550:127.1,600:140.7},
+      Sch40S:{15:0.086,20:0.127,25:0.252,32:0.426,40:0.61,50:0.881,65:1.75,80:2.43,100:4.16,125:6.6,150:9.68,200:18.1,250:30.7,300:47.7,350:62.9,400:88.6,450:126.2,500:164.8,550:210.3,600:255.7},
+      Sch80S:{15:0.108,20:0.163,25:0.322,32:0.56,40:0.814,50:1.21,65:2.3,80:3.28,100:5.83,125:9.3,150:14.6,200:27.4,250:48.8,300:78.7}
+    }
+  },
+  red:{
+    sgp:{
+      SGP:   {20:0.057,25:0.11,32:0.154,40:0.232,50:0.364,65:0.594,80:0.725,100:1.17,125:1.74,150:2.55,200:4.17,250:6.87,300:9.97,350:21.2,400:25.9,450:31.5,500:47},
+      Sch40: {20:0.059,25:0.116,32:0.157,40:0.243,50:0.372,65:0.724,80:0.933,100:1.54,125:2.5,150:3.57,200:5.71,250:9.58,300:14.7,350:29.5,400:41.1,450:56.2,500:88.5,550:103.2,600:124.3},
+      Sch80: {20:0.075,25:0.147,32:0.206,40:0.324,50:0.508,65:0.946,80:1.25,100:2.14,125:3.52,150:5.38,200:8.63,250:15.2,300:24.2,350:49.3,400:67.7,450:91.4,500:149.9,550:181,600:215},
+      Sch160:{25:0.194,32:0.257,40:0.429,50:0.752,65:1.23,80:1.75,100:3.2,125:5.57,150:8.45,200:14.7,250:27,300:43.6,350:87.7,400:121,450:165,500:271.2,550:324.5,600:391.4}
+    },
+    sus:{
+      Sch5S: {20:0.035,25:0.06,32:0.066,40:0.114,50:0.164,65:0.307,80:0.372,100:0.528,125:1.107,150:1.45,200:2.01,250:3.59,300:5.83},
+      Sch10S:{20:0.045,25:0.099,32:0.126,40:0.19,50:0.275,65:0.435,80:0.53,100:0.8,125:1.33,150:1.76,200:2.84,250:4.21,300:6.57,350:13.7,400:16.7,450:20.3,500:33.2,550:36.7,600:47.5},
+      Sch20S:{20:0.052,25:0.105,32:0.134,40:0.202,50:0.339,65:0.503,80:0.697,100:1.05,125:1.93,150:2.57,200:4.55,250:6.78,300:9.43,350:21.7,400:26.4,450:32.2,500:56.9,550:63,600:69.1},
+      Sch40S:{20:0.059,25:0.117,32:0.158,40:0.246,50:0.375,65:0.728,80:0.94,100:1.55,125:2.52,150:3.59,200:5.68,250:9.58,300:14.7,350:29.8,400:41.4,450:56.7,500:89.3,550:104.1,600:125.5},
+      Sch80S:{20:0.076,25:0.149,32:0.207,40:0.327,50:0.512,65:0.952,80:1.26,100:2.16,125:3.53,150:5.42,200:8.59,250:15.2,300:24.3}
+    }
+  }
+};
+
+/* ======================================================
+   大口径継手重量データ (BENKAN KIKOH / 400A〜1500A)
+   cs: LG(7.9mm)/STD(9.5mm), sus: Sch10/Sch20
+====================================================== */
+const LB_FIT={
+  e90l:{
+    cs:{
+      LG: {400:74.3,450:94.2,500:116,550:141,600:168,650:198,700:229,750:264,800:300,850:338,900:380,1000:470,1100:569,1200:677,1350:858,1500:1060},
+      STD:{400:89,450:113,500:140,550:169,600:202,650:237,700:275,750:316,800:360,850:407,900:457,1000:564,1100:683,1200:814,1350:1033,1500:1276}
+    },
+    sus:{
+      Sch10:{400:47.9,450:60.7,500:82.4,550:99.8,600:140.3,650:202.3,700:234.9,750:269.8,800:307.2,850:347,900:389.2,1000:570.3},
+      Sch20:{400:76,450:96.4,500:141.2,550:171.2,600:204,650:318.9,700:370.3,750:425.6,800:484.8,850:547.8,900:614.7,1000:854.3}
+    }
+  },
+  e90s:{
+    cs:{
+      LG: {400:49.5,450:62.8,500:77.7,550:94.1,600:112,650:132,700:153,750:176,800:200,850:226,900:253,1000:313,1100:379,1200:451,1350:572,1500:706},
+      STD:{400:59.1,450:75.3,500:93.1,550:113,600:135,650:158,700:184,750:211,800:240,850:271,900:304,1000:376,1100:456,1200:543,1350:687,1500:848}
+    },
+    sus:{
+      Sch10:{400:31.9,450:40.5,500:54.9,550:66.5,600:93.5,650:134.9,700:156.6,750:179.9,800:204.8,850:231.3,900:259.5,1000:380.2},
+      Sch20:{400:50.7,450:64.3,500:94.1,550:114.1,600:136,650:212.6,700:246.9,750:283.8,800:323.2,850:365.2,900:409.8,1000:569.5}
+    }
+  },
+  e45l:{
+    cs:{
+      LG: {400:37.1,450:47.1,500:58.3,550:70.6,600:84.1,650:98.8,700:115,750:132,800:150,850:169,900:190,1000:235,1100:284,1200:339,1350:429,1500:530},
+      STD:{400:44.5,450:56.5,500:69.9,550:84.7,600:101,650:119,700:138,750:158,800:180,850:203,900:228,1000:282,1100:342,1200:407,1350:517,1500:638}
+    },
+    sus:{
+      Sch10:{400:23.9,450:30.3,500:41.2,550:49.9,600:70.1,650:101.2,700:117.4,750:134.9,800:153.6,850:173.5,900:194.6,1000:285.1},
+      Sch20:{400:38,450:48.2,500:70.6,550:85.6,600:102,650:159.4,700:185.2,750:212.8,800:242.4,850:273.9,900:307.3,1000:427.1}
+    }
+  },
+  e45s:{
+    cs:{
+      LG: {400:24.8,450:31.4,500:38.8,550:47.1,600:56.1,650:65.9,700:76.5,750:87.8,800:100,850:113,900:127,1000:157,1100:190,1200:226,1350:286,1500:353},
+      STD:{400:29.5,450:37.6,500:46.6,550:56.4,600:67.3,650:79.1,700:91.8,750:105,800:120,850:136,900:152,1000:188,1100:228,1200:272,1350:344,1500:424}
+    }
+  },
+  tee:{
+    cs:{
+      LG: {650:147,700:165,750:190,800:217,850:245,900:276,1000:342,1100:395,1200:473,1300:558,1500:750},
+      STD:{650:176,700:198,750:228,800:261,850:295,900:331,1000:410,1100:475,1200:568,1300:671,1500:901}
+    },
+    sus:{
+      Sch10:{650:150.3,700:169.1,750:194.7,800:222,850:251.2,900:282.2,1000:414.5},
+      Sch20:{650:236.8,700:266.6,750:307.1,800:350.4,850:396.6,900:445.7,1000:620.9}
+    }
+  },
+  red:{
+    cs:{
+      LG: {400:25.9,450:31.5,500:47,550:52,600:57.1,650:74.5,700:80.5,750:86.5,800:92.6,850:98.6,900:105,1000:117,1100:129,1200:164,1300:178,1500:207},
+      STD:{400:31,450:37.8,500:56.4,550:62.4,600:68.5,650:89.3,700:96.6,750:104,800:111,850:118,900:126,1000:140,1100:155,1200:197,1300:214,1500:248}
+    },
+    sus:{
+      Sch10:{400:16.7,450:20.3,500:33.2,550:36.7,600:47.5,650:76.2,700:82.3,750:88.5,800:94.7,850:100.9,900:107,1000:141.5},
+      Sch20:{400:26.4,450:32.2,500:56.9,550:63,600:69.1,650:120,700:129.8,750:139.6,800:149.4,850:159.2,900:169,1000:212}
+    }
+  }
+};
+
+/* ======================================================
+   フランジ重量データ (Excel 実測値)
+   2K:SOP/BL  5K:SOP/BL  10K:SOP/BL  20K:SOH/BL  F12:SOP/BL
+====================================================== */
+const FL={
+  k2:{
+    types:['SOP','BL'],
+    data:{450:[19.9,48.8],500:[21.5,57.1],550:[28.2,75.2],600:[30.4,86.3],650:[33.5,99.1],700:[35.8,111.8],750:[43,130.3],800:[45.4,144.7],850:[47.8,159.9],900:[50.1,175.8],1000:[58.9,226.9],1100:[67.9,271.2],1200:[79.7,321.2],1350:[90.5,396.2],1500:[109.6,515.4]}
+  },
+  k5:{
+    types:['SOP','BL'],
+    data:{15:[0.3,0.32],20:[0.36,0.41],25:[0.45,0.52],32:[0.77,0.91],40:[0.82,1],50:[1.06,1.38],65:[1.48,2],80:[1.97,2.67],100:[2.35,3.66],125:[3.2,5.16],150:[4.39,7.47],200:[6.24,12.1],250:[9.39,19.2],300:[10.2,24.2],350:[14,33],400:[16.9,41.7],450:[21.4,52.7],500:[23,61.6],550:[30.1,80.8],600:[32.5,92.7],650:[35.6,114],700:[38,138],750:[48.4,171],800:[51.2,202],850:[53.9,237],900:[60.7,260],1000:[70.1,345],1100:[81.6,454],1200:[101,586],1350:[116,814],1500:[137,1060]}
+  },
+  k10:{
+    types:['SOP','BL'],
+    data:{15:[0.56,0.6],20:[0.72,0.79],25:[1.12,1.22],32:[1.47,1.66],40:[1.55,1.79],50:[1.86,2.23],65:[2.58,3.24],80:[2.58,3.48],100:[3.1,4.57],125:[4.73,7.18],150:[6.3,10.1],200:[7.46,13.9],250:[11.8,22.6],300:[12.6,27.8],350:[16.3,36.9],400:[23.2,52.1],450:[29.3,68.4],500:[33.3,81.6],550:[42.9,112],600:[45.4,134],650:[51.8,161],700:[59,196],750:[72.8,248],800:[76,286],850:[80.1,330],900:[88.9,377],1000:[109,512],1100:[131,675],1200:[163,854],1350:[204,1180],1500:[248,1590]}
+  },
+  k20:{
+    types:['SOH','BL'],
+    data:{15:[0.65,0.67],20:[0.81,0.86],25:[1.27,1.34],32:[1.58,1.73],40:[1.68,1.87],50:[1.89,2.2],65:[2.73,3.24],80:[3.85,4.63],100:[5.03,6.61],125:[7.94,10.5],150:[10.4,14.4],200:[13.1,20.8],250:[23.1,36.2],300:[27.2,47.4],350:[38.4,66.1],400:[53.9,97],450:[71,126],500:[84.6,155],550:[102,190],600:[115,223]}
+  },
+  f12:{
+    types:['SOP','BL'],
+    data:{80:[3.9,4.8],100:[4.6,6.1],125:[5.8,8.3],150:[7.4,11.2],200:[9.1,15.4],250:[13.6,24.4],300:[16.2,31],350:[23.6,44.3],400:[28.4,53.4],450:[35.6,72.3],500:[40,85],600:[49.9,119.8],700:[67.1,167.4],800:[81.9,220.8],900:[106.2,293.4],1000:[125.4,363.1],1100:[147.1,467.7],1200:[168.6,568],1350:[211.3,740.3],1500:[254,949.7]}
+  }
+};
+
+/* ======================================================
+   セクション定義
+====================================================== */
+const SECTIONS=[
+  // ─ 直管 ─
+  {id:'sgp',   g:'pipe', name:'SGP 直管',      type:'pipe',     mat:'SGP'},
+  {id:'stpg',  g:'pipe', name:'STPG 直管',     type:'pipe_sch', mat:'STPG',    schs:['Sch40','Sch80','Sch160']},
+  {id:'s304',  g:'pipe', name:'SUS304 直管',   type:'pipe_sch', mat:'SUS304',  schs:['Sch10S','Sch20S','Sch40S','Sch80S']},
+  {id:'s316',  g:'pipe', name:'SUS316 直管',   type:'pipe_sch', mat:'SUS316',  schs:['Sch10S','Sch20S','Sch40S','Sch80S']},
+  // ─ 継手 SGP/CS ─
+  {id:'e90s',  g:'fit_sgp', name:'90°エルボ',           type:'fit', fitKey:'e90', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'e45s',  g:'fit_sgp', name:'45°エルボ',           type:'fit', fitKey:'e45', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'tees',  g:'fit_sgp', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'reds',  g:'fit_sgp', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  // ─ 継手 SUS ─
+  {id:'e90u',  g:'fit_sus', name:'90°エルボ',                              type:'fit', fitKey:'e90', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
+  {id:'e45u',  g:'fit_sus', name:'45°エルボ',                              type:'fit', fitKey:'e45', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
+  {id:'teeu',  g:'fit_sus', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
+  {id:'redu',  g:'fit_sus', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
+  // ─ フランジ ─
+  {id:'fl2k',  g:'flange', name:'2K フランジ',          type:'flange', flKey:'k2'},
+  {id:'fl5k',  g:'flange', name:'5K フランジ',          type:'flange', flKey:'k5'},
+  {id:'fl10k', g:'flange', name:'10K フランジ',         type:'flange', flKey:'k10'},
+  {id:'fl20k', g:'flange', name:'20K フランジ',         type:'flange', flKey:'k20'},
+  {id:'flf12', g:'flange', name:'F12（7.5K）フランジ',  type:'flange', flKey:'f12'},
+  // ─ 大口径 ─
+  {id:'stpy',     g:'lbo', name:'STPY400 直管',         type:'pipe_sch', mat:'STPY400', schs:['LG','STD']},
+  {id:'lbe90l_c', g:'lbo', name:'90°ロングエルボ CS',   type:'fit_lb', lbKey:'e90l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe90l_s', g:'lbo', name:'90°ロングエルボ SUS',  type:'fit_lb', lbKey:'e90l', matKey:'sus',schs:['Sch10','Sch20']},
+  {id:'lbe90s_c', g:'lbo', name:'90°ショートエルボ CS', type:'fit_lb', lbKey:'e90s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe90s_s', g:'lbo', name:'90°ショートエルボ SUS',type:'fit_lb', lbKey:'e90s', matKey:'sus',schs:['Sch10','Sch20']},
+  {id:'lbe45l_c', g:'lbo', name:'45°ロングエルボ CS',   type:'fit_lb', lbKey:'e45l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe45l_s', g:'lbo', name:'45°ロングエルボ SUS',  type:'fit_lb', lbKey:'e45l', matKey:'sus',schs:['Sch10','Sch20']},
+  {id:'lbe45s_c', g:'lbo', name:'45°ショートエルボ CS', type:'fit_lb', lbKey:'e45s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbtee_c',  g:'lbo', name:'ティーズ（同径重量・異径共用）CS',  type:'fit_lb', lbKey:'tee',  matKey:'cs', schs:['LG','STD']},
+  {id:'lbtee_s',  g:'lbo', name:'ティーズ（同径重量・異径共用）SUS', type:'fit_lb', lbKey:'tee',  matKey:'sus',schs:['Sch10','Sch20']},
+  {id:'lbred_c',  g:'lbo', name:'レジューサ（1段落ち重量）CS',       type:'fit_lb', lbKey:'red',  matKey:'cs', schs:['LG','STD']},
+  {id:'lbred_s',  g:'lbo', name:'レジューサ（1段落ち重量）SUS',      type:'fit_lb', lbKey:'red',  matKey:'sus',schs:['Sch10','Sch20']},
+];
+
+/* ======================================================
+   状態管理
+====================================================== */
+const state={};
+SECTIONS.forEach(s=>{state[s.id]=[];});
+let uidCnt=0;
+const mkUid=()=>'r'+(++uidCnt);
+
+/* ======================================================
+   重量計算
+====================================================== */
+function calcWt(sec,row){
+  const qty=+row.qty||0;
+  if(!qty||qty<=0) return null;
+
+  if(sec.type==='pipe'){
+    const w=pipeKgM(sec.mat,null,row.size);
+    const len=+row.len||0;
+    if(!w||!len) return null;
+    return w*(len/1000)*qty;
+  }
+  if(sec.type==='pipe_sch'){
+    if(!row.sch) return null;
+    const w=pipeKgM(sec.mat,row.sch,row.size);
+    const len=+row.len||0;
+    if(!w||!len) return null;
+    return w*(len/1000)*qty;
+  }
+  if(sec.type==='fit'){
+    if(!row.sch||!row.size) return null;
+    const tbl=(FIT[sec.fitKey]||{})[sec.matKey]||{};
+    const w=(tbl[row.sch]||{})[+row.size];
+    return w!=null?w*qty:null;
+  }
+  if(sec.type==='fit_lb'){
+    if(!row.sch||!row.size) return null;
+    const tbl=(LB_FIT[sec.lbKey]||{})[sec.matKey]||{};
+    const w=(tbl[row.sch]||{})[+row.size];
+    return w!=null?w*qty:null;
+  }
+  if(sec.type==='flange'){
+    const fd=FL[sec.flKey];
+    if(!row.fltype||!row.size) return null;
+    const idx=fd.types.indexOf(row.fltype);
+    if(idx<0) return null;
+    const row_data=(fd.data[+row.size]);
+    if(!row_data) return null;
+    const w=row_data[idx];
+    return w!=null?w*qty:null;
+  }
+  return null;
+}
+
+/* ======================================================
+   サイズ選択肢生成
+====================================================== */
+function pipeSizeOpts(mat,sch,sel){
+  if(mat==='STPY400'){
+    const kgm=STPY_KGM[sch]||{};
+    const sizes=Object.keys(kgm).map(Number).sort((a,b)=>a-b);
+    return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+  }
+  let tmap;
+  if(mat==='SGP') tmap=T.SGP;
+  else if(mat==='STPG') tmap=(T.STPG[sch]||{});
+  else{ const k=sch?sch.replace(/S$/,''):'Sch40'; tmap=(T.SUS[k]||{}); }
+  const sizes=Object.keys(tmap).map(Number).sort((a,b)=>a-b);
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+function fitSizeOpts(sec,sch,sel){
+  if(sec.type==='fit_lb'){
+    const tbl=(LB_FIT[sec.lbKey]||{})[sec.matKey]||{};
+    const data=tbl[sch]||{};
+    const sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+    return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+  }
+  const tbl=(FIT[sec.fitKey]||{})[sec.matKey]||{};
+  const data=tbl[sch]||{};
+  const sizes=FSIZES.filter(s=>data[s]!=null);
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+function flangeSizeOpts(flKey,sel){
+  const fd=FL[flKey];
+  const sizes=Object.keys(fd.data).map(Number).sort((a,b)=>a-b);
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+/* ======================================================
+   行 HTML 生成
+====================================================== */
+function rowHTML(sec,row){
+  const wt=calcWt(sec,row);
+  const wtStr=wt!=null?wt.toFixed(2):'—';
+  const wtCls='row-wt'+(wt==null?' empty':'');
+  const s=sec.id, u=row.uid;
+
+  const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
+    onmousedown="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+  const delBtn=`<button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>`;
+
+  if(sec.type==='pipe'){
+    const sOpts=pipeSizeOpts(sec.mat,null,row.size);
+    const teishaku=TEISHAKU[sec.mat]||5500;
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
+        ${adjBtn('len',-1,'−')}
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='pipe_sch'){
+    const schOpts='<option value="">—</option>'+sec.schs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
+    const sOpts=row.sch?pipeSizeOpts(sec.mat,row.sch,row.size):'<option value="">— スケジュール先に —</option>';
+    const teishaku=TEISHAKU[sec.mat]||5500;
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" onchange="onSel(this,'${s}','${u}','sch')">${schOpts}</select>
+        <select class="sz-sel" id="ss-${u}" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
+        ${adjBtn('len',-1,'−')}
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='fit'||sec.type==='fit_lb'){
+    const schOpts='<option value="">—</option>'+sec.schs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
+    const sOpts=row.sch?fitSizeOpts(sec,row.sch,row.size):'<option value="">— スケジュール先に —</option>';
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" onchange="onSel(this,'${s}','${u}','sch')">${schOpts}</select>
+        <select class="sz-sel" id="ss-${u}" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">個数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">個</span>
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='flange'){
+    const fd=FL[sec.flKey];
+    const typeOpts='<option value="">— 形式 —</option>'+fd.types.map(t=>`<option value="${t}"${row.fltype===t?' selected':''}>${t}形</option>`).join('');
+    const sOpts=flangeSizeOpts(sec.flKey,row.size);
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" style="width:58px" onchange="onSel(this,'${s}','${u}','fltype')">${typeOpts}</select>
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">枚数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">枚</span>
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+/* ======================================================
+   セクション再描画
+====================================================== */
+function renderSec(sec){
+  const rows=state[sec.id];
+  const sub=rows.reduce((s,r)=>{const w=calcWt(sec,r);return s+(w||0);},0);
+  const card=document.getElementById('card-'+sec.id);
+  if(!card) return;
+  const subEl=card.querySelector('.sec-sub');
+  subEl.textContent=sub>0?sub.toFixed(1)+' kg':'—';
+  subEl.className='sec-sub'+(sub>0?' has-data':'');
+  const list=card.querySelector('.entry-list');
+  list.innerHTML=rows.length===0?'<div class="empty-msg">項目なし — 下の＋ボタンで追加</div>':rows.map(r=>rowHTML(sec,r)).join('');
+}
+
+function renderTotal(){
+  let t=0;
+  SECTIONS.forEach(s=>state[s.id].forEach(r=>{const w=calcWt(s,r);if(w)t+=w;}));
+  document.getElementById('grand-total').textContent=t.toFixed(1);
+}
+
+function renderAll(){SECTIONS.forEach(renderSec);renderTotal();}
+
+/* ======================================================
+   行重量更新（軽量版）
+====================================================== */
+function updateRowWt(sec,row){
+  const wt=calcWt(sec,row);
+  const el=document.getElementById('wt-'+row.uid);
+  if(el){el.textContent=wt!=null?wt.toFixed(2):'—';el.className='row-wt'+(wt==null?' empty':'');}
+  renderSec(sec);renderTotal();
+}
+
+/* ======================================================
+   イベントハンドラ
+====================================================== */
+function findSecRow(secId,uid){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row=state[secId].find(r=>r.uid===uid);
+  return {sec,row};
+}
+
+function onSel(el,secId,uid,field){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  const prev=row[field];
+  row[field]=el.value;
+  if(field==='sch'&&prev!==el.value){
+    row.size='';
+    const ssSel=document.getElementById('ss-'+uid);
+    if(ssSel){
+      if(sec.type==='pipe_sch') ssSel.innerHTML=pipeSizeOpts(sec.mat,row.sch,'');
+      else if(sec.type==='fit'||sec.type==='fit_lb') ssSel.innerHTML=fitSizeOpts(sec,row.sch,'');
+    }
+  }
+  updateRowWt(sec,row);
+}
+
+function onNum(el,secId,uid,field){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  row[field]=el.value?+el.value:null;
+  updateRowWt(sec,row);
+}
+
+function setTeishaku(secId,uid,len){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  row.len=len;
+  const inp=document.getElementById('li-'+uid);
+  if(inp) inp.value=len;
+  updateRowWt(sec,row);
+}
+
+function addRow(secId){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row={uid:mkUid(),sch:'',size:'',fltype:'',len:null,qty:null};
+  state[secId].push(row);
+  document.getElementById('card-'+secId).classList.add('open');
+  renderSec(sec);
+  setTimeout(()=>{
+    const el=document.getElementById('er-'+row.uid);
+    if(el) el.querySelector('select').focus();
+  },60);
+}
+
+function delRow(secId,uid){
+  state[secId]=state[secId].filter(r=>r.uid!==uid);
+  const sec=SECTIONS.find(s=>s.id===secId);
+  renderSec(sec);renderTotal();
+}
+
+function clearAll(){SECTIONS.forEach(s=>{state[s.id]=[];});renderAll();}
+function toggleCard(secId){document.getElementById('card-'+secId).classList.toggle('open');}
+
+/* ======================================================
+   ±ボタン長押し
+====================================================== */
+let _adjTimer=null,_curAdj=null;
+
+function doAdj(){
+  if(!_curAdj) return;
+  const {secId,uid,fld,dir}=_curAdj;
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  if(fld==='len'){
+    row.len=Math.max(1,(+row.len||0)+dir*1);
+    const inp=document.getElementById('li-'+uid);
+    if(inp) inp.value=row.len;
+  } else {
+    row.qty=Math.max(1,(+row.qty||0)+dir);
+    const inp=document.getElementById('qi-'+uid);
+    if(inp) inp.value=row.qty;
+  }
+  updateRowWt(sec,row);
+}
+
+function startAdj(secId,uid,fld,dir){
+  stopAdj();
+  _curAdj={secId,uid,fld,dir};
+  doAdj();
+  _adjTimer=setTimeout(function rpt(){doAdj();_adjTimer=setTimeout(rpt,85);},380);
+}
+function stopAdj(){clearTimeout(_adjTimer);_adjTimer=null;}
+
+/* ======================================================
+   スケジュール表示名（LG/STD 肉厚付き）
+====================================================== */
+const SCH_LABEL={LG:'LG（t7.9mm）',STD:'STD（t9.5mm）'};
+
+/* ======================================================
+   グループラベルテキスト
+====================================================== */
+const GROUP_LABELS={
+  pipe:    '直　管　類',
+  fit_sgp: '継手類　CS（炭素鋼）',
+  fit_sus: '継手類 — SUS（ステンレス）',
+  flange:  'フ ラ ン ジ 類',
+  lbo:     '大 口 径 管 継 手 類'
+};
+const GROUP_NOTE={
+  lbo:'※ 600A超はJIS規格外・BENKANカタログ社内規格値'
+};
+
+/* ======================================================
+   DOM生成
+====================================================== */
+function buildDOM(){
+  const wrap=document.getElementById('main-wrap');
+  let html='';
+  let lastG='';
+  SECTIONS.forEach(sec=>{
+    if(sec.g!==lastG){
+      html+=`<div class="group-label">${GROUP_LABELS[sec.g]||sec.g}</div>`;
+      if(GROUP_NOTE[sec.g]) html+=`<div class="group-note">${GROUP_NOTE[sec.g]}</div>`;
+      lastG=sec.g;
+    }
+    html+=`<div class="sec-card" id="card-${sec.id}">
+      <div class="sec-head" onclick="toggleCard('${sec.id}')">
+        <span class="sec-chevron">▶</span>
+        <span class="sec-name">${sec.name}</span>
+        <span class="sec-sub">—</span>
+      </div>
+      <div class="sec-body">
+        <div class="entry-list"></div>
+        <button class="add-btn" onclick="addRow('${sec.id}')">＋ 行を追加</button>
+      </div>
+    </div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+buildDOM();
+renderAll();
+</script>
+</body>
+</html>
