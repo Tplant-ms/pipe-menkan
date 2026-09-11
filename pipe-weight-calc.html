@@ -507,16 +507,16 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        ${adjBtn('len',-1,'−')}
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
+        ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
-        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
         <span class="unit-txt">本</span>
+        ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
@@ -536,16 +536,16 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        ${adjBtn('len',-1,'−')}
         <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
+        ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
-        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
         <span class="unit-txt">本</span>
+        ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
@@ -563,9 +563,9 @@ function rowHTML(sec,row){
       </div>
       <div class="row-l2">
         <span class="row-lbl">個数</span>
-        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
         <span class="unit-txt">個</span>
+        ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
@@ -584,9 +584,9 @@ function rowHTML(sec,row){
       </div>
       <div class="row-l2">
         <span class="row-lbl">枚数</span>
-        ${adjBtn('qty',-1,'−')}
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
         <span class="unit-txt">枚</span>
+        ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
       </div>
     </div>`;
