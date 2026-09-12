@@ -540,7 +540,7 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="onNum(this,'${s}','${u}','len')">
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="saveLenOnly(this,'${s}','${u}')" onchange="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
@@ -569,7 +569,7 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="onNum(this,'${s}','${u}','len')">
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="saveLenOnly(this,'${s}','${u}')" onchange="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
@@ -684,11 +684,17 @@ function onSel(el,secId,uid,field){
   updateRowWt(sec,row);
 }
 
+function saveLenOnly(el,secId,uid){
+  // oninput: データだけ保存、再描画なし（入力中キーボードが消えるのを防ぐ）
+  const {row}=findSecRow(secId,uid); if(!row) return;
+  if(el.value!=='') row.len=+el.value;
+}
 function onNum(el,secId,uid,field){
   const {sec,row}=findSecRow(secId,uid); if(!row) return;
-  if(field==='len' && el.value==='') return; // Android: ignore spurious empty on blur
+  if(field==='len' && el.value==='') return; // Android: blur時に空値が来ても無視
   row[field]=el.value?+el.value:null;
-  updateRowWt(sec,row);
+  // blur中にrenderSecを呼ぶとNotFoundError → 0msで遅延してblur完了後に実行
+  setTimeout(()=>updateRowWt(sec,row), 0);
 }
 
 function setTeishaku(secId,uid,len){
