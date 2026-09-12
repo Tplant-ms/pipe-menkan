@@ -384,7 +384,7 @@ const SECTIONS=[
   // ─ 直管 ─
   {id:'sgp',   g:'pipe', name:'SGP 直管',      type:'pipe',     mat:'SGP'},
   {id:'stpg',  g:'pipe', name:'STPG 直管',     type:'pipe_sch', mat:'STPG',    schs:['Sch40','Sch80','Sch160']},
-  {id:'s304',  g:'pipe', name:'SUS直管',        type:'pipe_sch', mat:'SUS304',  schs:['Sch5S','Sch10S','Sch20S','Sch40S']},
+  {id:'s304',  g:'pipe', name:'SUS 直管',        type:'pipe_sch', mat:'SUS304',  schs:['Sch5S','Sch10S','Sch20S','Sch40S']},
   // ─ 継手 SGP/CS ─
   {id:'e90s_c',  g:'fit_sgp', name:'90°エルボ（ロング）',          type:'fit', fitKey:'e90l', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
   {id:'e90ss_c', g:'fit_sgp', name:'90°エルボ（ショート）',        type:'fit', fitKey:'e90s', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
@@ -393,10 +393,10 @@ const SECTIONS=[
   {id:'tees',    g:'fit_sgp', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
   {id:'reds',    g:'fit_sgp', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
   // ─ 継手 SUS（統合 15A〜900A）─
-  {id:'e90l_u', g:'fit_sus', name:'90°エルボ ロング',               type:'fit', fitKey:'e90l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
-  {id:'e90s_u', g:'fit_sus', name:'90°エルボ ショート',             type:'fit', fitKey:'e90s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
-  {id:'e45l_u', g:'fit_sus', name:'45°エルボ ロング',               type:'fit', fitKey:'e45l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
-  {id:'e45s_u', g:'fit_sus', name:'45°エルボ ショート',             type:'fit', fitKey:'e45s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
+  {id:'e90l_u', g:'fit_sus', name:'90°エルボ（ロング）',             type:'fit', fitKey:'e90l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
+  {id:'e90s_u', g:'fit_sus', name:'90°エルボ（ショート）',           type:'fit', fitKey:'e90s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
+  {id:'e45l_u', g:'fit_sus', name:'45°エルボ（ロング）',             type:'fit', fitKey:'e45l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
+  {id:'e45s_u', g:'fit_sus', name:'45°エルボ（ショート）',           type:'fit', fitKey:'e45s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40','Sch80']},
   {id:'teeu',  g:'fit_sus', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee',  matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
   {id:'redu',  g:'fit_sus', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red',  matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S']},
   // ─ フランジ ─
@@ -407,10 +407,10 @@ const SECTIONS=[
   {id:'flf12', g:'flange', name:'F12（7.5K）フランジ',  type:'flange', flKey:'f12'},
   // ─ 大口径 CS（STPY＋炭素鋼 LG/STD）─
   {id:'stpy',     g:'lbo', name:'STPY400 直管',                   type:'pipe_sch', mat:'STPY400', schs:['LG','STD']},
-  {id:'lbe90l_c', g:'lbo', name:'90°ロングエルボ',             type:'fit_lb', lbKey:'e90l', matKey:'cs', schs:['LG','STD']},
-  {id:'lbe90s_c', g:'lbo', name:'90°ショートエルボ',           type:'fit_lb', lbKey:'e90s', matKey:'cs', schs:['LG','STD']},
-  {id:'lbe45l_c', g:'lbo', name:'45°ロングエルボ',             type:'fit_lb', lbKey:'e45l', matKey:'cs', schs:['LG','STD']},
-  {id:'lbe45s_c', g:'lbo', name:'45°ショートエルボ',           type:'fit_lb', lbKey:'e45s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe90l_c', g:'lbo', name:'90°エルボ（ロング）',          type:'fit_lb', lbKey:'e90l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe90s_c', g:'lbo', name:'90°エルボ（ショート）',        type:'fit_lb', lbKey:'e90s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe45l_c', g:'lbo', name:'45°エルボ（ロング）',          type:'fit_lb', lbKey:'e45l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe45s_c', g:'lbo', name:'45°エルボ（ショート）',        type:'fit_lb', lbKey:'e45s', matKey:'cs', schs:['LG','STD']},
   {id:'lbtee_c',  g:'lbo', name:'ティーズ（同径重量・異径共用）', type:'fit_lb', lbKey:'tee',  matKey:'cs', schs:['LG','STD']},
   {id:'lbred_c',  g:'lbo', name:'レジューサ（1段落ち重量）',     type:'fit_lb', lbKey:'red',  matKey:'cs', schs:['LG','STD']},
 ];
@@ -540,7 +540,7 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
@@ -569,7 +569,7 @@ function rowHTML(sec,row){
       <div class="row-l2">
         <span class="row-lbl">長さ</span>
         <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
-        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','len')">
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="onNum(this,'${s}','${u}','len')">
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
@@ -686,6 +686,7 @@ function onSel(el,secId,uid,field){
 
 function onNum(el,secId,uid,field){
   const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  if(field==='len' && el.value==='') return; // Android: ignore spurious empty on blur
   row[field]=el.value?+el.value:null;
   updateRowWt(sec,row);
 }
@@ -762,8 +763,8 @@ const SCH_LABEL={LG:'LG（t7.9mm）',STD:'STD（t9.5mm）'};
 ====================================================== */
 const GROUP_LABELS={
   pipe:    '直　管　類',
-  fit_sgp: '継手類　CS（炭素鋼）',
-  fit_sus: '継手類　SUS（ステンレス 15A〜1000A）',
+  fit_sgp: '継　手　類　CS（炭素鋼）',
+  fit_sus: '継　手　類　SUS（ステンレス）',
   flange:  'フ ラ ン ジ 類',
   lbo:     '大 口 径 管 継 手 類（LG, STD）'
 };
