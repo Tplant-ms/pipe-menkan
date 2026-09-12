@@ -55,7 +55,7 @@ header p{color:#aac4df;font-size:.68rem;white-space:nowrap}
   max-width:560px;margin:0 auto;
   display:flex;align-items:baseline;gap:8px;
 }
-.total-label{color:#aac4df;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.total-label{color:#aac4df;font-size:.875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .total-value{
   font-family:'Courier New',monospace;font-size:2.2rem;font-weight:700;
   color:#fff;line-height:1;flex:1;text-align:right;
@@ -68,11 +68,13 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 
 /* ─── グループラベル ─── */
 .group-label{
-  font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-soft);
-  padding:10px 2px 5px;
-  border-bottom:1px solid var(--paper-line);
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;
+  color:#fff;
+  background:var(--blueprint);
+  padding:7px 12px;
+  border-radius:4px;
   margin-bottom:8px;
+  margin-top:4px;
 }
 
 /* ─── セクションカード ─── */
@@ -529,7 +531,11 @@ function delRow(secId,uid){
 }
 
 // 全クリア
-function clearAll(){SECTIONS.forEach(s=>{state[s.id]=[];});renderAll();}
+function clearAll(){
+  SECTIONS.forEach(s=>{state[s.id]=[];});
+  document.querySelectorAll('.sec-card.open').forEach(el=>el.classList.remove('open'));
+  renderAll();
+}
 
 // セクション開閉
 function toggleCard(secId){document.getElementById('card-'+secId).classList.toggle('open');}
