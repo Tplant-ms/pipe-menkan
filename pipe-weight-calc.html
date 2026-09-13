@@ -38,7 +38,7 @@ header h1{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:
 .all-clear-btn:hover{border-color:#fff;background:#fff;color:var(--blueprint)}
 .total-bar{
   background:var(--blueprint-deep);padding:10px 16px;
-  position:sticky;top:53px;z-index:19;border-bottom:2px solid var(--accent);
+  position:sticky;top:88px;z-index:19;border-bottom:2px solid var(--accent);
 }
 .total-bar-inner{max-width:560px;margin:0 auto;display:flex;align-items:baseline;gap:8px;}
 .total-label{color:#aac4df;font-size:.875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
@@ -101,6 +101,24 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 .site-nav a{color:#aac4df;font-size:.78rem;text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:4px;transition:all .15s;}
 .site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
 .site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+/* ─── タブ ─── */
+.tab-row{display:flex;gap:4px;padding:4px 8px 8px;max-width:560px;margin:0 auto;}
+.tab-btn{flex:1;padding:5px 8px;border:none;border-radius:4px;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
+.tab-btn.active{background:var(--accent);color:#fff;}
+.tab-btn:not(.active){background:rgba(255,255,255,.15);color:#aac4df;}
+.tab-btn:not(.active):hover{background:rgba(255,255,255,.25);color:#fff;}
+/* ─── マニュアル ─── */
+.man-wrap{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+.man-section{background:var(--card);border:1px solid var(--paper-line);border-radius:4px;margin-bottom:12px;padding:14px}
+.man-h2{font-size:.85rem;font-weight:700;color:#fff;background:var(--blueprint);padding:6px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.06em}
+.man-h3{font-size:.8rem;font-weight:700;color:var(--blueprint);margin:10px 0 6px;border-bottom:1px solid var(--paper-line);padding-bottom:4px}
+.man-ol{margin:0 0 4px 1.4em;padding:0;font-size:.8rem;line-height:1.9;color:var(--ink)}
+.man-tbl{width:100%;border-collapse:collapse;font-size:.75rem;margin-bottom:4px}
+.man-tbl th{background:var(--blueprint);color:#fff;padding:5px 7px;text-align:left;font-weight:700}
+.man-tbl td{padding:4px 7px;border-bottom:1px solid var(--paper-line);vertical-align:middle}
+.man-tbl tr:nth-child(even) td{background:var(--row)}
+.man-note{font-size:.74rem;color:var(--ink-soft);line-height:1.7;margin-top:4px}
+.man-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:4px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -108,11 +126,15 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 <header>
   <div class="hdr-inner">
     <h1>配管重量　拾い出し</h1>
-    <button class="all-clear-btn" onclick="clearAll()">⟳ 全クリア</button>
+    <button class="all-clear-btn" id="clear-btn" onclick="clearAll()">⟳ 全クリア</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" id="tab-calc" onclick="showTab('calc')">拾い出し</button>
+    <button class="tab-btn" id="tab-manual" onclick="showTab('manual')">マニュアル</button>
   </div>
 </header>
 
-<div class="total-bar">
+<div class="total-bar" id="total-bar-el">
   <div class="total-bar-inner">
     <span class="total-label">合計重量</span>
     <span class="total-value" id="grand-total">0.0</span>
@@ -122,7 +144,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 
 <main id="main-wrap"></main>
 
-<div style="max-width:560px;margin:0 auto;padding:0 14px 24px">
+<div id="disclaimer-div" style="max-width:560px;margin:0 auto;padding:0 14px 24px">
   <div style="background:#fff;border:1px solid var(--paper-line);border-radius:4px;padding:14px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
       <span style="background:var(--ink-soft);color:#fff;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:3px">!</span>
@@ -138,6 +160,136 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
       </ul>
     </div>
   </div>
+</div>
+
+<div id="manual-div" style="display:none">
+<div class="man-wrap">
+
+  <div class="man-section">
+    <div class="man-h2">操 作 方 法</div>
+    <ol class="man-ol">
+      <li>各セクション名をタップして展開します。</li>
+      <li>「＋ 行を追加」をタップして入力行を追加します。</li>
+      <li>サイズ（呼び径）とスケジュール（配管のみ）を選択します。</li>
+      <li>本数（個数）を入力または ＋／－ ボタンで増減します。</li>
+      <li>直管は長さ（mm）を入力すると重量を自動計算します。</li>
+      <li>直管の「定尺」ボタンを押すと規格定尺長が自動入力されます。</li>
+      <li>合計重量は画面上部に常時表示されます。</li>
+    </ol>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">注 意 事 項</div>
+    <div class="man-h3">ティーズ（T字管）</div>
+    <p class="man-note"><span class="man-badge">同径重量適用</span>データは同径ティーズ（15A×15A 等）の重量です。異径ティーズも同じ重量で計算します。</p>
+    <div class="man-h3">レジューサ（径違い継手）</div>
+    <p class="man-note"><span class="man-badge">１段落ち重量適用</span>データは１段落ち（例：50A×40A）の重量です。２段落ち以降の異径も同じ重量で計算します。</p>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">直 管 類　サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>スケジュール</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>SGP 直管</td><td>—</td><td>10A ～ 500A</td></tr>
+        <tr><td rowspan="2">STPG 直管</td><td>Sch40 / Sch80</td><td>10A ～ 650A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 650A</td></tr>
+        <tr><td rowspan="6">SUS 直管</td><td>Sch5S</td><td>150A ～ 750A</td></tr>
+        <tr><td>Sch10S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch20S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch40S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch80S</td><td>10A ～ 650A</td></tr>
+        <tr><td>Sch160S</td><td>15A ～ 500A</td></tr>
+        <tr><td>STPY400 直管</td><td>LG / STD</td><td>400A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">継 手 類　CS（炭素鋼）　サイズ範囲</div>
+    <div class="man-h3">エルボ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>規格</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">90°エルボ（ロング）</td><td>SGP / Sch40 / Sch80</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 400A</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td rowspan="2">90°エルボ（ショート）</td><td>SGP</td><td>25A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80 / Sch160</td><td>25A ～ 650A</td></tr>
+        <tr><td rowspan="3">45°エルボ（ロング）</td><td>SGP / Sch40 / Sch80</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 400A</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td rowspan="2">45°エルボ（ショート）</td><td>SGP</td><td>40A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80 / Sch160</td><td>40A ～ 650A</td></tr>
+      </tbody>
+    </table>
+    <div class="man-h3">ティーズ・レジューサ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>規格</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">ティーズ</td><td>SGP</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80</td><td>15A ～ 600A</td></tr>
+        <tr><td>Sch160</td><td>32A ～ 600A</td></tr>
+        <tr><td rowspan="3">レジューサ</td><td>SGP</td><td>20A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80</td><td>20A ～ 600A</td></tr>
+        <tr><td>Sch160</td><td>25A ～ 600A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">継 手 類　SUS（ステンレス）　サイズ範囲</div>
+    <div class="man-h3">エルボ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>Sch5S / Sch80</th><th>Sch10S / Sch20S / Sch40</th></tr></thead>
+      <tbody>
+        <tr><td>90°エルボ（ロング）</td><td>15A ～ 300A</td><td>15A ～ 1000A</td></tr>
+        <tr><td>90°エルボ（ショート）</td><td>25A ～ 300A</td><td>25A ～ 1000A</td></tr>
+        <tr><td>45°エルボ（ロング）</td><td>15A ～ 300A</td><td>15A ～ 1000A</td></tr>
+        <tr><td>45°エルボ（ショート）</td><td>32A ～ 300A</td><td>32A ～ 1000A</td></tr>
+      </tbody>
+    </table>
+    <div class="man-h3">ティーズ・レジューサ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>Sch5S / Sch80S</th><th>Sch10S / Sch20S</th><th>Sch40S</th></tr></thead>
+      <tbody>
+        <tr><td>ティーズ</td><td>15A ～ 300A</td><td>15A ～ 1000A</td><td>15A ～ 600A</td></tr>
+        <tr><td>レジューサ</td><td>20A ～ 300A</td><td>20A ～ 1000A</td><td>20A ～ 600A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">フ ラ ン ジ 類　サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>規格</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>2K フランジ</td><td>450A ～ 1500A</td></tr>
+        <tr><td>5K フランジ</td><td>15A ～ 1500A</td></tr>
+        <tr><td>10K フランジ</td><td>15A ～ 1500A</td></tr>
+        <tr><td>20K フランジ</td><td>15A ～ 600A</td></tr>
+        <tr><td>F12（7.5K）フランジ</td><td>80A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">大 口 径 管 継 手 類（LG, STD）　サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>90°エルボ（ロング）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>90°エルボ（ショート）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>45°エルボ（ロング）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>45°エルボ（ショート）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>ティーズ</td><td>650A ～ 1500A</td></tr>
+        <tr><td>レジューサ</td><td>400A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+    <p class="man-note">※ 600A超はJIS規格外・BENKANカタログ社内規格値</p>
+  </div>
+
+</div>
 </div>
 
 <nav class="site-nav">
@@ -164,7 +316,8 @@ const T={
     Sch10:{10:1.65,15:2.1,20:2.1,25:2.8,32:2.8,40:2.8,50:2.8,65:3.0,80:3.0,100:3.0,125:3.4,150:3.4,200:4.0,250:4.0,300:4.5,350:4.8,400:5.6,450:6.4,500:6.4,550:7.1,600:7.9,650:7.9},
     Sch20:{10:2.0,15:2.5,20:2.5,25:3.0,32:3.0,40:3.0,50:3.5,65:3.5,80:4.0,100:4.0,125:5.0,150:5.0,200:6.5,250:6.5,300:6.5},
     Sch40:{10:2.3,15:2.8,20:2.9,25:3.4,32:3.6,40:3.7,50:3.9,65:5.2,80:5.5,100:6.0,125:6.6,150:7.1,200:8.2,250:9.3,300:10.3,350:11.1,400:12.7,450:14.3,500:15.1,550:15.9,600:17.5,650:18.9},
-    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0}
+    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0},
+    Sch160:{15:4.78,20:5.54,25:6.35,32:6.35,40:7.14,50:8.74,65:9.53,80:11.13,100:13.49,125:15.88,150:18.26,200:23.01,250:28.58,300:33.32,350:35.71,400:40.49,450:45.24,500:49.99}
   }
 };
 const K_PIPE={SGP:0.02466,STPG:0.02466,SUS304:0.02491};
@@ -384,7 +537,7 @@ const SECTIONS=[
   // ─ 直管 ─
   {id:'sgp',   g:'pipe', name:'SGP 直管',      type:'pipe',     mat:'SGP'},
   {id:'stpg',  g:'pipe', name:'STPG 直管',     type:'pipe_sch', mat:'STPG',    schs:['Sch40','Sch80','Sch160']},
-  {id:'s304',  g:'pipe', name:'SUS 直管',        type:'pipe_sch', mat:'SUS304',  schs:['Sch5S','Sch10S','Sch20S','Sch40S']},
+  {id:'s304',  g:'pipe', name:'SUS 直管',        type:'pipe_sch', mat:'SUS304',  schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
   // ─ 継手 SGP/CS ─
   {id:'e90s_c',  g:'fit_sgp', name:'90°エルボ（ロング）',          type:'fit', fitKey:'e90l', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
   {id:'e90ss_c', g:'fit_sgp', name:'90°エルボ（ショート）',        type:'fit', fitKey:'e90s', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
@@ -806,6 +959,19 @@ function buildDOM(){
     </div>`;
   });
   wrap.innerHTML=html;
+}
+
+/* ======================================================
+   タブ切り替え
+====================================================== */
+function showTab(t){
+  const isCalc=(t==='calc');
+  document.getElementById('total-bar-el').style.display  = isCalc ? '' : 'none';
+  document.getElementById('main-wrap').style.display     = isCalc ? '' : 'none';
+  document.getElementById('disclaimer-div').style.display= isCalc ? '' : 'none';
+  document.getElementById('manual-div').style.display    = isCalc ? 'none' : '';
+  document.getElementById('tab-calc').classList.toggle('active',  isCalc);
+  document.getElementById('tab-manual').classList.toggle('active', !isCalc);
 }
 
 buildDOM();
