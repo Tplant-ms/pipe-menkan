@@ -651,6 +651,16 @@ const SECTIONS=[
 ====================================================== */
 const state={};
 SECTIONS.forEach(s=>{state[s.id]=[];});
+// グループ別「最後に使ったサイズ・スケジュール」記憶（継手行削除時に保存、直管に口径なし時のフォールバック用）
+const grpLastSize={};
+const grpLastSch={};
+function rememberLastUsed(sec,row){
+  if(!sec.g) return;
+  const isFit=sec.type==='fit'||sec.type==='fit_lb'||sec.type==='flange';
+  if(!isFit) return;
+  if(row.size) grpLastSize[sec.g]=String(row.size);
+  if(row.sch)  grpLastSch[sec.g]=row.sch;
+}
 let uidCnt=0;
 const mkUid=()=>'r'+(++uidCnt);
 
@@ -690,8 +700,8 @@ function getSmartDefault(sec){
   const schs=[...schSet];
   const sizes=[...sizeSet];
   return {
-    sch : schs.length===1 ? schs[0] : (GROUP_SCH_FALLBACK[sec.g]||''),
-    size: sizes.length===1 ? sizes[0]: '',
+    sch : schs.length===1 ? schs[0] : (GROUP_SCH_FALLBACK[sec.g]||grpLastSch[sec.g]||''),
+    size: sizes.length===1 ? sizes[0] : (sizes.length===0 ? (grpLastSize[sec.g]||'') : ''),
   };
 }
 
@@ -1023,8 +1033,10 @@ function addRow(secId){
 
 
 function delRow(secId,uid){
-  state[secId]=state[secId].filter(r=>r.uid!==uid);
   const sec=SECTIONS.find(s=>s.id===secId);
+  const row=state[secId].find(r=>r.uid===uid);
+  if(row) rememberLastUsed(sec,row); // 削除前にサイズを記憶
+  state[secId]=state[secId].filter(r=>r.uid!==uid);
   renderSec(sec);renderTotal();
   // 直管の行を削除したら継手・フランジの選択肢も更新
   if(sec.type==='pipe'||sec.type==='pipe_sch') refreshFitSections();
@@ -1035,7 +1047,8 @@ function delOrClear(secId,uid){
   const {sec,row}=findSecRow(secId,uid); if(!row) return;
   const hasFitRow=sec.type==='fit'||sec.type==='fit_lb'||sec.type==='flange';
   if(hasFitRow && (row.sch||row.size||row.fltype)){
-    // 1回目: 値をクリアしてフィルター解除
+    // 1回目: 使用サイズを記憶してからクリア＆フィルター解除
+    rememberLastUsed(sec,row);
     row.sch=''; row.size=''; row.fltype=''; row.bypass=true;
     renderSec(sec); renderTotal();
   } else {
@@ -1071,7 +1084,10 @@ function getActiveSizesForGroup(g,pipeIds){
   ids.forEach(pid=>{
     (state[pid]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
   });
-  return [...s].sort((a,b)=>a-b);
+  const result=[...s].sort((a,b)=>a-b);
+  // 直管に口径が未設定の場合は「最後に使った口径」をフォールバックとして使用
+  if(result.length===0 && grpLastSize[g]) return [+grpLastSize[g]];
+  return result;
 }
 
 // グループの関連直管で実際に選択されているスケジュールを返す
