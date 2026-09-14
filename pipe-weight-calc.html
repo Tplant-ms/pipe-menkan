@@ -619,7 +619,7 @@ const SECTIONS=[
   {id:'fl2k',  g:'flange', name:'2K フランジ',          type:'flange', flKey:'k2'},
   {id:'fl5k',  g:'flange', name:'5K フランジ',          type:'flange', flKey:'k5'},
   {id:'fl10k', g:'flange', name:'10K フランジ',         type:'flange', flKey:'k10'},
-  {id:'fl20k', g:'flange', name:'20K フランジ',         type:'flange', flKey:'k20'},
+  {id:'fl20k', g:'flange', name:'20K フランジ',         type:'flange', flKey:'k20', pipeSrcs:['sgp','stpg','s304']},
   {id:'flf12', g:'flange', name:'F12（7.5K）フランジ',  type:'flange', flKey:'f12'},
   // ─ 大口径 CS（STPY＋炭素鋼 LG/STD）─
   {id:'stpy',     g:'lbo', name:'STPY400 直管',                   type:'pipe_sch', mat:'STPY400', schs:['LG','STD']},
@@ -646,14 +646,14 @@ const mkUid=()=>'r'+(++uidCnt);
 const GROUP_PIPE_SRCS={
   fit_sgp: ['sgp','stpg'],
   fit_sus: ['s304'],
-  flange:  ['sgp','stpg','s304'],
+  flange:  ['sgp','stpg','s304','stpy'],
   lbo:     ['stpy'],
 };
 // 直管が未入力のときのスケジュールフォールバック
 const GROUP_SCH_FALLBACK={ lbo:'LG' };
 
 function getSmartDefault(sec){
-  const pipeIds=GROUP_PIPE_SRCS[sec.g]||[];
+  const pipeIds=sec.pipeSrcs||GROUP_PIPE_SRCS[sec.g]||[];
   if(!pipeIds.length) return {sch:GROUP_SCH_FALLBACK[sec.g]||'', size:''};
 
   // sch と size を別々に収集（STPGはsch入力だけでもschを拾う）
@@ -767,9 +767,9 @@ function fitSizeOpts(sec,sch,sel,bypass){
   return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
 }
 
-function flangeSizeOpts(flKey,sel,g,bypass){
+function flangeSizeOpts(flKey,sel,g,bypass,pipeIds){
   const fd=FL[flKey];
-  const active=bypass?[]:(g?getActiveSizesForGroup(g):getActiveSizes());
+  const active=bypass?[]:(g?getActiveSizesForGroup(g,pipeIds):getActiveSizes());
   let sizes=Object.keys(fd.data).map(Number).sort((a,b)=>a-b);
   if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
   return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
@@ -873,7 +873,7 @@ function rowHTML(sec,row){
     const fd=FL[sec.flKey];
     const bypass=row.bypass||false;
     const typeOpts='<option value="">— 形式 —</option>'+fd.types.map(t=>`<option value="${t}"${row.fltype===t?' selected':''}>${t}形</option>`).join('');
-    const sOpts=flangeSizeOpts(sec.flKey,row.size,sec.g,bypass);
+    const sOpts=flangeSizeOpts(sec.flKey,row.size,sec.g,bypass,sec.pipeSrcs);
     return `<div class="entry-row" id="er-${u}">
       <div class="row-l1">
         <select class="sch-sel" style="width:58px" onchange="onSel(this,'${s}','${u}','fltype')">${typeOpts}</select>
@@ -1036,11 +1036,11 @@ function getActiveSizes(){
 }
 
 // グループ（fit_sgp / fit_sus / flange / lbo）に対応する直管だけのサイズ
-function getActiveSizesForGroup(g){
-  const pipeIds=GROUP_PIPE_SRCS[g];
-  if(!pipeIds||!pipeIds.length) return getActiveSizes(); // 未定義グループはフォールバック
+function getActiveSizesForGroup(g,pipeIds){
+  const ids=pipeIds||GROUP_PIPE_SRCS[g];
+  if(!ids||!ids.length) return getActiveSizes(); // 未定義グループはフォールバック
   const s=new Set();
-  pipeIds.forEach(pid=>{
+  ids.forEach(pid=>{
     (state[pid]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
   });
   return [...s].sort((a,b)=>a-b);
