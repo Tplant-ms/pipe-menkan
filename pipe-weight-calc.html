@@ -92,12 +92,10 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 .teishaku-btn{padding:5px 7px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--sw-soft);color:var(--sw);font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
 .teishaku-btn:hover{border-color:var(--sw);background:var(--sw);color:#fff}
 .del-btn{width:28px;height:28px;flex-shrink:0;border:1px solid var(--paper-line);border-radius:3px;background:transparent;color:var(--ink-soft);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
-.del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}
-.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
 .add-btn{width:100%;padding:7px;border:1.5px dashed var(--paper-line);border-radius:4px;background:transparent;color:var(--ink-soft);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
 .add-btn:hover{border-color:var(--blueprint);color:var(--blueprint);background:var(--row-hover)}
-.empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}
-.site-nav{background:var(--blueprint);border-top:3px solid var(--blueprint-deep);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}.site-nav{background:var(--blueprint);border-top:3px solid var(--blueprint-deep);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
 .site-nav a{color:#aac4df;font-size:.78rem;text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:4px;transition:all .15s;}
 .site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
 .site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
@@ -119,6 +117,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 .man-tbl tr:nth-child(even) td{background:var(--row)}
 .man-note{font-size:.74rem;color:var(--ink-soft);line-height:1.7;margin-top:4px}
 .man-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:4px;white-space:nowrap}
+
 </style>
 </head>
 <body>
@@ -141,6 +140,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
     <span class="total-unit">kg</span>
   </div>
 </div>
+
 
 <main id="main-wrap"></main>
 
@@ -168,14 +168,41 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
   <div class="man-section">
     <div class="man-h2">操 作 方 法</div>
     <ol class="man-ol">
-      <li>各セクション名をタップして展開します。</li>
-      <li>「＋ 行を追加」をタップして入力行を追加します。</li>
-      <li>サイズ（呼び径）とスケジュール（配管のみ）を選択します。</li>
-      <li>本数（個数）を入力または ＋／－ ボタンで増減します。</li>
-      <li>直管は長さ（mm）を入力すると重量を自動計算します。</li>
-      <li>直管の「定尺」ボタンを押すと規格定尺長が自動入力されます。</li>
+      <li>まず <strong>直管セクション</strong> を展開し、「＋ 行を追加」で使用する口径・スケジュールを入力します。</li>
+      <li>直管に口径を入力すると、同じ材質グループの <strong>継手・フランジのサイズリストが自動的に絞り込まれます</strong>。<br>
+          <span style="font-size:.74rem;color:var(--ink-soft)">例：CS直管に100Aだけ入力 → CS継手のサイズは100Aのみ表示</span></li>
+      <li>同様に、直管のスケジュール（Sch40 等）も継手の <strong>スケジュールリストに反映</strong> されます。<br>
+          <span style="font-size:.74rem;color:var(--ink-soft)">例：STPG Sch40・Sch80を入力 → CS継手にSch40とSch80のみ表示</span></li>
+      <li>継手・フランジ行を追加すると、直管で入力済みのスケジュール・サイズが <strong>自動でデフォルト設定</strong> されます（1種類の場合）。数量は <strong>１</strong> が自動入力されます。</li>
+      <li>フランジ行は形式が <strong>SOP または SOH</strong>（圧力クラスに応じて自動選択）に設定されます。</li>
+      <li>直管は長さ（mm）を入力、「定尺」ボタンで規格定尺長を自動入力できます。</li>
       <li>合計重量は画面上部に常時表示されます。</li>
+      <li>全て入力し直す場合は「⟳ 全クリア」ボタンを使用してください。</li>
     </ol>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">✕ ボ タ ン の 動 作</div>
+    <p class="man-note" style="margin-bottom:8px">継手・フランジ行の <strong>✕</strong> ボタンは、状態によって動作が変わります。</p>
+    <table class="man-tbl">
+      <thead><tr><th>押す前の状態</th><th>動作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>スケジュール・サイズに値が入っている</td>
+          <td><strong>値をクリア＋フィルター解除</strong><br>
+              <span style="color:var(--ink-soft)">全スケジュール・全口径が選択できる状態になります。他の口径の重量を一時的に調べたいときに使います。</span></td>
+        </tr>
+        <tr>
+          <td>値がない（クリア後の空行）</td>
+          <td><strong>行を削除</strong></td>
+        </tr>
+        <tr>
+          <td>直管・大口径管行</td>
+          <td><strong>即削除</strong>（フィルターなし）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="man-note" style="margin-top:6px">💡 継手で絞り込み外の口径を一時的に調べたいときに活用してください。</p>
   </div>
 
   <div class="man-section">
@@ -613,6 +640,47 @@ let uidCnt=0;
 const mkUid=()=>'r'+(++uidCnt);
 
 /* ======================================================
+   スケジュールのグループ別デフォルト値
+====================================================== */
+// グループ → 参照すべき直管セクションID
+const GROUP_PIPE_SRCS={
+  fit_sgp: ['sgp','stpg'],
+  fit_sus: ['s304'],
+  flange:  ['sgp','stpg','s304'],
+  lbo:     ['stpy'],
+};
+// 直管が未入力のときのスケジュールフォールバック
+const GROUP_SCH_FALLBACK={ lbo:'LG' };
+
+function getSmartDefault(sec){
+  const pipeIds=GROUP_PIPE_SRCS[sec.g]||[];
+  if(!pipeIds.length) return {sch:GROUP_SCH_FALLBACK[sec.g]||'', size:''};
+
+  // sch と size を別々に収集（STPGはsch入力だけでもschを拾う）
+  const schSet=new Set();
+  const sizeSet=new Set();
+  pipeIds.forEach(pid=>{
+    (state[pid]||[]).forEach(r=>{
+      if(pid==='sgp'){
+        // SGP直管: sizeがあればSGPを追加
+        if(r.size){ schSet.add('SGP'); sizeSet.add(String(r.size)); }
+      } else {
+        // STPG・SUS等: schだけでも追加（sizeは両方ある時のみ）
+        if(r.sch) schSet.add(r.sch);
+        if(r.sch&&r.size) sizeSet.add(String(r.size));
+      }
+    });
+  });
+
+  const schs=[...schSet];
+  const sizes=[...sizeSet];
+  return {
+    sch : schs.length===1 ? schs[0] : (GROUP_SCH_FALLBACK[sec.g]||''),
+    size: sizes.length===1 ? sizes[0]: '',
+  };
+}
+
+/* ======================================================
    重量計算
 ====================================================== */
 function calcWt(sec,row){
@@ -683,22 +751,27 @@ function pipeSizeOpts(mat,sch,sel){
   return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
 }
 
-function fitSizeOpts(sec,sch,sel){
+function fitSizeOpts(sec,sch,sel,bypass){
+  const active=bypass?[]:getActiveSizesForGroup(sec.g);
   if(sec.type==='fit_lb'){
     const tbl=(LB_FIT[sec.lbKey]||{})[sec.matKey]||{};
     const data=tbl[sch]||{};
-    const sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+    let sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+    if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
     return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
   }
   const tbl=(FIT[sec.fitKey]||{})[sec.matKey]||{};
   const data=tbl[sch]||{};
-  const sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+  let sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+  if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
   return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
 }
 
-function flangeSizeOpts(flKey,sel){
+function flangeSizeOpts(flKey,sel,g,bypass){
   const fd=FL[flKey];
-  const sizes=Object.keys(fd.data).map(Number).sort((a,b)=>a-b);
+  const active=bypass?[]:(g?getActiveSizesForGroup(g):getActiveSizes());
+  let sizes=Object.keys(fd.data).map(Number).sort((a,b)=>a-b);
+  if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
   return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
 }
 
@@ -715,7 +788,7 @@ function rowHTML(sec,row){
     ontouchstart="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
     onmousedown="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
     ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
-  const delBtn=`<button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>`;
+  const delBtn=`<button class="del-btn" onclick="delOrClear('${s}','${u}')" title="値あり→クリア＆フィルター解除 / 空行→削除">✕</button>`;
 
   if(sec.type==='pipe'){
     const sOpts=pipeSizeOpts(sec.mat,null,row.size);
@@ -774,8 +847,11 @@ function rowHTML(sec,row){
   }
 
   if(sec.type==='fit'||sec.type==='fit_lb'){
-    const schOpts='<option value="">—</option>'+sec.schs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
-    const sOpts=row.sch?fitSizeOpts(sec,row.sch,row.size):'<option value="">— スケジュール先に —</option>';
+    const bypass=row.bypass||false;
+    const activeSchs=bypass?[]:getActiveSchsForGroup(sec.g);
+    const visSchs=activeSchs.length>0 ? sec.schs.filter(sc=>activeSchs.includes(sc)) : sec.schs;
+    const schOpts='<option value="">—</option>'+visSchs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
+    const sOpts=row.sch?fitSizeOpts(sec,row.sch,row.size,bypass):'<option value="">— スケジュール先に —</option>';
     return `<div class="entry-row" id="er-${u}">
       <div class="row-l1">
         <select class="sch-sel" onchange="onSel(this,'${s}','${u}','sch')">${schOpts}</select>
@@ -795,8 +871,9 @@ function rowHTML(sec,row){
 
   if(sec.type==='flange'){
     const fd=FL[sec.flKey];
+    const bypass=row.bypass||false;
     const typeOpts='<option value="">— 形式 —</option>'+fd.types.map(t=>`<option value="${t}"${row.fltype===t?' selected':''}>${t}形</option>`).join('');
-    const sOpts=flangeSizeOpts(sec.flKey,row.size);
+    const sOpts=flangeSizeOpts(sec.flKey,row.size,sec.g,bypass);
     return `<div class="entry-row" id="er-${u}">
       <div class="row-l1">
         <select class="sch-sel" style="width:58px" onchange="onSel(this,'${s}','${u}','fltype')">${typeOpts}</select>
@@ -867,8 +944,14 @@ function onSel(el,secId,uid,field){
     const ssSel=document.getElementById('ss-'+uid);
     if(ssSel){
       if(sec.type==='pipe_sch') ssSel.innerHTML=pipeSizeOpts(sec.mat,row.sch,'');
-      else if(sec.type==='fit'||sec.type==='fit_lb') ssSel.innerHTML=fitSizeOpts(sec,row.sch,'');
+      else if(sec.type==='fit'||sec.type==='fit_lb') ssSel.innerHTML=fitSizeOpts(sec,row.sch,'',row.bypass||false);
     }
+    // 直管スケジュール変更時 → 継手のスケジュール選択肢も更新
+    if(sec.type==='pipe_sch') refreshFitSections();
+  }
+  // 直管サイズ変更時 → 継手・フランジの選択肢を更新
+  if(field==='size' && (sec.type==='pipe'||sec.type==='pipe_sch')){
+    refreshFitSections();
   }
   updateRowWt(sec,row);
 }
@@ -896,20 +979,42 @@ function setTeishaku(secId,uid,len){
 
 function addRow(secId){
   const sec=SECTIONS.find(s=>s.id===secId);
-  const row={uid:mkUid(),sch:'',size:'',fltype:'',len:null,qty:null};
+  const def=getSmartDefault(sec);
+  // フランジはデフォルト形式を SOP/SOH（types[0]）に設定。BL は × クリア後に選択可
+  const defaultFltype=sec.type==='flange'?(FL[sec.flKey].types[0]||''):'';
+  const row={uid:mkUid(),sch:def.sch,size:def.size,fltype:defaultFltype,len:null,qty:1,bypass:false};
   state[secId].push(row);
   document.getElementById('card-'+secId).classList.add('open');
   renderSec(sec);
+  renderTotal();
   setTimeout(()=>{
     const el=document.getElementById('er-'+row.uid);
     if(el) el.querySelector('select').focus();
   },60);
 }
 
+
+
 function delRow(secId,uid){
   state[secId]=state[secId].filter(r=>r.uid!==uid);
   const sec=SECTIONS.find(s=>s.id===secId);
   renderSec(sec);renderTotal();
+  // 直管の行を削除したら継手・フランジの選択肢も更新
+  if(sec.type==='pipe'||sec.type==='pipe_sch') refreshFitSections();
+}
+
+// × ボタン: 値あり → クリア＆フィルター解除 / 空行 → 削除
+function delOrClear(secId,uid){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  const hasFitRow=sec.type==='fit'||sec.type==='fit_lb'||sec.type==='flange';
+  if(hasFitRow && (row.sch||row.size||row.fltype)){
+    // 1回目: 値をクリアしてフィルター解除
+    row.sch=''; row.size=''; row.fltype=''; row.bypass=true;
+    renderSec(sec); renderTotal();
+  } else {
+    // 空行（または直管行）はそのまま削除
+    delRow(secId,uid);
+  }
 }
 
 function clearAll(){
@@ -918,6 +1023,50 @@ function clearAll(){
   renderAll();
 }
 function toggleCard(secId){document.getElementById('card-'+secId).classList.toggle('open');}
+
+/* ======================================================
+   直管入力済み口径の取得 → 継手サイズリスト絞り込み用
+====================================================== */
+function getActiveSizes(){
+  const s=new Set();
+  SECTIONS.filter(x=>x.type==='pipe'||x.type==='pipe_sch').forEach(sec=>{
+    (state[sec.id]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
+  });
+  return [...s].sort((a,b)=>a-b);
+}
+
+// グループ（fit_sgp / fit_sus / flange / lbo）に対応する直管だけのサイズ
+function getActiveSizesForGroup(g){
+  const pipeIds=GROUP_PIPE_SRCS[g];
+  if(!pipeIds||!pipeIds.length) return getActiveSizes(); // 未定義グループはフォールバック
+  const s=new Set();
+  pipeIds.forEach(pid=>{
+    (state[pid]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
+  });
+  return [...s].sort((a,b)=>a-b);
+}
+
+// グループの関連直管で実際に選択されているスケジュールを返す
+// （行が存在しない or スケジュール未選択の場合は空配列 → 全スケジュール表示）
+function getActiveSchsForGroup(g){
+  const pipeIds=GROUP_PIPE_SRCS[g]||[];
+  const s=new Set();
+  pipeIds.forEach(pid=>{
+    (state[pid]||[]).forEach(row=>{
+      // SGP直管はschフィールドなし → 行があれば'SGP'相当
+      if(pid==='sgp'){ if(row.size) s.add('SGP'); }
+      else{ if(row.sch) s.add(row.sch); }
+    });
+  });
+  return [...s];
+}
+
+function refreshFitSections(){
+  // 継手・フランジセクションのサイズ選択肢を再描画
+  SECTIONS.filter(x=>x.type==='fit'||x.type==='fit_lb'||x.type==='flange').forEach(sec=>{
+    if(state[sec.id].length>0) renderSec(sec);
+  });
+}
 
 /* ======================================================
    ±ボタン長押し
@@ -978,6 +1127,8 @@ function buildDOM(){
   let lastG='';
   SECTIONS.forEach(sec=>{
     if(sec.g!==lastG){
+      if(lastG) html+='</div>';  // close previous group wrapper
+      html+=`<div data-g="${sec.g}">`;
       html+=`<div class="group-label">${GROUP_LABELS[sec.g]||sec.g}</div>`;
       if(GROUP_NOTE[sec.g]) html+=`<div class="group-note">${GROUP_NOTE[sec.g]}</div>`;
       lastG=sec.g;
@@ -994,6 +1145,7 @@ function buildDOM(){
       </div>
     </div>`;
   });
+  if(lastG) html+='</div>';  // close last group wrapper
   wrap.innerHTML=html;
 }
 
