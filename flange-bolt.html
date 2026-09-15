@@ -121,6 +121,13 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .gk-cell .i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
 .gk-cell .i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;display:block;}
 .gk-cell .i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
+
+/* ── 折りたたみ共通 ── */
+.coll-head{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;}
+.chevron{display:inline-block;font-style:normal;font-size:.72rem;opacity:.65;margin-left:6px;transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+.coll-extra-badge{font-size:.68rem;font-weight:400;opacity:.75;margin-left:4px;letter-spacing:.02em;}
+.gk-coll-head{background:var(--bp);color:#fff;padding:6px 14px;margin:0 -14px 8px;}
 </style>
 
 <header class="hdr">
@@ -150,6 +157,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
       <!-- JIS -->
       <div id="in-jis">
         <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="jis-size" onchange="update()" autocomplete="off"></select>
+        </div>
+        <div>
           <div class="s-lbl">フランジ レーティング</div>
           <div class="rtab" id="jis-rtabs">
             <button class="rtab-btn" onclick="setJisRating(this,'2k')">2k</button>
@@ -158,14 +169,14 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
             <button class="rtab-btn" onclick="setJisRating(this,'20k')">20k</button>
           </div>
         </div>
-        <div>
-          <div class="s-lbl">呼び径</div>
-          <select id="jis-size" onchange="update()" autocomplete="off"></select>
-        </div>
       </div>
 
       <!-- PVC -->
       <div id="in-pvc" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="pvc-size" onchange="update()"></select>
+        </div>
         <div>
           <div class="s-lbl">フランジ種類</div>
           <div class="pvc-tabs" id="pvc-ttabs">
@@ -176,14 +187,14 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
             <button class="pvc-tab-btn" onclick="setPvcType(this,'w10k')">溶接-10K</button>
           </div>
         </div>
-        <div>
-          <div class="s-lbl">呼び径</div>
-          <select id="pvc-size" onchange="update()"></select>
-        </div>
       </div>
 
       <!-- DCIP -->
       <div id="in-dcip" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="dcip-size" onchange="update()"></select>
+        </div>
         <div>
           <div class="s-lbl">圧力クラス</div>
           <div class="rtab" id="dcip-rtabs">
@@ -198,14 +209,14 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
             <button class="seg-btn" onclick="setDcipLen(this,'l2')">L2（フランジ-仕切弁）</button>
           </div>
         </div>
-        <div>
-          <div class="s-lbl">呼び径</div>
-          <select id="dcip-size" onchange="update()"></select>
-        </div>
       </div>
 
       <!-- LB -->
       <div id="in-lb" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="lb-size" onchange="update()"></select>
+        </div>
         <div>
           <div class="s-lbl">圧力クラス</div>
           <div class="rtab" id="lb-rtabs">
@@ -220,10 +231,6 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
             <button class="seg-btn" onclick="setLbBolt(this,'stud')">全ネジボルト</button>
           </div>
         </div>
-        <div>
-          <div class="s-lbl">呼び径</div>
-          <select id="lb-size" onchange="update()"></select>
-        </div>
       </div>
 
     </div>
@@ -231,7 +238,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 
   <!-- ③ 追加部材 -->
   <div class="card">
-    <div class="card-ttl">追加部材（基準長さに加算）</div>
+    <div class="card-ttl coll-head" id="extra-toggle" onclick="toggleExtra()">
+      追加部材（基準長さに加算）<span id="extra-badge" class="coll-extra-badge"></span><span class="chevron" id="extra-chevron">▼</span>
+    </div>
+    <div id="extra-body" style="display:none;">
     <div class="card-body">
 
       <!-- ワッシャー（JIS/DCIP/LB用） -->
@@ -291,6 +301,7 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
     <div style="padding:4px 14px 10px;">
       <button class="reset-link" onclick="clearAllExtras()">追加項目をすべてクリア</button>
     </div>
+    </div><!-- /extra-body -->
   </div>
 
   <!-- ④ 選定結果 -->
@@ -314,7 +325,11 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
       <table class="bkdn-tbl" id="bkdn-tbl"></table>
     </div>
     <div class="gk-section" id="gk-section" style="display:none;">
-      <div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--bp);color:#fff;padding:6px 14px;margin:0 -14px 0;">ガスケット参考寸法</div>
+      <div class="coll-head gk-coll-head" id="gk-toggle" onclick="toggleGasket()">
+        <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">ガスケット参考寸法</span>
+        <span class="chevron" id="gk-chevron">▼</span>
+      </div>
+      <div id="gk-body" style="display:none;">
       <!-- RF 平面座 -->
       <div class="gk-band" id="gk-rf-row" style="display:none;">
         <div class="gk-face-lbl">平面座（RF）</div>
@@ -772,6 +787,7 @@ function update(){
   if(totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${minLen} mm</td></tr>`;
   tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${rec} mm</td></tr>`;
   si('bkdn-tbl').innerHTML=tbl;
+  updateExtraBadge();
 
   // ── ガスケット参考寸法 ──────────────────────────────────────────────────
   (function(){
@@ -929,6 +945,28 @@ populateDcipSizes();
 populateSelect('lb-size', Object.keys(LB_TABLE['150lb']), '1/2B');
 update();
 
+
+/* ── 折りたたみ ── */
+function toggleExtra(){
+  const body=si('extra-body'), chev=si('extra-chevron');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+function toggleGasket(){
+  const body=si('gk-body'), chev=si('gk-chevron');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+function updateExtraBadge(){
+  const parts=[];
+  if(state.washerCount>0) parts.push('W×'+state.washerCount);
+  if(state.dnut) parts.push('ダブルナット');
+  if(state.other){ const v=parseFloat(document.getElementById('other-h')?.value||0); parts.push('追加'+v+'mm'); }
+  si('extra-badge').textContent=parts.length?'（'+parts.join(' + ')+'）':'';
+}
+
 /* ── その他追加 ステッパーボタン ── */
 (function(){
   const input = si('other-h');
@@ -983,6 +1021,7 @@ update();
 <nav class="site-nav">
   <a href="index.html">🏠 トップ</a>
   <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="pipe-identify.html">🔍 サイズ特定</a>
   <a href="flange-bolt.html" class="current">🔩 ボルト寸法</a>
   <a href="pipe-weight-calc.html">📦 配管拾い出し</a>
   <a href="cast-iron-weight.html">🏭 鋳鉄管拾い出し</a>
