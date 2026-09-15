@@ -539,8 +539,9 @@ function findCandidatesFor(matKey, mOD, mT, odTol) {
         if (t !== undefined) allSchs.push({ sch, t });
       }
       entry.hasData = allSchs.length > 0;
-      // isLarge: 素材にデータがない 700A 以上のみ
-      entry.isLarge = size >= 700 && !entry.hasData;
+      // 規格にデータが存在しないサイズは候補から除外
+      if (!entry.hasData) continue;
+      entry.isLarge = false;
 
       if (mT !== null && entry.hasData) {
         const withDiff = allSchs.map(s => ({
