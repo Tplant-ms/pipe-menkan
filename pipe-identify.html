@@ -175,11 +175,11 @@ main{max-width:560px;margin:0 auto;padding:16px 14px 40px}
     <span class="step-label">測定方法を選択</span>
   </div>
   <div class="btn-group col2" id="mode-group">
-    <button class="sel-btn active" data-mode="circ">
-      外周で測定<br><span style="font-size:.68rem;font-weight:400">コンベックスを巻く</span>
-    </button>
-    <button class="sel-btn" data-mode="od">
+    <button class="sel-btn active" data-mode="od">
       外径を直接入力<br><span style="font-size:.68rem;font-weight:400">ノギス・スケール直読み</span>
+    </button>
+    <button class="sel-btn" data-mode="circ">
+      外周で測定<br><span style="font-size:.68rem;font-weight:400">コンベックスを巻く（大口径）</span>
     </button>
   </div>
 </div>
@@ -399,7 +399,7 @@ const OD = {
 
 /* ===== 状態 ===== */
 let curMat  = 'SUS';
-let curMode = 'circ';
+let curMode = 'od';
 let curTol  = 5;
 
 /* ===== DOM ===== */
@@ -758,7 +758,8 @@ function makeSpin(btnId, fn) {
 /* ===== 初期化 ===== */
 (function init() {
   updateMatUI();
-  derivedBox.style.display = '';
+  step3Label.textContent = '外径を入力';
+  derivedBox.style.display = 'none';
 
   // スピンボタン登録
   makeSpin('main-dec', () => spinMain(-1));
