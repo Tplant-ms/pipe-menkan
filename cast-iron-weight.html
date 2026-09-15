@@ -332,6 +332,25 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
     </table>
   </div>
 
+  <div class="man-section">
+    <div class="man-h2">押　輪（K形直管・短管１号・継ぎ輪連動）</div>
+    <div class="man-h3">概要</div>
+    <p class="man-note">K形メカ直管・短管１号・継ぎ輪を入力すると「押輪」カードに自動連動します。各口径ごとに以下の関係で計算されます。</p>
+    <ol class="man-ol" style="margin-top:6px">
+      <li>押輪合計 ＝ K形直管本数 ＋ 短管１号個数 ＋ 継ぎ輪個数×２（自動）</li>
+      <li>特殊押輪の個数を入力（初期値：0）</li>
+      <li>通常押輪 ＝ 押輪合計 − 特殊押輪（自動）</li>
+    </ol>
+    <div class="man-h3">サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>口径範囲</th></tr></thead>
+      <tbody>
+        <tr><td>押輪（通常）</td><td>75A ～ 1500A</td></tr>
+        <tr><td>特殊押輪</td><td>75A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 </div>
 
@@ -364,6 +383,9 @@ const CRV45={75:14.1,100:17.6,150:28.2,200:45.6,250:62.9,300:86.2,350:116,400:15
 const CRV90={75:15.4,100:19.3,150:30.8,200:53.6,250:74,300:114,350:141,400:181,450:217,500:275,600:383,700:521,800:728,900:947,1000:1150,1100:1390,1200:1610,1350:2010,1500:2440};
 const FUTA={75:4.53,100:5.81,150:8.22,200:11.9,250:17.7,300:23.5,350:31.5,400:39.3,450:51.5,500:62.5,600:87.6,700:123,800:167,900:224,1000:290,1100:361,1200:449,1350:609,1500:791};
 const RAPPA={75:5.25,100:6.8,150:10.6,200:16.5,250:24.9,300:34,350:46,400:58.6,450:77.5,500:93,600:132,700:178,800:206,900:267,1000:331,1100:405,1200:489,1350:649,1500:833};
+// 押輪・特殊押輪（K形直管連動、1500Aまで）
+const OSWA={75:1.87,100:2.49,150:4.27,200:5.31,250:7.53,300:8.91,350:11.9,400:14.6,450:17.2,500:19.9,600:24.9,700:35.2,800:42.1,900:53.9,1000:63.2,1100:72.1,1200:81.3,1350:99.4,1500:123};
+const OSWS={75:3.4,100:4.9,150:7.7,200:9,250:12.6,300:15.2,350:19.5,400:25.6,450:29.2,500:32.3,600:42.1,700:73.3,800:84.5,900:122.3,1000:134.3,1100:159.1,1200:187,1350:230.9,1500:263.2};
 // 組み合わせ継手
 // JDPA G 3007 形式2 7.5K
 const TMAN={
@@ -447,6 +469,7 @@ function getActivePipeSizes(){
 }
 function onPipeSizeChange(){
   SECTIONS.filter(s=>s.g==='fit').forEach(renderSec);
+  renderPushRing();
   renderTotal();
 }
 
@@ -496,7 +519,7 @@ function sizeOpts(sec,sel){
         return diams.map(d=>`<option value="${d}"${sel==d?' selected':''}>φ${d}</option>`).join('');
     }
   }
-  return DIAM.filter(d=>sec.data[d]!==undefined)
+  return (sec.diam||DIAM).filter(d=>sec.data[d]!==undefined)
     .map(d=>`<option value="${d}"${sel==d?' selected':''}>φ${d}</option>`).join('');
 }
 
@@ -600,13 +623,111 @@ function renderSec(sec){
   list.innerHTML=rows.length===0?'<div class="empty-msg">項目なし — 下の＋ボタンで追加</div>':rows.map(r=>rowHTML(sec,r)).join('');
 }
 
+function calcPushRingTotal(){
+  return getOswBaseSizes().reduce((t,sz)=>{
+    const bq=getOswBaseQty(sz);
+    const sp=Math.min(pushRingState[sz]||0,bq);
+    return t+(bq-sp)*(OSWA[sz]||0)+sp*(OSWS[sz]||0);
+  },0);
+}
+
 function renderTotal(){
   let t=0;
   SECTIONS.forEach(s=>state[s.id].forEach(r=>{const w=calcWt(s,r);if(w)t+=w;}));
+  t+=calcPushRingTotal();
   document.getElementById('grand-total').textContent=t.toFixed(1);
 }
 
-function renderAll(){SECTIONS.forEach(renderSec);renderTotal();}
+/* =====================================================
+   押輪（K形直管・短管１号連動）
+===================================================== */
+const pushRingState={}; // {size: 特殊押輪個数}
+
+function getOswBaseQty(size){
+  // K形直管 + 短管１号 の本数、継ぎ輪は両端で×2
+  const mq=state['meka'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty:0),0);
+  const t1=state['tan1'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty:0),0);
+  const ts=state['tsug'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty*2:0),0);
+  return mq+t1+ts;
+}
+
+function getOswBaseSizes(){
+  const sizes=new Set();
+  ['meka','tan1','tsug'].forEach(id=>{
+    state[id].forEach(r=>{if(r.size&&+r.qty>0) sizes.add(+r.size);});
+  });
+  return [...sizes].sort((a,b)=>a-b);
+}
+
+function renderPushRing(){
+  const body=document.getElementById('osw-body');
+  const subEl=document.getElementById('osw-sub');
+  if(!body||!subEl) return;
+  const sizes=getOswBaseSizes();
+  if(sizes.length===0){
+    body.innerHTML='<div class="empty-msg">K形メカ直管・短管１号・継ぎ輪を入力すると自動表示されます</div>';
+    subEl.textContent='—'; subEl.className='sec-sub';
+    return;
+  }
+  let totalWt=0;
+  const adjBtn=(sz,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();adjPushRing(${sz},${dir})"
+    onmousedown="event.preventDefault();adjPushRing(${sz},${dir})"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+  const rows=sizes.map(sz=>{
+    const bq=getOswBaseQty(sz);
+    const sp=Math.min(pushRingState[sz]||0,bq);
+    const nm=bq-sp;
+    const wt=nm*(OSWA[sz]||0)+sp*(OSWS[sz]||0);
+    totalWt+=wt;
+    return `<div class="entry-row" id="osr-${sz}">
+      <div class="row-l1">
+        <span style="flex:1;font-size:.85rem;font-weight:700">φ${sz}</span>
+        <span style="font-size:.75rem;color:var(--ink-soft);white-space:nowrap">押輪 ${bq}個</span>
+        <span class="row-wt${wt>0?'':' empty'}" style="margin-left:8px">${wt.toFixed(1)}</span>
+        <span class="wt-unit">kg</span>
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">通常</span>
+        <span style="font-family:'Courier New',monospace;font-weight:700;font-size:.95rem;color:var(--blueprint);min-width:2em;text-align:right;font-variant-numeric:tabular-nums">${nm}</span>
+        <span class="unit-txt">個</span>
+        <span style="flex:1"></span>
+        <span class="row-lbl">特殊</span>
+        ${adjBtn(sz,-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="osp-${sz}" value="${sp}"
+          onchange="onPushRingInput(this,${sz})">
+        <span class="unit-txt">個</span>
+        ${adjBtn(sz,1,'＋')}
+      </div>
+    </div>`;
+  }).join('');
+  body.innerHTML=`<div class="entry-list">${rows}</div>
+    <div style="text-align:right;font-size:.72rem;color:var(--ink-soft);padding:4px 2px 0">
+      通常＋特殊 ＝ 押輪合計個数
+    </div>`;
+  subEl.textContent=totalWt>0?totalWt.toFixed(1)+' kg':'—';
+  subEl.className='sec-sub'+(totalWt>0?' has-data':'');
+}
+
+function adjPushRing(size,dir){
+  const bq=getOswBaseQty(size);
+  pushRingState[size]=Math.max(0,Math.min(bq,(pushRingState[size]||0)+dir));
+  const inp=document.getElementById('osp-'+size);
+  if(inp) inp.value=pushRingState[size];
+  renderPushRing();
+  renderTotal();
+}
+
+function onPushRingInput(el,size){
+  const bq=getOswBaseQty(size);
+  const val=Math.max(0,Math.min(bq,Math.floor(+el.value||0)));
+  pushRingState[size]=val;
+  el.value=val;
+  renderPushRing();
+  renderTotal();
+}
+
+function renderAll(){SECTIONS.forEach(renderSec);renderPushRing();renderTotal();}
 
 /* =====================================================
    行の重量表示を単体更新（再描画なし）
@@ -632,6 +753,7 @@ function onSel(el,secId,uid){
   const sec=SECTIONS.find(s=>s.id===secId);
   updateRowWt(sec,row);
   if(sec.g==='pipe') onPipeSizeChange();
+  else if(secId==='tan1'||secId==='tsug') { renderPushRing(); renderTotal(); }
 }
 function onLen(el,secId,uid){
   const row=findRow(secId,uid); if(!row) return;
@@ -644,6 +766,7 @@ function onQty(el,secId,uid){
   row.qty=el.value?+el.value:null;
   const sec=SECTIONS.find(s=>s.id===secId);
   updateRowWt(sec,row);
+  if(secId==='meka'||secId==='tan1'||secId==='tsug') renderPushRing();
 }
 
 // 定尺ボタン
@@ -682,6 +805,7 @@ function addRow(secId){
   const card=document.getElementById('card-'+secId);
   card.classList.add('open');
   renderSec(sec);
+  if(secId==='tan1'||secId==='tsug') { renderPushRing(); renderTotal(); }
   setTimeout(()=>{
     const el=document.getElementById('er-'+row.uid);
     if(el) el.querySelector('select').focus();
@@ -694,14 +818,16 @@ function delRow(secId,uid){
   const sec=SECTIONS.find(s=>s.id===secId);
   renderSec(sec);
   if(sec.g==='pipe') onPipeSizeChange();
-  else renderTotal();
+  else { if(secId==='tsug') renderPushRing(); renderTotal(); }
 }
 
 // 全クリア
 function clearAll(){
   SECTIONS.forEach(s=>{state[s.id]=[];});
+  Object.keys(pushRingState).forEach(k=>delete pushRingState[k]);
   document.querySelectorAll('.sec-card.open').forEach(el=>el.classList.remove('open'));
   renderAll();
+  renderPushRing();
 }
 
 // セクション開閉
@@ -730,6 +856,7 @@ function doAdjCur(){
     if(inp) inp.value=row.qty;
   }
   updateRowWt(sec,row);
+  if(secId==='meka'||secId==='tan1'||secId==='tsug') renderPushRing();
 }
 
 function startAdjInline(secId,uid,fld,dir,step){
@@ -762,7 +889,8 @@ function buildDOM(){
   let lastG='';
   SECTIONS.forEach(sec=>{
     if(sec.g!==lastG){
-      html+=`<div class="group-label">${sec.g==='pipe'?'直　管　類':'継　手　類'}</div>`;
+      const grpLabel=sec.g==='pipe'?'直　管　類':'継　手　類';
+      html+=`<div class="group-label">${grpLabel}</div>`;
       lastG=sec.g;
     }
     html+=`<div class="sec-card" id="card-${sec.id}">
@@ -776,6 +904,19 @@ function buildDOM(){
         <button class="add-btn" onclick="addRow('${sec.id}')">＋ 行を追加</button>
       </div>
     </div>`;
+    // K形メカ直管の直後に押輪カード挿入
+    if(sec.id==='meka'){
+      html+=`<div class="sec-card" id="card-osw">
+        <div class="sec-head" onclick="toggleCard('osw')">
+          <span class="sec-chevron">▶</span>
+          <span class="sec-name">押輪<span style="font-size:.7rem;color:var(--sw);font-weight:400;margin-left:6px">▸ K形直管・短管１号・継ぎ輪連動</span></span>
+          <span class="sec-sub" id="osw-sub">—</span>
+        </div>
+        <div class="sec-body" id="osw-body">
+          <div class="empty-msg">K形メカ直管または短管１号を入力すると自動表示されます</div>
+        </div>
+      </div>`;
+    }
   });
   wrap.innerHTML=html;
 }
