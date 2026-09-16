@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鋳鉄管重量計算</title>
+<style>
+:root{
+  --paper:#F3EFE6; --paper-line:#D9D2BF; --ink:#16324F; --ink-soft:#4A6178;
+  --blueprint:#1B3A5C; --blueprint-deep:#0F2843;
+  --accent:#C1541F; --accent-soft:#F0DCC9;
+  --sw:#5C6B1B; --sw-soft:#E8ECD3;
+  --card:#fff; --row:#f8f8f6; --row-hover:#f1efe9;
+  font-size:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--paper-line) 1px,transparent 1px);
+  background-size:100% 28px;
+  color:var(--ink);
+  font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;
+  min-height:100vh;
+}
+
+/* ─── ヘッダー ─── */
+header{
+  background:var(--blueprint);
+  position:sticky;top:0;z-index:20;
+  padding:10px 16px;
+  border-bottom:4px solid var(--accent);
+}
+.hdr-inner{
+  max-width:560px;margin:0 auto;
+  display:flex;align-items:center;gap:10px;
+}
+header h1{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:1;text-align:center}
+header p{color:#aac4df;font-size:.68rem;white-space:nowrap}
+.all-clear-btn{
+  padding:5px 11px;
+  border:1.5px solid rgba(255,255,255,.3);border-radius:4px;
+  background:var(--paper);color:var(--ink);font-size:.75rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.all-clear-btn:hover{border-color:#fff;background:#fff;color:var(--blueprint)}
+
+/* ─── 合計バー ─── */
+.total-bar{
+  background:var(--blueprint-deep);
+  padding:10px 16px;
+  position:sticky;top:88px;z-index:19;
+  border-bottom:2px solid var(--accent);
+}
+.total-bar-inner{
+  max-width:560px;margin:0 auto;
+  display:flex;align-items:baseline;gap:8px;
+}
+.total-label{color:#aac4df;font-size:.875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.total-value{
+  font-family:'Courier New',monospace;font-size:2.2rem;font-weight:700;
+  color:#fff;line-height:1;flex:1;text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+.total-unit{color:#aac4df;font-size:.85rem}
+
+/* ─── メイン ─── */
+main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+
+/* ─── グループラベル ─── */
+.group-label{
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;
+  color:#fff;
+  background:var(--blueprint);
+  padding:7px 12px;
+  border-radius:4px;
+  margin-bottom:8px;
+  margin-top:4px;
+}
+
+/* ─── セクションカード ─── */
+.sec-card{
+  background:var(--card);
+  border:1px solid var(--paper-line);
+  border-radius:4px;
+  margin-bottom:8px;
+  overflow:hidden;
+}
+.sec-head{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.sec-head:hover{background:var(--row-hover)}
+.sec-chevron{font-size:.65rem;color:var(--ink-soft);transition:transform .2s;flex-shrink:0}
+.sec-card.open .sec-chevron{transform:rotate(90deg)}
+.sec-name{font-size:.875rem;font-weight:700;flex:1;color:var(--ink)}
+.sec-sub{
+  font-family:'Courier New',monospace;font-size:.82rem;font-weight:700;
+  color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.sec-sub.has-data{color:var(--accent);font-size:.9rem}
+
+.sec-body{display:none;padding:0 10px 10px}
+.sec-card.open .sec-body{display:block}
+
+/* ─── 行リスト ─── */
+.entry-list{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+
+/* ─── 1行 ─── */
+.entry-row{
+  background:var(--row);border:1px solid var(--paper-line);
+  border-radius:3px;padding:7px 8px;
+}
+.row-l1{display:flex;align-items:center;gap:5px}
+.row-l2,.row-l3{display:flex;align-items:center;gap:6px;margin-top:5px}
+.row-lbl{font-size:.68rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;width:2.2em;flex-shrink:0}
+
+/* ─── 結果重量（大きくオレンジ）─── */
+.row-wt{
+  font-family:'Courier New',monospace;font-size:1rem;font-weight:700;
+  color:var(--accent);white-space:nowrap;text-align:right;
+  min-width:62px;flex-shrink:0;
+  font-variant-numeric:tabular-nums;
+}
+.row-wt.empty{color:var(--paper-line)}
+.wt-unit{font-size:.68rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+
+/* ─── サイズ選択 ─── */
+.sz-sel{
+  flex:1;min-width:0;
+  padding:7px 22px 7px 8px;
+  border:1.5px solid var(--paper-line);border-radius:4px;
+  background:var(--card);color:var(--ink);
+  font-size:.85rem;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%234A6178' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+  cursor:pointer;
+}
+.sz-sel:focus{outline:none;border-color:var(--blueprint)}
+
+/* ─── 数値入力 ─── */
+.num-inp{
+  border:1.5px solid var(--paper-line);border-radius:4px;
+  background:var(--card);color:var(--blueprint);
+  font-family:'Courier New',monospace;font-size:.9rem;font-weight:700;
+  text-align:right;padding:7px 5px;
+  appearance:none;-webkit-appearance:none;
+}
+.num-inp:focus{outline:none;border-color:var(--blueprint)}
+.num-inp::-webkit-inner-spin-button,.num-inp::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num-inp[type=number]{-moz-appearance:textfield}
+.len-inp{width:68px}
+.qty-inp{width:46px}
+
+/* ─── ±ボタン ─── */
+.adj-btn{
+  width:32px;height:32px;flex-shrink:0;
+  border:1.5px solid var(--paper-line);border-radius:4px;
+  background:var(--card);color:var(--ink);
+  font-size:1rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .1s;-webkit-tap-highlight-color:transparent;
+  touch-action:none;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+.adj-btn:active{background:var(--accent-soft)}
+
+/* ─── 定尺ボタン ─── */
+.teishaku-btn{
+  padding:5px 7px;
+  border:1.5px solid var(--paper-line);border-radius:4px;
+  background:var(--sw-soft);color:var(--sw);
+  font-size:.72rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:all .15s;
+}
+.teishaku-btn:hover{border-color:var(--sw);background:var(--sw);color:#fff}
+
+/* ─── ×削除ボタン ─── */
+.del-btn{
+  width:28px;height:28px;flex-shrink:0;
+  border:1px solid var(--paper-line);border-radius:3px;
+  background:transparent;color:var(--ink-soft);font-size:.8rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;
+}
+.del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ─── 単位テキスト ─── */
+.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+
+/* ─── 追加ボタン ─── */
+.add-btn{
+  width:100%;padding:7px;
+  border:1.5px dashed var(--paper-line);border-radius:4px;
+  background:transparent;color:var(--ink-soft);
+  font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;
+  transition:all .15s;
+}
+.add-btn:hover{border-color:var(--blueprint);color:var(--blueprint);background:var(--row-hover)}
+
+/* ─── 空メッセージ ─── */
+.empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}
+
+/* ─── ナビ ─── */
+.site-nav{
+  background:var(--blueprint);border-top:3px solid var(--blueprint-deep);
+  padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+}
+.site-nav a{
+  color:#aac4df;font-size:.78rem;text-decoration:none;
+  padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:4px;
+  transition:all .15s;
+}
+.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+/* ─── タブ ─── */
+.tab-row{display:flex;gap:4px;padding:4px 8px 8px;max-width:560px;margin:0 auto;}
+.tab-btn{flex:1;padding:5px 8px;border:none;border-radius:4px;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
+.tab-btn.active{background:var(--accent);color:#fff;}
+.tab-btn:not(.active){background:rgba(255,255,255,.15);color:#aac4df;}
+.tab-btn:not(.active):hover{background:rgba(255,255,255,.25);color:#fff;}
+/* ─── マニュアル ─── */
+.man-wrap{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+.man-section{background:var(--card);border:1px solid var(--paper-line);border-radius:4px;margin-bottom:12px;padding:14px}
+.man-h2{font-size:.85rem;font-weight:700;color:#fff;background:var(--blueprint);padding:6px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.06em}
+.man-h3{font-size:.8rem;font-weight:700;color:var(--blueprint);margin:10px 0 6px;border-bottom:1px solid var(--paper-line);padding-bottom:4px}
+.man-ol{margin:0 0 4px 1.4em;padding:0;font-size:.8rem;line-height:1.9;color:var(--ink)}
+.man-tbl{width:100%;border-collapse:collapse;font-size:.75rem;margin-bottom:4px}
+.man-tbl th{background:var(--blueprint);color:#fff;padding:5px 7px;text-align:left;font-weight:700}
+.man-tbl td{padding:4px 7px;border-bottom:1px solid var(--paper-line);vertical-align:middle}
+.man-tbl tr:nth-child(even) td{background:var(--row)}
+.man-note{font-size:.74rem;color:var(--ink-soft);line-height:1.7;margin-top:4px}
+.man-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:4px;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <h1>鋳鉄管　重量計算</h1>
+    <button class="all-clear-btn" id="clear-btn" onclick="clearAll()">⟳ 全クリア</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" id="tab-calc" onclick="showTab('calc')">計算</button>
+    <button class="tab-btn" id="tab-manual" onclick="showTab('manual')">マニュアル</button>
+  </div>
+</header>
+
+<div class="total-bar" id="total-bar-el">
+  <div class="total-bar-inner">
+    <span class="total-label">合計重量</span>
+    <span class="total-value" id="grand-total">0.0</span>
+    <span class="total-unit">kg</span>
+  </div>
+</div>
+
+<main id="main-wrap"></main>
+
+<div id="disclaimer-div" style="max-width:560px;margin:0 auto;padding:0 14px 24px">
+  <div style="background:#fff;border:1px solid var(--paper-line);border-radius:4px;padding:14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="background:var(--ink-soft);color:#fff;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:3px">!</span>
+      <span style="font-size:.8rem;font-weight:700;color:var(--ink-soft);letter-spacing:.05em">免責事項</span>
+    </div>
+    <div style="font-size:.78rem;color:var(--ink-soft);line-height:1.75">
+      <p style="margin:0 0 8px">本ツールの計算結果は、鋳鉄管重量の参考値としてのみご使用ください。</p>
+      <ul style="margin:0 0 8px 1.2em;padding:0;list-style:disc">
+        <li>実際の施工にあたっては、JDPA等の最新規格および設計図書・仕様書を必ずご確認ください。</li>
+        <li>継手・フランジ・ボルト類の重量は含まれません。現場ごとの実情は本ツールに反映されません。</li>
+        <li>計算結果の誤りに起因するいかなる損害・損失についても、制作者は一切の責任を負いません。</li>
+        <li>重量の最終確認は、担当技術者の判断と責任において行ってください。</li>
+      </ul>
+      <p style="margin:0;font-size:.72rem">本ツールは社内参考用として作成されたものです。第三者への無断配布・転用はご遠慮ください。</p>
+    </div>
+  </div>
+</div>
+<div id="manual-div" style="display:none">
+<div class="man-wrap">
+
+  <div class="man-section">
+    <div class="man-h2">操 作 方 法</div>
+    <ol class="man-ol">
+      <li>各セクション名をタップして展開します。</li>
+      <li>「＋ 行を追加」をタップして入力行を追加します。</li>
+      <li>口径（呼び径）を選択します。</li>
+      <li>本数（個数）を入力または ＋／－ ボタンで増減します（初期値：1）。</li>
+      <li>メカ直管・両フランジ管・片フランジ管は長さ（mm）を入力すると重量を自動計算します。</li>
+      <li>「定尺」ボタンを押すと規格定尺長が自動入力されます。</li>
+      <li>合計重量は画面上部に常時表示されます。</li>
+    </ol>
+    <div class="man-h3">口径の自動連動</div>
+    <p class="man-note">直管類（K形・両フランジ・片フランジ）に口径を設定すると、継手類の口径ドロップダウンは使用中の口径のみに絞り込まれます。直管口径が1種類のみの場合、継手行追加時に口径が自動入力されます。三フランジT字管・フランジ片落管は、使用中の口径にどちらかのサイズが一致する組み合わせのみ表示されます。</p>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">注 意 事 項</div>
+    <div class="man-h3">三フランジT字管</div>
+    <p class="man-note">
+      <span class="man-badge">～600A 形式１</span>全フランジ RFフランジの重量を収録。<br>
+      <span class="man-badge">700A～ 形式２</span>片側 GFフランジ・他 RFフランジの重量を収録。<br>
+      特注で全フランジRF仕様の場合は重量が異なります。D×d の各組み合わせを個別収録、該当する組み合わせを直接使用します。
+    </p>
+    <div class="man-h3">フランジ片落管</div>
+    <p class="man-note">
+      <span class="man-badge">～600A 形式１</span>全フランジ RFフランジの重量を収録。<br>
+      <span class="man-badge">700A～ 形式２</span>片側 GFフランジ・他 RFフランジの重量を収録。<br>
+      特注で全フランジRF仕様の場合は重量が異なります。D×d の各組み合わせを個別収録、該当する組み合わせを直接使用します。
+    </p>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">直 管 類　サイズ範囲・定尺</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>口径範囲</th><th>定尺長</th></tr></thead>
+      <tbody>
+        <tr><td>K形メカ直管</td><td>75A ～ 1500A</td><td>75A・100A: 4000mm<br>150A・200A・250A: 5000mm<br>300A以上: 6000mm</td></tr>
+        <tr><td>両フランジ管</td><td>75A ～ 1500A</td><td>75A・100A: 3000mm<br>150A以上: 4000mm</td></tr>
+        <tr><td>片フランジ管</td><td>75A ～ 1500A</td><td>75A・100A: 3000mm<br>150A以上: 4000mm</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">継 手 類　サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>口径範囲</th></tr></thead>
+      <tbody>
+        <tr><td>短管１号</td><td>75A ～ 1500A</td></tr>
+        <tr><td>短管２号</td><td>75A ～ 1500A</td></tr>
+        <tr><td>45°曲管</td><td>75A ～ 1500A</td></tr>
+        <tr><td>90°曲管</td><td>75A ～ 1500A</td></tr>
+        <tr><td>三フランジT字管</td><td>75×75 ～ 1500×1500</td></tr>
+        <tr><td>フランジ片落管</td><td>100×75 ～ 1500×1350</td></tr>
+        <tr><td>継ぎ輪</td><td>75A ～ 1500A</td></tr>
+        <tr><td>フランジふた</td><td>75A ～ 1500A</td></tr>
+        <tr><td>ラッパ口</td><td>75A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">押　輪（K形直管・短管１号・継ぎ輪連動）</div>
+    <div class="man-h3">概要</div>
+    <p class="man-note">K形メカ直管・短管１号・継ぎ輪を入力すると「押輪」カードに自動連動します。各口径ごとに以下の関係で計算されます。</p>
+    <ol class="man-ol" style="margin-top:6px">
+      <li>押輪合計 ＝ K形直管本数 ＋ 短管１号個数 ＋ 継ぎ輪個数×２（自動）</li>
+      <li>特殊押輪の個数を入力（初期値：0）</li>
+      <li>通常押輪 ＝ 押輪合計 − 特殊押輪（自動）</li>
+    </ol>
+    <div class="man-h3">サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>口径範囲</th></tr></thead>
+      <tbody>
+        <tr><td>押輪（通常）</td><td>75A ～ 1500A</td></tr>
+        <tr><td>特殊押輪</td><td>75A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html">🏠 トップ</a>
+  <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="pipe-identify.html">🔍 サイズ特定</a>
+  <a href="flange-bolt.html">🔩 ボルト寸法</a>
+  <a href="pipe-weight-calc.html">📦 配管重量計算</a>
+  <a href="cast-iron-weight.html" class="current">🏭 鋳鉄管重量計算</a>
+</nav>
+
+<script>
+/* =====================================================
+   マスタデータ
+===================================================== */
+// K形3種メカ直管 {口径: {標準長さ mm, 重量/本 kg}}
+const MEKA={75:{s:4000,w:52.1},100:{s:4000,w:67},150:{s:5000,w:119},200:{s:5000,w:157},250:{s:5000,w:195},300:{s:6000,w:301},350:{s:6000,w:351},400:{s:6000,w:429},450:{s:6000,w:514},500:{s:6000,w:606},600:{s:6000,w:812},700:{s:6000,w:1050},800:{s:6000,w:1310},900:{s:6000,w:1610},1000:{s:6000,w:1940},1100:{s:6000,w:2300},1200:{s:6000,w:2680},1350:{s:6000,w:3310},1500:{s:6000,w:4010}};
+// 両フランジ長管 {口径: {標準長さ mm, 重量/本 kg}}
+const RFLA={75:{s:3000,w:55.9},100:{s:3000,w:71.8},150:{s:4000,w:142},200:{s:4000,w:223},250:{s:4000,w:303},300:{s:4000,w:377},350:{s:4000,w:459},400:{s:4000,w:561},450:{s:4000,w:659},500:{s:4000,w:755},600:{s:4000,w:962},700:{s:4000,w:1190},800:{s:4000,w:1460},900:{s:4000,w:1740},1000:{s:4000,w:2040},1100:{s:4000,w:2360},1200:{s:4000,w:2700},1350:{s:4000,w:3330},1500:{s:4000,w:4000}};
+// 片フランジ長管
+const KFLA={75:{s:3000,w:52.2},100:{s:3000,w:67.3},150:{s:4000,w:136},200:{s:4000,w:215},250:{s:4000,w:291},300:{s:4000,w:363},350:{s:4000,w:440},400:{s:4000,w:540},450:{s:4000,w:631},500:{s:4000,w:723},600:{s:4000,w:923},700:{s:4000,w:1140},800:{s:4000,w:1390},900:{s:4000,w:1660},1000:{s:4000,w:1940},1100:{s:4000,w:2240},1200:{s:4000,w:2560},1350:{s:4000,w:3150},1500:{s:4000,w:3790}};
+// 乱尺管用 {口径: {突部 kg, 直部1m kg}}
+const FSPAN={75:{b:3.77,m:16.1},100:{b:4.55,m:20.9},150:{b:6.22,m:32.3},200:{b:8.06,m:51.6},250:{b:11.5,m:70},300:{b:14.2,m:87.1},350:{b:18.8,m:105},400:{b:21.8,m:129},450:{b:28.3,m:151},500:{b:32,m:173},600:{b:38.9,m:221},700:{b:49.9,m:273},800:{b:66.1,m:331},900:{b:85.3,m:393},1000:{b:101,m:459},1100:{b:120,m:530},1200:{b:140,m:605},1350:{b:181,m:742},1500:{b:216,m:892}};
+// 継手単重 {口径: kg}
+const TSUGI={75:14.2,100:17.9,150:25.1,200:32.7,250:40.5,300:57.5,350:68,400:81.2,450:93.7,500:107,600:146,700:184,800:223,900:270,1000:348,1100:400,1200:455,1350:600,1500:717};
+const TAN1={75:10.8,100:13.6,150:19.6,200:26.4,250:38.5,300:52.6,350:64.9,400:77.6,450:94.1,500:108,600:152,700:194,800:241,900:296,1000:357,1100:456,1200:524,1350:652,1500:785};
+const TAN2={75:15.1,100:19.2,150:28.9,200:44.2,250:60.5,300:75.2,350:92.6,400:119,450:141,500:162,600:205,700:255,800:314,900:399,1000:468,1100:544,1200:624,1350:774,1500:930};
+const CRV45={75:14.1,100:17.6,150:28.2,200:45.6,250:62.9,300:86.2,350:116,400:150,450:193,500:235,600:331,700:481,800:650,900:857,1000:1080,1100:1350,1200:1560,1350:1960,1500:2380};
+const CRV90={75:15.4,100:19.3,150:30.8,200:53.6,250:74,300:114,350:141,400:181,450:217,500:275,600:383,700:521,800:728,900:947,1000:1150,1100:1390,1200:1610,1350:2010,1500:2440};
+const FUTA={75:4.53,100:5.81,150:8.22,200:11.9,250:17.7,300:23.5,350:31.5,400:39.3,450:51.5,500:62.5,600:87.6,700:123,800:167,900:224,1000:290,1100:361,1200:449,1350:609,1500:791};
+const RAPPA={75:5.25,100:6.8,150:10.6,200:16.5,250:24.9,300:34,350:46,400:58.6,450:77.5,500:93,600:132,700:178,800:206,900:267,1000:331,1100:405,1200:489,1350:649,1500:833};
+// 押輪・特殊押輪（K形直管連動、1500Aまで）
+const OSWA={75:1.87,100:2.49,150:4.27,200:5.31,250:7.53,300:8.91,350:11.9,400:14.6,450:17.2,500:19.9,600:24.9,700:35.2,800:42.1,900:53.9,1000:63.2,1100:72.1,1200:81.3,1350:99.4,1500:123};
+const OSWS={75:3.4,100:4.9,150:7.7,200:9,250:12.6,300:15.2,350:19.5,400:25.6,450:29.2,500:32.3,600:42.1,700:73.3,800:84.5,900:122.3,1000:134.3,1100:159.1,1200:187,1350:230.9,1500:263.2};
+// 組み合わせ継手
+// JDPA G 3007 形式2 7.5K
+const TMAN={
+  '75×75':17.9,'100×75':21.9,'100×100':23.1,'150×75':30,'150×100':31.2,'150×150':33.8,
+  '200×100':43.8,'200×150':52.9,'200×200':56.1,
+  '250×100':62,'250×150':64.9,'250×250':80.4,
+  '300×100':77.1,'300×150':79.9,'300×200':99.2,'300×300':109,
+  '350×250':133,'350×350':144,
+  '400×300':175,'400×400':188,
+  '450×300':213,'450×450':235,
+  '500×300':255,'500×350':261,'500×500':284,
+  '600×400':359,'600×500':375,'600×600':389,
+  '700×400':478,'700×500':493,'700×600':507,'700×700':527,
+  '800×500':644,'800×600':657,'800×700':676,'800×800':703,
+  '900×600':700,'900×700':865,'900×800':891,'900×900':924,
+  '1000×600':885,'1000×800':1090,'1000×1000':1150,
+  '1100×600':979,'1100×800':1120,'1100×1100':1410,
+  '1200×600':1160,'1200×900':1380,'1200×1200':1690,
+  '1350×600':1460,'1350×900':1750,'1350×1350':2390,
+  '1500×600':1810,'1500×1000':2210,'1500×1500':3050
+};
+// JDPA G 3007 形式2 7.5K
+const KATA={
+  '100×75':15.5,'150×100':21.1,'200×100':27.3,'200×150':32.6,
+  '250×100':38.7,'250×150':45,'250×200':51,
+  '300×100':46.5,'300×150':52.7,'300×200':58.5,'300×250':68.2,
+  '350×150':62.2,'350×200':67.8,'350×250':77.3,'350×300':86.1,
+  '400×150':79.4,'400×200':86,'400×250':96.7,'400×300':107,'400×350':118,
+  '450×200':101,'450×250':111,'450×300':121,'450×350':132,'450×400':146,
+  '500×250':124,'500×300':134,'500×350':145,'500×400':157,'500×450':173,
+  '600×300':161,'600×350':172,'600×400':184,'600×450':199,'600×500':212,
+  '700×400':252,'700×450':270,'700×500':286,'700×600':320,
+  '800×450':318,'800×500':333,'800×600':365,'800×700':405,
+  '900×500':390,'900×600':419,'900×700':457,'900×800':505,
+  '1000×600':483,'1000×700':518,'1000×800':563,'1000×900':617,
+  '1100×700':619,'1100×800':666,'1100×900':721,'1100×1000':782,
+  '1200×800':742,'1200×900':794,'1200×1000':851,'1200×1100':916,
+  '1350×900':946,'1350×1000':997,'1350×1100':1050,'1350×1200':1120,
+  '1500×1000':1180,'1500×1100':1220,'1500×1200':1280,'1500×1350':1400
+};
+
+/* =====================================================
+   セクション定義
+===================================================== */
+const DIAM=[75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,1100,1200,1350,1500];
+
+const SECTIONS=[
+  // ─ 直管 ─
+  {id:'meka',  g:'pipe', name:'K形メカ直管',   type:'meka', data:MEKA},
+  {id:'rfla',  g:'pipe', name:'両フランジ管',   type:'fla',  data:FSPAN, flange:2, stdData:RFLA},
+  {id:'kfla',  g:'pipe', name:'片フランジ管',   type:'fla',  data:FSPAN, flange:1, stdData:KFLA},
+  // ─ 継手 ─
+  {id:'tan1',  g:'fit',  name:'短管１号',          type:'simple', data:TAN1},
+  {id:'tan2',  g:'fit',  name:'短管２号',          type:'simple', data:TAN2},
+  {id:'c45',   g:'fit',  name:'45°曲管',          type:'simple', data:CRV45},
+  {id:'c90',   g:'fit',  name:'90°曲管',          type:'simple', data:CRV90},
+  {id:'tman',  g:'fit',  name:'三フランジT字管',   type:'combo',  data:TMAN},
+  {id:'kata',  g:'fit',  name:'フランジ片落管',    type:'combo',  data:KATA},
+  {id:'tsug',  g:'fit',  name:'継ぎ輪',            type:'simple', data:TSUGI},
+  {id:'futa',  g:'fit',  name:'フランジふた',      type:'simple', data:FUTA},
+  {id:'rapp',  g:'fit',  name:'ラッパ口',          type:'simple', data:RAPPA},
+];
+
+/* =====================================================
+   状態管理
+===================================================== */
+const state={};
+SECTIONS.forEach(s=>{state[s.id]=[];});
+let uidCnt=0;
+const mkUid=()=>'r'+(++uidCnt);
+
+/* =====================================================
+   アクティブ直管口径ヘルパー
+===================================================== */
+function getActivePipeSizes(){
+  const sizes=new Set();
+  ['meka','rfla','kfla'].forEach(id=>{
+    state[id].forEach(r=>{ if(r.size) sizes.add(+r.size); });
+  });
+  return [...sizes].sort((a,b)=>a-b);
+}
+function onPipeSizeChange(){
+  SECTIONS.filter(s=>s.g==='fit').forEach(renderSec);
+  renderPushRing();
+  renderTotal();
+}
+
+/* =====================================================
+   重量計算
+===================================================== */
+function calcWt(sec,row){
+  const sz=row.size, qty=+row.qty;
+  if(!sz||!qty||qty<=0) return null;
+  switch(sec.type){
+    case 'simple':{const w=sec.data[+sz]; return w!=null?w*qty:null;}
+    case 'meka':{
+      const d=sec.data[+sz]; const len=+row.len;
+      if(!d||!len||len<=0) return null;
+      return (len/d.s)*d.w*qty;
+    }
+    case 'fla':{
+      const d=sec.data[+sz]; const len=+row.len;
+      if(!d||!len||len<=0) return null;
+      return (d.b*sec.flange+d.m*(len/1000))*qty;
+    }
+    case 'combo':{const w=sec.data[sz]; return w!=null?w*qty:null;}
+  }
+  return null;
+}
+
+/* =====================================================
+   行HTML生成
+===================================================== */
+function sizeOpts(sec,sel){
+  if(sec.type==='combo'){
+    // 直管で使用中の口径にどちらかのサイズが一致する組み合わせのみ表示
+    let keys=Object.keys(sec.data);
+    const activeSizes=getActivePipeSizes();
+    if(activeSizes.length>0){
+      const filtered=keys.filter(k=>{const p=k.split('×');return activeSizes.includes(+p[0])||activeSizes.includes(+p[1]);});
+      if(filtered.length>0) keys=filtered;
+    }
+    return keys.map(k=>`<option value="${k}"${sel===k?' selected':''}>φ${k.replace('×','×φ')}</option>`).join('');
+  }
+  // 継手行は使用中の直管口径のみ表示
+  if(sec.g==='fit'){
+    const activeSizes=getActivePipeSizes();
+    if(activeSizes.length>0){
+      const diams=DIAM.filter(d=>sec.data[d]!==undefined && activeSizes.includes(d));
+      if(diams.length>0)
+        return diams.map(d=>`<option value="${d}"${sel==d?' selected':''}>φ${d}</option>`).join('');
+    }
+  }
+  return (sec.diam||DIAM).filter(d=>sec.data[d]!==undefined)
+    .map(d=>`<option value="${d}"${sel==d?' selected':''}>φ${d}</option>`).join('');
+}
+
+function rowHTML(sec,row){
+  const wt=calcWt(sec,row);
+  const wtStr=wt!=null?wt.toFixed(1):'—';
+  const wtCls='row-wt'+(wt==null?' empty':'');
+  const sOpts=sizeOpts(sec,row.size);
+  const s=sec.id, u=row.uid;
+  const _qty=+row.qty||0;
+  const unitWtStr=(wt!=null&&_qty>1)
+    ?`<span style="margin-left:auto;font-size:.72rem;color:var(--ink-soft);white-space:nowrap">単重 ${(wt/_qty).toFixed(1)} kg</span>`
+    :'';
+
+  // 定尺ボタン（長さ入力セクション用）
+  const tBtn=`<button class="teishaku-btn" data-sec="${s}" data-uid="${u}" onclick="setTeishaku('${s}','${u}')">定尺</button>`;
+
+  // ±ボタン共通インラインハンドラ生成
+  const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();startAdjInline('${s}','${u}','${fld}',${dir},1)"
+    onmousedown="event.preventDefault();startAdjInline('${s}','${u}','${fld}',${dir},1)"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+
+  if(sec.type==='meka'){
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}')">${sOpts.replace('<option','<option value=""— —</option><option')}</select>
+        <span class="row-wt ${wt==null?'empty':''}" id="wt-${u}">${wtStr}</span>
+        <span class="wt-unit">kg</span>
+        <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        ${tBtn}
+        ${adjBtn('len',-1,'−')}
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',1,'＋')}
+        ${unitWtStr}
+      </div>
+    </div>`;
+  }
+  if(sec.type==='fla'){
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}')"><option value="">— サイズ —</option>${sOpts}</select>
+        <span class="row-wt ${wt==null?'empty':''}" id="wt-${u}">${wtStr}</span>
+        <span class="wt-unit">kg</span>
+        <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        ${tBtn}
+        ${adjBtn('len',-1,'−')}
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" onchange="onLen(this,'${s}','${u}')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        ${adjBtn('qty',-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',1,'＋')}
+        ${unitWtStr}
+      </div>
+    </div>`;
+  }
+  // simple / combo
+  const selectHTML=`<select class="sz-sel" onchange="onSel(this,'${s}','${u}')"><option value="">— サイズ —</option>${sOpts}</select>`;
+  return `<div class="entry-row" id="er-${u}">
+    <div class="row-l1">
+      ${selectHTML}
+      <span class="row-wt ${wt==null?'empty':''}" id="wt-${u}">${wtStr}</span>
+      <span class="wt-unit">kg</span>
+      <button class="del-btn" onclick="delRow('${s}','${u}')">✕</button>
+    </div>
+    <div class="row-l2">
+      <span class="row-lbl">個数</span>
+      ${adjBtn('qty',-1,'−')}
+      <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
+      <span class="unit-txt">個</span>
+      ${adjBtn('qty',1,'＋')}
+      ${unitWtStr}
+    </div>
+  </div>`;
+}
+
+/* =====================================================
+   セクション再描画
+===================================================== */
+function renderSec(sec){
+  const rows=state[sec.id];
+  const sub=rows.reduce((s,r)=>{const w=calcWt(sec,r);return s+(w||0);},0);
+  const card=document.getElementById('card-'+sec.id);
+  if(!card) return;
+  const subEl=card.querySelector('.sec-sub');
+  subEl.textContent=sub>0?sub.toFixed(1)+' kg':'—';
+  subEl.className='sec-sub'+(sub>0?' has-data':'');
+  const list=card.querySelector('.entry-list');
+  list.innerHTML=rows.length===0?'<div class="empty-msg">項目なし — 下の＋ボタンで追加</div>':rows.map(r=>rowHTML(sec,r)).join('');
+}
+
+function calcPushRingTotal(){
+  return getOswBaseSizes().reduce((t,sz)=>{
+    const bq=getOswBaseQty(sz);
+    const sp=Math.min(pushRingState[sz]||0,bq);
+    return t+(bq-sp)*(OSWA[sz]||0)+sp*(OSWS[sz]||0);
+  },0);
+}
+
+function renderTotal(){
+  let t=0;
+  SECTIONS.forEach(s=>state[s.id].forEach(r=>{const w=calcWt(s,r);if(w)t+=w;}));
+  t+=calcPushRingTotal();
+  document.getElementById('grand-total').textContent=t.toFixed(1);
+}
+
+/* =====================================================
+   押輪（K形直管・短管１号連動）
+===================================================== */
+const pushRingState={}; // {size: 特殊押輪個数}
+
+function getOswBaseQty(size){
+  // K形直管 + 短管１号 の本数、継ぎ輪は両端で×2
+  const mq=state['meka'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty:0),0);
+  const t1=state['tan1'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty:0),0);
+  const ts=state['tsug'].reduce((s,r)=>s+(+r.size===+size&&+r.qty>0?+r.qty*2:0),0);
+  return mq+t1+ts;
+}
+
+function getOswBaseSizes(){
+  const sizes=new Set();
+  ['meka','tan1','tsug'].forEach(id=>{
+    state[id].forEach(r=>{if(r.size&&+r.qty>0) sizes.add(+r.size);});
+  });
+  return [...sizes].sort((a,b)=>a-b);
+}
+
+function renderPushRing(){
+  const body=document.getElementById('osw-body');
+  const subEl=document.getElementById('osw-sub');
+  if(!body||!subEl) return;
+  const sizes=getOswBaseSizes();
+  if(sizes.length===0){
+    body.innerHTML='<div class="empty-msg">K形メカ直管・短管１号・継ぎ輪を入力すると自動表示されます</div>';
+    subEl.textContent='—'; subEl.className='sec-sub';
+    return;
+  }
+  let totalWt=0;
+  const adjBtn=(sz,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();adjPushRing(${sz},${dir})"
+    onmousedown="event.preventDefault();adjPushRing(${sz},${dir})"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+  const rows=sizes.map(sz=>{
+    const bq=getOswBaseQty(sz);
+    const sp=Math.min(pushRingState[sz]||0,bq);
+    const nm=bq-sp;
+    const wt=nm*(OSWA[sz]||0)+sp*(OSWS[sz]||0);
+    totalWt+=wt;
+    return `<div class="entry-row" id="osr-${sz}">
+      <div class="row-l1">
+        <span style="flex:1;font-size:.85rem;font-weight:700">φ${sz}</span>
+        <span style="font-size:.75rem;color:var(--ink-soft);white-space:nowrap">押輪 ${bq}個</span>
+        <span class="row-wt${wt>0?'':' empty'}" style="margin-left:8px">${wt.toFixed(1)}</span>
+        <span class="wt-unit">kg</span>
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">通常</span>
+        <span style="font-family:'Courier New',monospace;font-weight:700;font-size:.95rem;color:var(--blueprint);min-width:2em;text-align:right;font-variant-numeric:tabular-nums">${nm}</span>
+        <span class="unit-txt">個</span>
+        <span style="flex:1"></span>
+        <span class="row-lbl">特殊</span>
+        ${adjBtn(sz,-1,'−')}
+        <input class="num-inp qty-inp" type="number" id="osp-${sz}" value="${sp}"
+          onchange="onPushRingInput(this,${sz})">
+        <span class="unit-txt">個</span>
+        ${adjBtn(sz,1,'＋')}
+      </div>
+      ${(nm>1||sp>1)?`<div class="row-l3" style="justify-content:flex-end;gap:12px">
+        ${nm>1?`<span style="font-size:.72rem;color:var(--ink-soft);white-space:nowrap">通常単重 ${(OSWA[sz]||0).toFixed(2)} kg</span>`:''}
+        ${sp>1?`<span style="font-size:.72rem;color:var(--ink-soft);white-space:nowrap">特殊単重 ${(OSWS[sz]||0).toFixed(2)} kg</span>`:''}
+      </div>`:''}
+    </div>`;
+  }).join('');
+  body.innerHTML=`<div class="entry-list">${rows}</div>
+    <div style="text-align:right;font-size:.72rem;color:var(--ink-soft);padding:4px 2px 0">
+      通常＋特殊 ＝ 押輪合計個数
+    </div>`;
+  subEl.textContent=totalWt>0?totalWt.toFixed(1)+' kg':'—';
+  subEl.className='sec-sub'+(totalWt>0?' has-data':'');
+}
+
+function adjPushRing(size,dir){
+  const bq=getOswBaseQty(size);
+  pushRingState[size]=Math.max(0,Math.min(bq,(pushRingState[size]||0)+dir));
+  const inp=document.getElementById('osp-'+size);
+  if(inp) inp.value=pushRingState[size];
+  renderPushRing();
+  renderTotal();
+}
+
+function onPushRingInput(el,size){
+  const bq=getOswBaseQty(size);
+  const val=Math.max(0,Math.min(bq,Math.floor(+el.value||0)));
+  pushRingState[size]=val;
+  el.value=val;
+  renderPushRing();
+  renderTotal();
+}
+
+function renderAll(){SECTIONS.forEach(renderSec);renderPushRing();renderTotal();}
+
+/* =====================================================
+   行の重量表示を単体更新（再描画なし）
+===================================================== */
+function updateRowWt(sec,row){
+  const wt=calcWt(sec,row);
+  const el=document.getElementById('wt-'+row.uid);
+  if(el){el.textContent=wt!=null?wt.toFixed(1):'—';el.className='row-wt'+(wt==null?' empty':'');}
+  renderSec(sec);
+  renderTotal();
+}
+
+/* =====================================================
+   イベントハンドラ
+===================================================== */
+function findRow(secId,uid){
+  return state[secId].find(r=>r.uid===uid);
+}
+
+function onSel(el,secId,uid){
+  const row=findRow(secId,uid); if(!row) return;
+  row.size=el.value;
+  const sec=SECTIONS.find(s=>s.id===secId);
+  updateRowWt(sec,row);
+  if(sec.g==='pipe') onPipeSizeChange();
+  else if(secId==='tan1'||secId==='tsug') { renderPushRing(); renderTotal(); }
+}
+function onLen(el,secId,uid){
+  const row=findRow(secId,uid); if(!row) return;
+  row.len=el.value?+el.value:null;
+  const sec=SECTIONS.find(s=>s.id===secId);
+  updateRowWt(sec,row);
+}
+function onQty(el,secId,uid){
+  const row=findRow(secId,uid); if(!row) return;
+  row.qty=el.value?+el.value:null;
+  const sec=SECTIONS.find(s=>s.id===secId);
+  updateRowWt(sec,row);
+  if(secId==='meka'||secId==='tan1'||secId==='tsug') renderPushRing();
+}
+
+// 定尺ボタン
+function setTeishaku(secId,uid){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row=findRow(secId,uid); if(!row||!row.size) return;
+  let len=null;
+  if(sec.type==='meka') len=(MEKA[+row.size]||{}).s;
+  else if(sec.stdData) len=(sec.stdData[+row.size]||{}).s;
+  if(!len) return;
+  row.len=len;
+  const inp=document.getElementById('li-'+uid);
+  if(inp) inp.value=len;
+  updateRowWt(sec,row);
+}
+
+// 行追加
+function addRow(secId){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  // 個数は直管・継手とも1をデフォルト
+  const row={uid:mkUid(),size:'',len:null,qty:1};
+  // 継手行 — 直管口径が1種類のみの場合にサイズを自動入力
+  if(sec.g==='fit'){
+    const activeSizes=getActivePipeSizes();
+    if(activeSizes.length===1){
+      const sz=activeSizes[0];
+      if(sec.type==='simple' && sec.data[sz]!==undefined){
+        row.size=String(sz);
+      } else if(sec.type==='combo'){
+        const key=Object.keys(sec.data).find(k=>+k.split('×')[0]===sz);
+        if(key) row.size=key;
+      }
+    }
+  }
+  state[secId].push(row);
+  const card=document.getElementById('card-'+secId);
+  card.classList.add('open');
+  renderSec(sec);
+  if(secId==='tan1'||secId==='tsug') { renderPushRing(); renderTotal(); }
+  setTimeout(()=>{
+    const el=document.getElementById('er-'+row.uid);
+    if(el) el.querySelector('select').focus();
+  },60);
+}
+
+// 行削除
+function delRow(secId,uid){
+  state[secId]=state[secId].filter(r=>r.uid!==uid);
+  const sec=SECTIONS.find(s=>s.id===secId);
+  renderSec(sec);
+  if(sec.g==='pipe') onPipeSizeChange();
+  else { if(secId==='tsug') renderPushRing(); renderTotal(); }
+}
+
+// 全クリア
+function clearAll(){
+  SECTIONS.forEach(s=>{state[s.id]=[];});
+  Object.keys(pushRingState).forEach(k=>delete pushRingState[k]);
+  document.querySelectorAll('.sec-card.open').forEach(el=>el.classList.remove('open'));
+  renderAll();
+  renderPushRing();
+}
+
+// セクション開閉
+function toggleCard(secId){document.getElementById('card-'+secId).classList.toggle('open');}
+
+/* =====================================================
+   ±ボタン 長押し連続変化
+   ※ボタン要素にインラインハンドラを直接付与する方式（document委任を廃止）
+   　これによりAndroid Chromeの合成mousedownに起因する止まらない問題を解消
+===================================================== */
+let repeatTimer=null;
+let _curAdj=null;
+
+function doAdjCur(){
+  if(!_curAdj) return;
+  const {secId,uid,fld,dir,step}=_curAdj;
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row=findRow(secId,uid); if(!row) return;
+  if(fld==='len'){
+    row.len=Math.max(step,(+row.len||0)+dir*step);
+    const inp=document.getElementById('li-'+uid);
+    if(inp) inp.value=row.len;
+  } else {
+    row.qty=Math.max(1,(+row.qty||0)+dir);
+    const inp=document.getElementById('qi-'+uid);
+    if(inp) inp.value=row.qty;
+  }
+  updateRowWt(sec,row);
+  if(secId==='meka'||secId==='tan1'||secId==='tsug') renderPushRing();
+}
+
+function startAdjInline(secId,uid,fld,dir,step){
+  stopAdj();
+  _curAdj={secId,uid,fld,dir,step};
+  doAdjCur();
+  repeatTimer=setTimeout(function rpt(){doAdjCur();repeatTimer=setTimeout(rpt,85);},380);
+}
+function stopAdj(){clearTimeout(repeatTimer);repeatTimer=null;}
+
+/* =====================================================
+   タブ切り替え
+===================================================== */
+function showTab(t){
+  const isCalc=(t==='calc');
+  document.getElementById('total-bar-el').style.display  = isCalc ? '' : 'none';
+  document.getElementById('main-wrap').style.display     = isCalc ? '' : 'none';
+  document.getElementById('disclaimer-div').style.display= isCalc ? '' : 'none';
+  document.getElementById('manual-div').style.display    = isCalc ? 'none' : '';
+  document.getElementById('tab-calc').classList.toggle('active',  isCalc);
+  document.getElementById('tab-manual').classList.toggle('active', !isCalc);
+}
+
+/* =====================================================
+   DOM生成
+===================================================== */
+function buildDOM(){
+  const wrap=document.getElementById('main-wrap');
+  let html='';
+  let lastG='';
+  SECTIONS.forEach(sec=>{
+    if(sec.g!==lastG){
+      const grpLabel=sec.g==='pipe'?'直　管　類':'継　手　類';
+      html+=`<div class="group-label">${grpLabel}</div>`;
+      lastG=sec.g;
+    }
+    const shikiNote=(sec.id==='tman'||sec.id==='kata')
+      ?`<div style="font-size:.72rem;color:var(--ink-soft);background:var(--row);border:1px solid var(--paper-line);border-radius:3px;padding:5px 8px;margin-bottom:6px;line-height:1.7">
+          <span style="font-weight:700;color:var(--accent)">注</span>
+          ～600A: 形式１（全フランジ RFフランジ）<br>
+          700A～: 形式２（片側 GFフランジ・他 RFフランジ）
+        </div>`
+      :'';
+    html+=`<div class="sec-card" id="card-${sec.id}">
+      <div class="sec-head" onclick="toggleCard('${sec.id}')">
+        <span class="sec-chevron">▶</span>
+        <span class="sec-name">${sec.name}</span>
+        <span class="sec-sub">—</span>
+      </div>
+      <div class="sec-body">
+        ${shikiNote}
+        <div class="entry-list"></div>
+        <button class="add-btn" onclick="addRow('${sec.id}')">＋ 行を追加</button>
+      </div>
+    </div>`;
+    // K形メカ直管の直後に押輪カード挿入
+    if(sec.id==='meka'){
+      html+=`<div class="sec-card" id="card-osw">
+        <div class="sec-head" onclick="toggleCard('osw')">
+          <span class="sec-chevron">▶</span>
+          <span class="sec-name">押輪<span style="font-size:.7rem;color:var(--sw);font-weight:400;margin-left:6px">▸ K形直管・短管１号・継ぎ輪連動</span></span>
+          <span class="sec-sub" id="osw-sub">—</span>
+        </div>
+        <div class="sec-body" id="osw-body">
+          <div class="empty-msg">K形メカ直管または短管１号を入力すると自動表示されます</div>
+        </div>
+      </div>`;
+    }
+  });
+  wrap.innerHTML=html;
+}
+
+/* =====================================================
+   サンプルデータ（初期表示）
+===================================================== */
+function loadSample(){
+  const add=(id,size,qty,len)=>{
+    const row={uid:mkUid(),size:String(size),qty:qty,len:len||null};
+    state[id].push(row);
+  };
+  add('meka',200,2,4800); add('meka',150,1,3200);
+  add('rfla',200,3);
+  add('rflar',300,1,2800);
+  add('tsug',200,4);
+  add('c90',200,2);
+  ['meka','rfla','rflar','tsug','c90'].forEach(id=>{
+    document.getElementById('card-'+id)?.classList.add('open');
+  });
+}
+
+/* =====================================================
+   初期化
+===================================================== */
+buildDOM();
+renderAll();
+</script>
+</body>
+</html>

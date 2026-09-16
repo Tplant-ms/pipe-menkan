@@ -1,0 +1,1047 @@
+<title>フランジ ボルト長さ・ガスケット寸法</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+:root {
+  --paper:      #F3EFE6;
+  --paper-mid:  #E8E2D4;
+  --paper-line: #D9D2BF;
+  --ink:        #16324F;
+  --ink-soft:   #4A6178;
+  --ink-faint:  #8AA0B2;
+  --bp:         #1B3A5C;
+  --bp-deep:    #0F2843;
+  --accent:     #C1541F;
+  --accent-bg:  #FBE9E0;
+  --amber:      #A05010;
+  --amber-bg:   #FEF0D8;
+  --green:      #2A6840;
+  --green-bg:   #E2F0E8;
+  --mono: 'JetBrains Mono','Courier New',monospace;
+  --sans: 'Noto Sans JP','Hiragino Sans','Yu Gothic UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{
+  font-family:var(--sans);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--paper-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink);
+  min-height:100vh;
+  padding-bottom:40px;
+}
+.hdr{background:var(--bp);border-bottom:4px solid var(--accent);padding:12px 16px;position:sticky;top:0;z-index:10;text-align:center;}
+.hdr h1{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:.02em;}
+.hdr-sub{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-top:1px;}
+.wrap{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:8px;}
+.card{background:#fff;border:1.5px solid var(--paper-line);border-radius:6px;overflow:hidden;}
+.card-ttl{background:var(--bp);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;}
+.card-body{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.s-lbl{font-size:.7rem;font-weight:700;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--paper-line);}
+/* tabs */
+.rtab{display:flex;gap:2px;background:var(--paper-mid);padding:2px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.rtab-btn{flex:1;padding:8px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:1rem;font-weight:600;cursor:pointer;transition:all .12s;text-align:center;line-height:1.2;}
+.rtab-btn.active{background:var(--bp);color:#fff;}
+/* main tabs bigger */
+.main-tab-btn{flex:1;padding:10px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .12s;text-align:center;}
+.main-tab-btn.active{background:var(--bp);color:#fff;}
+/* seg */
+.seg{display:flex;gap:2px;background:var(--paper-mid);padding:2px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.seg-btn{flex:1;padding:8px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--sans);font-size:.9rem;cursor:pointer;text-align:center;line-height:1.3;transition:all .12s;}
+.seg-btn.active{background:#fff;color:var(--ink);border:1px solid var(--paper-line);font-weight:600;}
+/* select */
+select{width:100%;padding:11px 34px 11px 12px;background:var(--paper);color:var(--ink);border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--mono);font-size:1.1rem;font-weight:600;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%234A6178'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+select:focus{outline:2px solid var(--bp);outline-offset:1px;}
+/* extras */
+.extra-item{border:1.5px solid var(--paper-line);border-radius:5px;padding:10px;background:var(--paper);display:flex;flex-direction:column;gap:6px;}
+.extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.extra-clear{border:none;background:none;color:var(--ink-faint);font-size:.7rem;text-decoration:underline;cursor:pointer;padding:2px 4px;line-height:1;margin-left:auto;}
+.reset-link{display:block;text-align:center;margin:2px 0 4px;font-size:.78rem;color:var(--ink-soft);text-decoration:underline;background:none;border:none;cursor:pointer;}
+.extra-title{font-size:.95rem;font-weight:600;}
+.extra-note{font-size:.78rem;color:var(--ink-faint);}
+.extra-tag{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--ink-faint);}
+.extra-tag.on{color:var(--accent);}
+.sub-row{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-soft);}
+.sub-row input{width:72px;padding:7px 10px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:1rem;color:var(--ink);}
+.sub-row input::-webkit-inner-spin-button,.sub-row input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.sub-row input{-moz-appearance:textfield;}
+.stepper-btn{flex:0 0 auto;width:36px;height:36px;border:1.5px solid var(--paper-line);background:#fff;color:var(--ink);border-radius:4px;font-size:1.1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;}
+.stepper-btn:active{background:var(--paper);}
+/* info strip */
+.info-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
+.info-cell.base-cell{background:var(--amber-bg);border-color:var(--amber);}
+.info-cell.accent-cell{background:var(--accent-bg);border-color:var(--accent);}
+.i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
+.base-cell .i-lbl{color:var(--amber);}
+.accent-cell .i-lbl{color:var(--accent);}
+.i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;}
+.base-cell .i-val{color:var(--amber);}
+.accent-cell .i-val{color:var(--accent);}
+.i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
+/* flow row */
+.flow-row{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:12px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;}
+.flow-item{display:flex;flex-direction:column;}
+.flow-lbl{font-size:.65rem;color:var(--ink-faint);margin-bottom:3px;letter-spacing:.04em;}
+.flow-box{padding:6px 13px;border-radius:4px;font-family:var(--mono);font-size:.95rem;font-weight:700;background:var(--paper-mid);border:1.5px solid var(--paper-line);color:var(--ink);}
+.flow-box.base{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
+.flow-box.extra{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
+.flow-box.result{background:var(--bp);border-color:var(--bp-deep);color:#fff;font-size:1.05rem;}
+.flow-box.ok{background:var(--green-bg);border-color:var(--green);color:var(--green);font-size:1.05rem;}
+.flow-arr{color:var(--ink-faint);font-size:1.2rem;padding-bottom:6px;}
+/* breakdown */
+.bkdn{padding:14px;border-top:1px solid var(--paper-line);}
+.bkdn-lbl{font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:8px;}
+.bkdn-tbl{width:100%;border-collapse:collapse;font-size:.92rem;}
+.bkdn-tbl td{padding:5px 2px;color:var(--ink-soft);}
+.bkdn-tbl td:last-child{text-align:right;font-family:var(--mono);font-size:.92rem;color:var(--ink);font-variant-numeric:tabular-nums;}
+.bkdn-tbl tr.r-base td{font-weight:700;color:var(--amber);}
+.bkdn-tbl tr.r-extra td{color:var(--accent);}
+.bkdn-tbl tr.r-sub td{border-top:1px solid var(--paper-line);padding-top:6px;font-weight:600;color:var(--ink);}
+.bkdn-tbl tr.r-total td{border-top:2px solid var(--bp);padding-top:8px;padding-bottom:4px;font-weight:700;font-size:1rem;background:var(--paper-mid);}
+.bkdn-tbl tr.r-total td:last-child{color:var(--bp);font-size:1.2rem;font-family:var(--mono);}
+/* pvc note box */
+.note-box{border:1.5px solid var(--amber);border-radius:5px;padding:10px 12px;background:var(--amber-bg);}
+.note-box-title{font-size:.88rem;font-weight:700;color:var(--amber);margin-bottom:3px;}
+.note-box-body{font-size:.8rem;color:var(--ink-soft);}
+/* pvc sub-tabs wrap */
+.pvc-tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--paper-mid);padding:4px;border-radius:5px;border:1.5px solid var(--paper-line);}
+.pvc-tab-btn{padding:7px 10px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--mono);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.pvc-tab-btn.active{background:var(--bp);color:#fff;}
+/* gasket reference */
+.gk-section{padding:0 14px 14px;border-top:1px solid var(--paper-line);margin-top:4px;display:flex;flex-direction:column;gap:6px;}
+.gk-band{display:flex;flex-direction:column;gap:4px;}
+.gk-face-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);padding:8px 0 2px;border-top:1px solid var(--paper-line);}
+.gk-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.gk-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
+.gk-cell .i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
+.gk-cell .i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;display:block;}
+.gk-cell .i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
+
+/* ── 折りたたみ共通 ── */
+.coll-head{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;}
+.chevron{display:inline-block;font-style:normal;font-size:.72rem;opacity:.65;margin-left:6px;transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+.coll-extra-badge{font-size:.68rem;font-weight:400;opacity:.75;margin-left:4px;letter-spacing:.02em;}
+.gk-coll-head{background:var(--bp);color:#fff;padding:6px 14px;margin:4px -14px 8px;}
+</style>
+
+<header class="hdr">
+  <h1>🔩 フランジ ボルト長さ・ガスケット寸法</h1>
+  <div class="hdr-sub">JIS B 2220 / PVC / DCIP / LB　ボルト長さ選定・ガスケット参考寸法</div>
+</header>
+
+<div class="wrap">
+
+  <!-- ① メインタブ -->
+  <div class="card">
+    <div style="padding:4px;">
+      <div class="rtab" id="main-tabs">
+        <button class="main-tab-btn active" onclick="setMainTab(this,'jis')">JIS</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'pvc')">PVC</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'dcip')">DCIP</button>
+        <button class="main-tab-btn" onclick="setMainTab(this,'lb')">LB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 入力 -->
+  <div class="card">
+    <div class="card-ttl" id="input-ttl">入力</div>
+    <div class="card-body">
+
+      <!-- JIS -->
+      <div id="in-jis">
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="jis-size" onchange="update()" autocomplete="off"></select>
+        </div>
+        <div>
+          <div class="s-lbl">フランジ レーティング</div>
+          <div class="rtab" id="jis-rtabs">
+            <button class="rtab-btn" onclick="setJisRating(this,'2k')">2k</button>
+            <button class="rtab-btn" onclick="setJisRating(this,'5k')">5k</button>
+            <button class="rtab-btn active" onclick="setJisRating(this,'10k')">10k</button>
+            <button class="rtab-btn" onclick="setJisRating(this,'20k')">20k</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PVC -->
+      <div id="in-pvc" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="pvc-size" onchange="update()"></select>
+        </div>
+        <div>
+          <div class="s-lbl">フランジ種類</div>
+          <div class="pvc-tabs" id="pvc-ttabs">
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'ts5k')">TS-5K</button>
+            <button class="pvc-tab-btn active" onclick="setPvcType(this,'ts10k')">TS-10K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'tsf12')">TS-F12</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'w5k')">溶接-5K</button>
+            <button class="pvc-tab-btn" onclick="setPvcType(this,'w10k')">溶接-10K</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DCIP -->
+      <div id="in-dcip" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="dcip-size" onchange="update()"></select>
+        </div>
+        <div>
+          <div class="s-lbl">圧力クラス</div>
+          <div class="rtab" id="dcip-rtabs">
+            <button class="rtab-btn active" onclick="setDcipRating(this,'7.5k')">7.5K</button>
+            <button class="rtab-btn" onclick="setDcipRating(this,'10k')">10K</button>
+          </div>
+        </div>
+        <div id="dcip-ltype-row">
+          <div class="s-lbl">長さ区分</div>
+          <div class="seg" id="dcip-lseg">
+            <button class="seg-btn active" onclick="setDcipLen(this,'l1')">L1（フランジ-フランジ）</button>
+            <button class="seg-btn" onclick="setDcipLen(this,'l2')">L2（フランジ-仕切弁）</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LB -->
+      <div id="in-lb" hidden>
+        <div>
+          <div class="s-lbl">呼び径</div>
+          <select id="lb-size" onchange="update()"></select>
+        </div>
+        <div>
+          <div class="s-lbl">圧力クラス</div>
+          <div class="rtab" id="lb-rtabs">
+            <button class="rtab-btn active" onclick="setLbRating(this,'150lb')">150 LB</button>
+            <button class="rtab-btn" onclick="setLbRating(this,'300lb')">300 LB</button>
+          </div>
+        </div>
+        <div>
+          <div class="s-lbl">ボルト種別</div>
+          <div class="seg" id="lb-bseg">
+            <button class="seg-btn active" onclick="setLbBolt(this,'machine')">マシンボルト</button>
+            <button class="seg-btn" onclick="setLbBolt(this,'stud')">全ネジボルト</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ③ 追加部材 -->
+  <div class="card">
+    <div class="card-ttl coll-head" id="extra-toggle" onclick="toggleExtra()">
+      追加部材（基準長さに加算）<span id="extra-badge" class="coll-extra-badge"></span><span class="chevron" id="extra-chevron">▼</span>
+    </div>
+    <div id="extra-body" style="display:none;">
+    <div class="card-body">
+
+      <!-- ワッシャー（JIS/DCIP/LB用） -->
+      <div id="ex-washer">
+        <div class="extra-item">
+          <div class="extra-head">
+            <div class="extra-title">ワッシャー <span class="extra-note">（JIS規格厚み自動）</span></div>
+            <span class="extra-tag" id="tag-washer">—</span>
+          </div>
+          <div class="seg" id="washer-seg">
+            <button class="seg-btn active" onclick="setWasher(this,0)">なし</button>
+            <button class="seg-btn" onclick="setWasher(this,1)">1枚<br><span style="font-size:.75rem;color:var(--ink-faint)">ナット側</span></button>
+            <button class="seg-btn" onclick="setWasher(this,2)">2枚<br><span style="font-size:.75rem;color:var(--ink-faint)">両側</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PVC用：ワッシャー済み通知 -->
+      <div id="ex-washer-pvc" hidden>
+        <div class="note-box">
+          <div class="note-box-title">ℹ ワッシャー2枚（両側）含む</div>
+          <div class="note-box-body">PVCフランジのボルト長さはワッシャー2枚分を含んだ寸法です。追加ワッシャーが必要な場合は「その他追加」をご利用ください。</div>
+        </div>
+      </div>
+
+      <!-- ダブルナット -->
+      <div class="extra-item">
+        <div class="extra-head">
+          <div class="extra-title">ダブルナット <span class="extra-note">（＋ナット1個分）</span></div>
+          <span class="extra-tag" id="tag-dnut">—</span>
+        </div>
+        <div class="seg" id="dnut-seg">
+          <button class="seg-btn active" onclick="setDnut(this,false)">なし</button>
+          <button class="seg-btn" onclick="setDnut(this,true)">あり</button>
+        </div>
+      </div>
+
+
+      <!-- その他 -->
+      <div class="extra-item">
+        <div class="extra-head">
+          <div class="extra-title">その他追加</div>
+          <span class="extra-tag" id="tag-other">—</span>
+        </div>
+        <div class="seg" id="other-seg">
+          <button class="seg-btn active" onclick="setOther(this,false)">なし</button>
+          <button class="seg-btn" onclick="setOther(this,true)">あり</button>
+        </div>
+        <div class="sub-row" id="row-other" style="display:none;">
+          <label>追加厚み</label>
+          <input type="number" id="other-h" value="3" min="0" max="200" step="0.1" oninput="update()">
+          <span>mm</span>
+        </div>
+      </div>
+
+    </div>
+    <div style="padding:4px 14px 10px;">
+      <button class="reset-link" onclick="clearAllExtras()">追加項目をすべてクリア</button>
+    </div>
+    </div><!-- /extra-body -->
+  </div>
+
+  <!-- ④ 選定結果 -->
+  <div class="card">
+    <div class="card-ttl coll-head" id="result-toggle" onclick="toggleResult()">
+      選定結果<span id="result-badge" class="coll-extra-badge"></span><span class="chevron" id="result-chevron">▼</span>
+    </div>
+    <div id="result-body" style="display:none;">
+    <div style="padding:14px 14px 0;display:flex;flex-direction:column;gap:6px;">
+      <div class="info-strip">
+        <div class="info-cell base-cell"><span class="i-lbl">ボルト径</span><span class="i-val" id="info-dia">—</span></div>
+        <div class="info-cell base-cell"><span class="i-lbl">長さ</span><span class="i-val" id="info-len">—</span></div>
+      </div>
+      <div class="info-strip">
+        <div class="info-cell"><span class="i-lbl">本数</span><span class="i-val" id="info-cnt">—</span></div>
+        <div class="info-cell"><span class="i-lbl">スパナ径</span><span class="i-val" id="info-sp">—</span></div>
+      </div>
+    </div>
+    <div style="padding:10px 14px 0;">
+      <div class="flow-row" id="flow-row"></div>
+    </div>
+    <div class="bkdn">
+      <div class="bkdn-lbl">計算内訳</div>
+      <table class="bkdn-tbl" id="bkdn-tbl"></table>
+    </div>
+    </div><!-- /result-body -->
+    <div class="gk-section" id="gk-section" style="display:none;">
+      <div class="coll-head gk-coll-head" id="gk-toggle" onclick="toggleGasket()">
+        <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">ガスケット参考寸法</span>
+        <span class="chevron" id="gk-chevron">▼</span>
+      </div>
+      <div id="gk-body" style="display:none;">
+      <!-- RF 平面座 -->
+      <div class="gk-band" id="gk-rf-row" style="display:none;">
+        <div class="gk-face-lbl">平面座（RF）</div>
+        <div class="gk-strip">
+          <div class="gk-cell"><span class="i-lbl">内径</span><span class="i-val" id="gk-rf-d1">—<span class="i-unit"> mm</span></span></div>
+          <div class="gk-cell"><span class="i-lbl">外径</span><span class="i-val" id="gk-rf-d2">—<span class="i-unit"> mm</span></span></div>
+        </div>
+      </div>
+      <!-- FF 全面座 -->
+      <div class="gk-band" id="gk-ff-row" style="display:none;">
+        <div class="gk-face-lbl">全面座（FF）</div>
+        <div class="gk-strip">
+          <div class="gk-cell"><span class="i-lbl">内径</span><span class="i-val" id="gk-ff-d1">—<span class="i-unit"> mm</span></span></div>
+          <div class="gk-cell"><span class="i-lbl">外径</span><span class="i-val" id="gk-ff-d2">—<span class="i-unit"> mm</span></span></div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /gk-section -->
+  </div>
+
+  <!-- 免責事項 -->
+  <div class="card">
+    <div class="card-ttl">免責事項</div>
+    <div style="padding:14px;font-size:.82rem;color:var(--ink-soft);line-height:1.75;">
+      <p>本ツールの計算結果は、施工計画の参考値としてのみご使用ください。</p>
+      <ul style="margin:8px 0 8px 1.2em;list-style:disc;">
+        <li>実際の施工にあたっては、JIS・JPI等の最新規格および設計図書・仕様書を必ずご確認ください。</li>
+        <li>ガスケット厚みは <strong>3mm</strong> を基準として算出しています。異なる厚みのガスケットを使用する場合は差分を加算してください。フランジ本体の寸法は材質・メーカーにより誤差が生じる場合がありますので、実際の仕様書をご確認ください。</li>
+        <li>計算結果の誤りに起因するいかなる損害・損失についても、制作者は一切の責任を負いません。</li>
+        <li>ボルト長さの最終決定は、担当技術者または設計者の判断と責任においておこなってください。</li>
+      </ul>
+      <p style="margin-top:6px;color:var(--ink-faint);font-size:.76rem;">本ツールは社内参考用として作成されたものです。第三者への無断配布・転用はご遠慮ください。</p>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── JIS TABLE ─────────────────────────────────────────────────────────────
+const JIS_TABLE = {
+  '2k': {
+    '450A':{cnt:16,dia:'M20',sp:30,base:75},'500A':{cnt:20,dia:'M20',sp:30,base:75},
+    '550A':{cnt:20,dia:'M22',sp:32,base:80},'600A':{cnt:20,dia:'M22',sp:32,base:80},
+    '650A':{cnt:22,dia:'M22',sp:32,base:80},'700A':{cnt:24,dia:'M22',sp:32,base:80},
+    '750A':{cnt:24,dia:'M24',sp:36,base:80},'800A':{cnt:24,dia:'M24',sp:36,base:80},
+    '850A':{cnt:24,dia:'M24',sp:36,base:80},'900A':{cnt:24,dia:'M24',sp:36,base:80},
+    '1000A':{cnt:28,dia:'M24',sp:36,base:85},'1100A':{cnt:28,dia:'M24',sp:36,base:85},
+    '1200A':{cnt:32,dia:'M24',sp:36,base:85},'1350A':{cnt:32,dia:'M24',sp:36,base:85},
+    '1500A':{cnt:36,dia:'M24',sp:36,base:90},
+  },
+  '5k': {
+    '10A':{cnt:4,dia:'M10',sp:17,base:35},'15A':{cnt:4,dia:'M10',sp:17,base:35},
+    '20A':{cnt:4,dia:'M10',sp:17,base:35},'25A':{cnt:4,dia:'M10',sp:17,base:35},
+    '32A':{cnt:4,dia:'M12',sp:19,base:45},'40A':{cnt:4,dia:'M12',sp:19,base:45},
+    '50A':{cnt:4,dia:'M12',sp:19,base:50},'65A':{cnt:4,dia:'M12',sp:19,base:50},
+    '80A':{cnt:4,dia:'M16',sp:24,base:50},'100A':{cnt:8,dia:'M16',sp:24,base:55},
+    '125A':{cnt:8,dia:'M16',sp:24,base:55},'150A':{cnt:8,dia:'M16',sp:24,base:60},
+    '200A':{cnt:8,dia:'M20',sp:30,base:70},'250A':{cnt:12,dia:'M20',sp:30,base:75},
+    '300A':{cnt:12,dia:'M20',sp:30,base:75},'350A':{cnt:12,dia:'M22',sp:32,base:80},
+    '400A':{cnt:16,dia:'M22',sp:32,base:80},'450A':{cnt:16,dia:'M22',sp:32,base:80},
+    '500A':{cnt:20,dia:'M22',sp:32,base:80},'550A':{cnt:20,dia:'M24',sp:36,base:90},
+    '600A':{cnt:20,dia:'M24',sp:36,base:90},'650A':{cnt:24,dia:'M24',sp:36,base:90},
+    '700A':{cnt:24,dia:'M24',sp:36,base:90},'750A':{cnt:24,dia:'M30',sp:46,base:110},
+    '800A':{cnt:24,dia:'M30',sp:46,base:110},'900A':{cnt:24,dia:'M30',sp:46,base:110},
+    '1000A':{cnt:28,dia:'M30',sp:46,base:120},'1200A':{cnt:32,dia:'M30',sp:46,base:120},
+    '1350A':{cnt:32,dia:'M30',sp:46,base:120},'1500A':{cnt:36,dia:'M30',sp:46,base:120},
+  },
+  '10k': {
+    '10A':{cnt:4,dia:'M12',sp:19,base:45},'15A':{cnt:4,dia:'M12',sp:19,base:45},
+    '20A':{cnt:4,dia:'M12',sp:19,base:45},'25A':{cnt:4,dia:'M16',sp:24,base:50},
+    '32A':{cnt:4,dia:'M16',sp:24,base:55},'40A':{cnt:4,dia:'M16',sp:24,base:55},
+    '50A':{cnt:4,dia:'M16',sp:24,base:55},'65A':{cnt:4,dia:'M16',sp:24,base:60},
+    '80A':{cnt:8,dia:'M16',sp:24,base:60},'100A':{cnt:8,dia:'M16',sp:24,base:60},
+    '125A':{cnt:8,dia:'M20',sp:30,base:70},'150A':{cnt:8,dia:'M20',sp:30,base:75},
+    '200A':{cnt:12,dia:'M20',sp:30,base:75},'250A':{cnt:12,dia:'M22',sp:32,base:80},
+    '300A':{cnt:16,dia:'M22',sp:32,base:80},'350A':{cnt:16,dia:'M22',sp:32,base:85},
+    '400A':{cnt:16,dia:'M24',sp:36,base:90},'450A':{cnt:20,dia:'M24',sp:36,base:100},
+    '500A':{cnt:20,dia:'M24',sp:36,base:100},'550A':{cnt:20,dia:'M30',sp:46,base:110},
+    '600A':{cnt:24,dia:'M30',sp:46,base:110},'650A':{cnt:24,dia:'M30',sp:46,base:110},
+    '700A':{cnt:24,dia:'M30',sp:46,base:110},'750A':{cnt:24,dia:'M30',sp:46,base:120},
+    '800A':{cnt:28,dia:'M30',sp:46,base:120},'900A':{cnt:28,dia:'M30',sp:46,base:120},
+    '1000A':{cnt:28,dia:'M36',sp:55,base:130},'1200A':{cnt:32,dia:'M36',sp:55,base:140},
+    '1350A':{cnt:36,dia:'M42',sp:65,base:150},'1500A':{cnt:40,dia:'M42',sp:65,base:160},
+  },
+  '20k': {
+    '10A':{cnt:4,dia:'M12',sp:19,base:50},'15A':{cnt:4,dia:'M12',sp:19,base:50},
+    '20A':{cnt:4,dia:'M12',sp:19,base:55},'25A':{cnt:4,dia:'M16',sp:24,base:60},
+    '32A':{cnt:4,dia:'M16',sp:24,base:60},'40A':{cnt:4,dia:'M16',sp:24,base:60},
+    '50A':{cnt:8,dia:'M16',sp:24,base:60},'65A':{cnt:8,dia:'M16',sp:24,base:65},
+    '80A':{cnt:8,dia:'M20',sp:30,base:75},'100A':{cnt:8,dia:'M20',sp:30,base:80},
+    '125A':{cnt:8,dia:'M22',sp:32,base:85},'150A':{cnt:12,dia:'M22',sp:32,base:90},
+    '200A':{cnt:12,dia:'M22',sp:32,base:95},'250A':{cnt:12,dia:'M24',sp:36,base:110},
+    '300A':{cnt:16,dia:'M24',sp:36,base:110},'350A':{cnt:16,dia:'M30',sp:46,base:120},
+    '400A':{cnt:16,dia:'M30',sp:46,base:130},'450A':{cnt:20,dia:'M30',sp:46,base:140},
+    '500A':{cnt:20,dia:'M30',sp:46,base:140},'550A':{cnt:20,dia:'M36',sp:55,base:150},
+    '600A':{cnt:24,dia:'M36',sp:55,base:160},
+  },
+};
+
+// ── PVC TABLE（ワッシャー2枚込み寸法）───────────────────────────────────
+const PVC_TABLE = {
+  'ts5k': {
+    '10A':{cnt:4,dia:'M10',sp:17,base:40},'15A':{cnt:4,dia:'M10',sp:17,base:40},
+    '20A':{cnt:4,dia:'M10',sp:17,base:40},'25A':{cnt:4,dia:'M10',sp:17,base:40},
+    '32A':{cnt:4,dia:'M12',sp:19,base:45},'40A':{cnt:4,dia:'M12',sp:19,base:45},
+    '50A':{cnt:4,dia:'M12',sp:19,base:50},'65A':{cnt:4,dia:'M12',sp:19,base:50},
+    '80A':{cnt:4,dia:'M16',sp:24,base:55},'100A':{cnt:8,dia:'M16',sp:24,base:60},
+    '125A':{cnt:8,dia:'M16',sp:24,base:60},'150A':{cnt:8,dia:'M16',sp:24,base:65},
+    '200A':{cnt:8,dia:'M20',sp:30,base:90},'250A':{cnt:12,dia:'M20',sp:30,base:90},
+    '300A':{cnt:12,dia:'M20',sp:30,base:90},'350A':{cnt:12,dia:'M22',sp:32,base:100},
+  },
+  'ts10k': {
+    '10A':{cnt:4,dia:'M12',sp:19,base:50},'15A':{cnt:4,dia:'M12',sp:19,base:50},
+    '20A':{cnt:4,dia:'M12',sp:19,base:55},'25A':{cnt:4,dia:'M16',sp:24,base:60},
+    '32A':{cnt:4,dia:'M16',sp:24,base:60},'40A':{cnt:4,dia:'M16',sp:24,base:60},
+    '50A':{cnt:4,dia:'M16',sp:24,base:70},'65A':{cnt:4,dia:'M16',sp:24,base:75},
+    '80A':{cnt:8,dia:'M16',sp:24,base:75},'100A':{cnt:8,dia:'M16',sp:24,base:75},
+    '125A':{cnt:8,dia:'M20',sp:30,base:80},'150A':{cnt:8,dia:'M20',sp:30,base:85},
+    '200A':{cnt:12,dia:'M20',sp:30,base:90},'250A':{cnt:12,dia:'M22',sp:32,base:95},
+    '300A':{cnt:16,dia:'M22',sp:32,base:95},'350A':{cnt:16,dia:'M22',sp:32,base:105},
+  },
+  'tsf12': {
+    '80A':{cnt:4,dia:'M16',sp:24,base:70},
+    '100A':{cnt:4,dia:'M16',sp:24,base:75},'125A':{cnt:6,dia:'M16',sp:24,base:80},
+    '150A':{cnt:6,dia:'M16',sp:24,base:85},'200A':{cnt:8,dia:'M16',sp:24,base:90},
+    '250A':{cnt:8,dia:'M20',sp:30,base:100},'300A':{cnt:10,dia:'M20',sp:30,base:105},
+  },
+  'w5k': {
+    '10A':{cnt:4,dia:'M10',sp:17,base:40},'15A':{cnt:4,dia:'M10',sp:17,base:40},
+    '20A':{cnt:4,dia:'M10',sp:17,base:40},'25A':{cnt:4,dia:'M10',sp:17,base:40},
+    '32A':{cnt:4,dia:'M12',sp:19,base:45},'40A':{cnt:4,dia:'M12',sp:19,base:45},
+    '50A':{cnt:4,dia:'M12',sp:19,base:50},'65A':{cnt:4,dia:'M12',sp:19,base:50},
+    '80A':{cnt:4,dia:'M16',sp:24,base:55},'100A':{cnt:8,dia:'M16',sp:24,base:60},
+    '125A':{cnt:8,dia:'M16',sp:24,base:60},'150A':{cnt:8,dia:'M16',sp:24,base:65},
+    '200A':{cnt:8,dia:'M20',sp:30,base:75},'250A':{cnt:12,dia:'M20',sp:30,base:80},
+    '300A':{cnt:12,dia:'M20',sp:30,base:80},
+  },
+  'w10k': {
+    '10A':{cnt:4,dia:'M12',sp:19,base:50},'15A':{cnt:4,dia:'M12',sp:19,base:50},
+    '20A':{cnt:4,dia:'M12',sp:19,base:55},'25A':{cnt:4,dia:'M16',sp:24,base:60},
+    '32A':{cnt:4,dia:'M16',sp:24,base:60},'40A':{cnt:4,dia:'M16',sp:24,base:60},
+    '50A':{cnt:4,dia:'M16',sp:24,base:60},'65A':{cnt:4,dia:'M16',sp:24,base:65},
+    '80A':{cnt:8,dia:'M16',sp:24,base:65},'100A':{cnt:8,dia:'M16',sp:24,base:65},
+    '125A':{cnt:8,dia:'M20',sp:30,base:75},'150A':{cnt:8,dia:'M20',sp:30,base:80},
+    '200A':{cnt:12,dia:'M20',sp:30,base:80},'250A':{cnt:12,dia:'M22',sp:32,base:85},
+    '300A':{cnt:16,dia:'M22',sp:32,base:85},
+  },
+};
+
+// ── DCIP TABLE ────────────────────────────────────────────────────────────
+const DCIP_TABLE = {
+  '7.5k': {
+    '80A' :{cnt:4, dia:'M16',sp:24,l1:75, l2:75 },'100A':{cnt:4, dia:'M16',sp:24,l1:75, l2:75 },
+    '150A':{cnt:6, dia:'M16',sp:24,l1:75, l2:75 },'200A':{cnt:8, dia:'M16',sp:24,l1:80, l2:80 },
+    '250A':{cnt:8, dia:'M20',sp:30,l1:85, l2:85 },'300A':{cnt:10,dia:'M20',sp:30,l1:85, l2:90 },
+    '350A':{cnt:10,dia:'M22',sp:32,l1:95, l2:95 },'400A':{cnt:12,dia:'M22',sp:32,l1:95, l2:95 },
+    '450A':{cnt:12,dia:'M24',sp:36,l1:100,l2:100},'500A':{cnt:12,dia:'M24',sp:36,l1:100,l2:110},
+    '600A':{cnt:16,dia:'M24',sp:36,l1:100,l2:120},'700A':{cnt:16,dia:'M30',sp:46,l1:110,l2:130},
+    '800A':{cnt:20,dia:'M30',sp:46,l1:120,l2:130},'900A':{cnt:20,dia:'M30',sp:46,l1:120,l2:140},
+    '1000A':{cnt:24,dia:'M30',sp:46,l1:130,l2:150},'1100A':{cnt:24,dia:'M30',sp:46,l1:130},
+    '1200A':{cnt:28,dia:'M30',sp:46,l1:140},'1350A':{cnt:28,dia:'M36',sp:55,l1:150},
+    '1500A':{cnt:32,dia:'M36',sp:55,l1:150},
+  },
+  '10k': {
+    '50A' :{cnt:4, dia:'M16',sp:24,l1:65},'80A' :{cnt:8, dia:'M16',sp:24,l1:65},
+    '100A':{cnt:8, dia:'M16',sp:24,l1:65},'150A':{cnt:8, dia:'M20',sp:30,l1:75},
+    '200A':{cnt:12,dia:'M20',sp:30,l1:75},'250A':{cnt:12,dia:'M22',sp:32,l1:80},
+    '300A':{cnt:16,dia:'M22',sp:32,l1:80},'350A':{cnt:16,dia:'M22',sp:32,l1:85},
+    '400A':{cnt:16,dia:'M24',sp:36,l1:100},'450A':{cnt:20,dia:'M24',sp:36,l1:100},
+    '500A':{cnt:20,dia:'M24',sp:36,l1:100},'600A':{cnt:24,dia:'M30',sp:46,l1:110},
+    '700A':{cnt:24,dia:'M30',sp:46,l1:110},'800A':{cnt:28,dia:'M30',sp:46,l1:120},
+    '900A':{cnt:28,dia:'M30',sp:46,l1:120},'1000A':{cnt:28,dia:'M36',sp:55,l1:140},
+    '1100A':{cnt:28,dia:'M36',sp:55,l1:140},'1200A':{cnt:32,dia:'M36',sp:55,l1:140},
+    '1350A':{cnt:36,dia:'M42',sp:65,l1:160},'1500A':{cnt:40,dia:'M42',sp:65,l1:160},
+  },
+};
+
+// ── LB TABLE ──────────────────────────────────────────────────────────────
+const LB_TABLE = {
+  '150lb': {
+    '3/8B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:60},
+    '1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:60},
+    '3/4B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:65},
+    '1B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:70},
+    '1 1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:50,stud:75},
+    '2B':{cnt:4,dia:'W 5/8',sp:26,machine:65,stud:85},
+    '2 1/2B':{cnt:4,dia:'W 5/8',sp:26,machine:65,stud:90},
+    '3B':{cnt:4,dia:'W 5/8',sp:26,machine:70,stud:95},
+    '4B':{cnt:8,dia:'W 5/8',sp:26,machine:70,stud:95},
+    '5B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:105},
+    '6B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:110},
+    '8B':{cnt:8,dia:'W 3/4',sp:32,machine:85,stud:115},
+    '10B':{cnt:12,dia:'W 7/8',sp:35,machine:90,stud:125},
+    '12B':{cnt:12,dia:'W 7/8',sp:35,machine:100,stud:125},
+    '14B':{cnt:12,dia:'W 1',sp:41,machine:110,stud:140},
+    '16B':{cnt:16,dia:'W 1',sp:41,machine:110,stud:140},
+    '18B':{cnt:16,dia:'W 1 1/8',sp:46,machine:125,stud:155},
+    '20B':{cnt:20,dia:'W 1 1/8',sp:46,machine:125,stud:160},
+    '22B':{cnt:20,dia:'W 1 1/4',sp:50,machine:140,stud:160},
+    '24B':{cnt:20,dia:'W 1 1/4',sp:50,machine:140,stud:160},
+    '26B':{cnt:24,dia:'W 1 1/4',sp:50,machine:160,stud:180},
+    '28B':{cnt:28,dia:'W 1 1/4',sp:50,machine:160,stud:180},
+    '30B':{cnt:28,dia:'W 1 1/4',sp:50,machine:160,stud:190},
+    '32B':{cnt:28,dia:'W 1 1/2',sp:58,machine:160,stud:200},
+  },
+  '300lb': {
+    '3/8B':{cnt:4,dia:'W 1/2',sp:21,machine:40,stud:70},
+    '1/2B':{cnt:4,dia:'W 1/2',sp:21,machine:45,stud:70},
+    '3/4B':{cnt:4,dia:'W 5/8',sp:26,machine:55,stud:80},
+    '1B':{cnt:4,dia:'W 5/8',sp:26,machine:55,stud:80},
+    '1 1/2B':{cnt:4,dia:'W 3/4',sp:32,machine:65,stud:100},
+    '2B':{cnt:8,dia:'W 5/8',sp:26,machine:70,stud:90},
+    '2 1/2B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:100},
+    '3B':{cnt:8,dia:'W 3/4',sp:32,machine:75,stud:115},
+    '4B':{cnt:8,dia:'W 3/4',sp:32,machine:85,stud:120},
+    '5B':{cnt:8,dia:'W 3/4',sp:32,machine:100,stud:125},
+    '6B':{cnt:12,dia:'W 3/4',sp:32,machine:110,stud:130},
+    '8B':{cnt:12,dia:'W 7/8',sp:35,machine:125,stud:145},
+    '10B':{cnt:16,dia:'W 1',sp:41,machine:140,stud:165},
+    '12B':{cnt:16,dia:'W 1 1/8',sp:46,machine:140,stud:175},
+    '14B':{cnt:20,dia:'W 1 1/8',sp:46,machine:160,stud:180},
+    '16B':{cnt:20,dia:'W 1 1/4',sp:50,machine:160,stud:195},
+    '18B':{cnt:24,dia:'W 1 1/4',sp:50,machine:180,stud:200},
+    '20B':{cnt:24,dia:'W 1 1/4',sp:50,machine:180,stud:210},
+    '22B':{cnt:24,dia:'W 1 1/2',sp:58,machine:200,stud:240},
+    '24B':{cnt:24,dia:'W 1 1/2',sp:58,machine:200,stud:240},
+  },
+};
+
+// ── BPROPS（ナット高さ・ワッシャー厚み）──────────────────────────────────
+const BPROPS = {
+  M10:{nut:8,washer:2.0},M12:{nut:10,washer:2.5},M16:{nut:13,washer:3.0},
+  M20:{nut:16,washer:3.0},M22:{nut:18,washer:3.0},M24:{nut:19,washer:4.0},
+  M27:{nut:22,washer:4.0},M30:{nut:24,washer:4.0},M36:{nut:29,washer:5.0},M42:{nut:34,washer:6.0},
+  // LB インチボルト：nut=8割（マシンボルト用）、nut10=10割（全ネジ用 JPI参考値）
+  'W 1/2':{nut:11,nut10:14,washer:2.5},'W 5/8':{nut:14,nut10:17,washer:3.0},
+  'W 3/4':{nut:17,nut10:21,washer:3.5},'W 7/8':{nut:19,nut10:24,washer:4.0},
+  'W 1':{nut:22,nut10:28,washer:4.5},'W 1 1/8':{nut:25,nut10:31,washer:5.0},
+  'W 1 1/4':{nut:28,nut10:35,washer:5.0},'W 1 1/2':{nut:33,nut10:41,washer:6.0},
+};
+
+// ── GASKET TABLES ─────────────────────────────────────────────────────────
+// JIS RF/FF ガスケット内径 D1（レーティング共通）
+const JIS_GK_D1 = {
+  '10A':18,'15A':22,'20A':28,'25A':35,'32A':43,'40A':49,'50A':61,'65A':84,
+  '80A':90,'100A':115,'125A':141,'150A':167,'200A':218,'250A':270,'300A':321,
+  '350A':359,'400A':410,'450A':460,'500A':513,'550A':564,'600A':615,'650A':667,
+  '700A':718,'750A':770,'800A':820,'850A':872,'900A':923,'1000A':1025,
+  '1100A':1130,'1200A':1230,'1350A':1385,'1500A':1540,
+};
+// JIS 平面座(RF) ガスケット外径 D2
+const JIS_RF_D2 = {
+  '2k': {'450A':535,'500A':585,'550A':643,'600A':693,'650A':748,'700A':798,'750A':856,'800A':906,'850A':956,'900A':1006,'1000A':1106,'1100A':1216,'1200A':1326,'1350A':1481,'1500A':1636},
+  '5k': {'10A':45,'15A':50,'20A':55,'25A':65,'32A':78,'40A':83,'50A':93,'65A':118,'80A':129,'100A':149,'125A':184,'150A':214,'200A':260,'250A':325,'300A':370,'350A':413,'400A':473,'450A':533,'500A':583,'550A':641,'600A':691,'650A':746,'700A':796,'750A':850,'800A':900,'850A':950,'900A':1000,'1000A':1100,'1100A':1210,'1200A':1320,'1350A':1475,'1500A':1630},
+  '10k':{'10A':53,'15A':58,'20A':63,'25A':74,'32A':84,'40A':89,'50A':104,'65A':124,'80A':134,'100A':159,'125A':190,'150A':220,'200A':270,'250A':333,'300A':378,'350A':423,'400A':486,'450A':541,'500A':596,'550A':650,'600A':700,'650A':750,'700A':810,'750A':870,'800A':920,'850A':970,'900A':1020,'1000A':1124,'1100A':1234,'1200A':1344,'1350A':1498,'1500A':1658},
+  '20k':{'10A':53,'15A':58,'20A':63,'25A':74,'32A':84,'40A':89,'50A':104,'65A':124,'80A':140,'100A':165,'125A':203,'150A':238,'200A':283,'250A':356,'300A':406,'350A':450,'400A':510,'450A':575,'500A':630,'550A':684,'600A':734},
+};
+// JIS 全面座(FF) ガスケット外径 D2（20Kはデータなし）
+const JIS_FF_D2 = {
+  '2k': {'450A':605,'500A':655,'550A':720,'600A':770,'650A':825,'700A':875,'750A':945,'800A':995,'850A':1045,'900A':1095,'1000A':1195,'1100A':1305,'1200A':1420,'1350A':1575,'1500A':1730},
+  '5k': {'10A':75,'15A':80,'20A':85,'25A':95,'32A':115,'40A':120,'50A':130,'65A':155,'80A':180,'100A':200,'125A':235,'150A':265,'200A':320,'250A':385,'300A':430,'350A':480,'400A':540,'450A':605,'500A':655,'550A':720,'600A':770,'650A':825,'700A':875,'750A':945,'800A':995,'850A':1045,'900A':1095,'1000A':1195,'1100A':1305,'1200A':1420,'1350A':1575,'1500A':1730},
+  '10k':{'10A':90,'15A':95,'20A':100,'25A':125,'32A':135,'40A':140,'50A':155,'65A':175,'80A':185,'100A':210,'125A':250,'150A':280,'200A':330,'250A':400,'300A':445,'350A':490,'400A':560,'450A':620,'500A':675,'550A':745,'600A':795,'650A':845,'700A':905,'750A':970,'800A':1020,'850A':1070,'900A':1120,'1000A':1235,'1100A':1345,'1200A':1465,'1350A':1630,'1500A':1795},
+};
+// LB(JPI) 内径 D1
+const LB_GK_D1 = {
+  '15A':22,'20A':28,'25A':34,'32A':44,'40A':49,'50A':61,'65A':77,'80A':90,
+  '100A':116,'125A':143,'150A':169,'200A':220,'250A':275,'300A':326,'350A':358,
+  '400A':408,'450A':459,'500A':510,'600A':612,'650A':663,'700A':714,'750A':765,'800A':816,
+};
+// LB 平面座(RF) ガスケット外径
+const LB_RF_D2 = {
+  '150':{'15A':47,'20A':56,'25A':66,'32A':75,'40A':85,'50A':104,'65A':123,'80A':135,'100A':173,'125A':196,'150A':221,'200A':277,'250A':338,'300A':408,'350A':449,'400A':512,'450A':547,'500A':604,'600A':715,'650A':722,'700A':773,'750A':824,'800A':878},
+  '300':{'15A':53,'20A':66,'25A':72,'32A':82,'40A':94,'50A':110,'65A':129,'80A':148,'100A':180,'125A':215,'150A':250,'200A':306,'250A':360,'300A':420,'350A':484,'400A':538,'450A':595,'500A':651,'600A':772,'650A':768,'700A':822,'750A':883,'800A':937},
+};
+// LB 全面座(FF) ガスケット外径
+const LB_FF_D2 = {
+  '150':{'15A':89,'20A':98,'25A':108,'32A':117,'40A':127,'50A':152,'65A':178,'80A':191,'100A':229,'125A':254,'150A':279,'200A':343,'250A':406,'300A':483,'350A':535,'400A':595,'450A':635,'500A':700,'600A':815},
+  '300':{'15A':95,'20A':117,'25A':124,'32A':133,'40A':156,'50A':165,'65A':191,'80A':210,'100A':254,'125A':279,'150A':318,'200A':381,'250A':445,'300A':520,'350A':585,'400A':650,'450A':710,'500A':775,'600A':915},
+};
+// LB B呼び→A呼び変換
+const LB_B_TO_A = {
+  '3/8B':null,'1/2B':'15A','3/4B':'20A','1B':'25A','1 1/2B':'40A',
+  '2B':'50A','2 1/2B':'65A','3B':'80A','4B':'100A','5B':'125A','6B':'150A',
+  '8B':'200A','10B':'250A','12B':'300A','14B':'350A','16B':'400A','18B':'450A',
+  '20B':'500A','22B':null,'24B':'600A','26B':'650A','28B':'700A','30B':'750A','32B':'800A',
+};
+// DCIP ガスケット（7.5K）※A呼びで検索。φ75は80Aと同一値
+const DCIP_GASKET = {
+  '75A':{d1:90,rf:152,ff:211},'80A':{d1:90,rf:152,ff:211},'100A':{d1:115,rf:179,ff:238},'125A':{d1:141,rf:null,ff:263},
+  '150A':{d1:167,rf:231,ff:290},'200A':{d1:218,rf:283,ff:342},'250A':{d1:270,rf:340,ff:410},
+  '300A':{d1:321,rf:394,ff:464},'350A':{d1:359,rf:450,ff:530},'400A':{d1:410,rf:502,ff:582},
+  '450A':{d1:460,rf:561,ff:652},'500A':{d1:513,rf:615,ff:706},'600A':{d1:615,rf:719,ff:810},
+  '700A':{d1:718,rf:824,ff:928},'800A':{d1:820,rf:930,ff:1034},'900A':{d1:923,rf:1043,ff:1156},
+  '1000A':{d1:1025,rf:1149,ff:1262},'1100A':{d1:1130,rf:1253,ff:1366},
+  '1200A':{d1:1230,rf:1357,ff:1470},'1350A':{d1:1385,rf:1516,ff:1642},'1500A':{d1:1540,rf:1674,ff:1800},
+};
+// PVC種別→JIS レーティング変換
+const PVC_TO_JIS_RATING = {ts5k:'5k',ts10k:'10k',tsf12:'10k',w5k:'5k',w10k:'10k'};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+let state = {
+  mainTab:   'jis',
+  jisRating: '10k',
+  pvcType:   'ts10k',
+  dcipRating:'7.5k',
+  dcipLen:   'l1',
+  lbRating:  '150lb',
+  lbBolt:    'machine',
+  washerCount:0,
+  dnut:false,other:false,
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+const si  = id => document.getElementById(id);
+const cv  = id => parseFloat(si(id).value)||0;
+function ceil5(v){ return Math.ceil(v/5)*5; }
+
+function populateSelect(selId, keys, preferred) {
+  const sel=si(selId);
+  const prev=sel.value;
+  sel.innerHTML='';
+  keys.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o); });
+  if(keys.includes(prev)) sel.value=prev;
+  else if(preferred && keys.includes(preferred)) sel.value=preferred;
+  else sel.value=keys[0];
+}
+
+// ── current entry ──────────────────────────────────────────────────────────
+function getEntry() {
+  switch(state.mainTab){
+    case 'jis': return JIS_TABLE[state.jisRating]?.[si('jis-size').value];
+    case 'pvc': return PVC_TABLE[state.pvcType]?.[si('pvc-size').value];
+    case 'dcip':return DCIP_TABLE[state.dcipRating]?.[si('dcip-size').value];
+    case 'lb':  return LB_TABLE[state.lbRating]?.[si('lb-size').value];
+  }
+}
+function getBaseLen(entry){
+  if(!entry) return null;
+  switch(state.mainTab){
+    case 'jis': return entry.base;
+    case 'pvc': return entry.base;
+    case 'dcip':{
+      const lt = state.dcipLen;
+      if(lt==='l2' && entry.l2!=null) return entry.l2;
+      return entry.l1;
+    }
+    case 'lb':  return entry[state.lbBolt];
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+function resolveParams(){
+  const entry=getEntry();
+  if(!entry) return null;
+  const baseLen=getBaseLen(entry);
+  if(baseLen==null) return null;
+  const props=BPROPS[entry.dia]||{nut:16,washer:3.0};
+
+  const isPvc    = state.mainTab==='pvc';
+  const isLbStud = state.mainTab==='lb' && state.lbBolt==='stud';
+  const washerH  = isPvc ? 0 : state.washerCount*props.washer;
+  // 全ネジ＋ダブルナット：両端各1個追加＝2個（10割ナット）
+  // マシンボルト＋ダブルナット：ナット端1個追加（8割ナット）
+  const dnutH    = state.dnut
+    ? (isLbStud ? 2*(props.nut10??props.nut) : props.nut)
+    : 0;
+  const otherH  = state.other ? cv('other-h') : 0;
+  const totalExtra = washerH+dnutH+otherH;
+  const minLen  = baseLen+totalExtra;
+  const rec     = ceil5(minLen);
+
+  return {entry,props,baseLen,washerH,dnutH,otherH,totalExtra,minLen,rec};
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UPDATE
+// ═══════════════════════════════════════════════════════════════════════════
+function update(){
+  const p=resolveParams();
+  if(!p) return;
+  const {entry,props,baseLen,washerH,dnutH,otherH,totalExtra,minLen,rec}=p;
+
+  // washer/pvc visibility
+  si('ex-washer').hidden     = (state.mainTab==='pvc');
+  si('ex-washer-pvc').hidden = (state.mainTab!=='pvc');
+
+  // DCIP L2 toggle: hide when 10K or entry has no l2
+  if(state.mainTab==='dcip'){
+    const has_l2 = state.dcipRating==='7.5k' && entry.l2!=null;
+    si('dcip-ltype-row').hidden = !has_l2;
+    if(!has_l2 && state.dcipLen==='l2'){ state.dcipLen='l1'; activateSeg(si('dcip-lseg'),0); }
+  }
+
+  // tags
+  const setTag=(id,val,on)=>{const e=si(id);e.textContent=val;e.className='extra-tag'+(on?' on':'');};
+  if(state.mainTab!=='pvc'){
+    const wL=state.washerCount===0?'—':state.washerCount===1?`+${washerH} mm（ナット側）`:`+${washerH} mm（両側）`;
+    setTag('tag-washer',wL,state.washerCount>0);
+  }
+  setTag('tag-dnut', state.dnut  ?`+${dnutH} mm`:'—',state.dnut);
+  setTag('tag-other',state.other ?`+${otherH} mm`:'—',state.other);
+  si('row-other').style.display=state.other?'flex':'none';
+
+  // info strip
+  si('info-dia').textContent = entry.dia;
+  si('info-len').innerHTML   = `${rec}<span class="i-unit"> mm</span>`;
+  si('info-sp').innerHTML    = entry.sp ? `${entry.sp}<span class="i-unit"> mm</span>` : '—';
+  si('info-cnt').innerHTML   = `${entry.cnt}<span class="i-unit"> 本</span>`;
+
+  // flow row
+  const flow=si('flow-row');
+  const pvcNote = state.mainTab==='pvc' ? '（W2枚込）' : '';
+  if(totalExtra===0){
+    flow.innerHTML=`
+      <div class="flow-item"><span class="flow-lbl">表の推奨長さ${pvcNote}</span><span class="flow-box base">${baseLen} mm</span></div>
+      <span class="flow-arr">＝</span>
+      <div class="flow-item"><span class="flow-lbl">追加部材なし</span><span class="flow-box ok">${rec} mm ✓</span></div>`;
+  } else {
+    const pts=[];
+    if(washerH>0) pts.push(`W:${washerH}`);
+    if(dnutH>0)   pts.push(`N:${dnutH}`);
+    if(otherH>0)  pts.push(`他:${otherH}`);
+    flow.innerHTML=`
+      <div class="flow-item"><span class="flow-lbl">表の推奨${pvcNote}</span><span class="flow-box base">${baseLen} mm</span></div>
+      <span class="flow-arr">＋</span>
+      <div class="flow-item"><span class="flow-lbl">追加（${pts.join('+')}）</span><span class="flow-box extra">+${totalExtra} mm</span></div>
+      <span class="flow-arr">＝</span>
+      <div class="flow-item"><span class="flow-lbl">必要最小</span><span class="flow-box">${minLen} mm</span></div>
+      <span class="flow-arr">→</span>
+      <div class="flow-item"><span class="flow-lbl">5mm切り上げ推奨</span><span class="flow-box result">${rec} mm</span></div>`;
+  }
+
+  // breakdown
+  const baseLblSuffix = state.mainTab==='pvc' ? '（ワッシャー2枚含む）' : '';
+  let tbl=`<tr class="r-base"><td>表の推奨長さ${baseLblSuffix}</td><td>${baseLen} mm</td></tr>`;
+  if(washerH>0){
+    const wn=state.washerCount===1?`ナット側 1枚 ${props.washer}mm`:`両側 2枚 ${props.washer}×2mm`;
+    tbl+=`<tr class="r-extra"><td>＋ ワッシャー（${wn}）</td><td>+${washerH} mm</td></tr>`;
+  }
+  if(dnutH>0){
+    const isLS = state.mainTab==='lb' && state.lbBolt==='stud';
+    const dnutDesc = isLS
+      ? `10割ナット 両端各1個追加 ${props.nut10??props.nut}×2mm`
+      : `8割ナット 1個 ${props.nut}mm`;
+    tbl+=`<tr class="r-extra"><td>＋ ダブルナット（${dnutDesc}）</td><td>+${dnutH} mm</td></tr>`;
+  }
+  if(otherH>0) tbl+=`<tr class="r-extra"><td>＋ その他追加</td><td>+${otherH} mm</td></tr>`;
+  if(totalExtra>0) tbl+=`<tr class="r-sub"><td>必要最小長さ</td><td>${minLen} mm</td></tr>`;
+  tbl+=`<tr class="r-total"><td>選定ボルト長さ</td><td>${rec} mm</td></tr>`;
+  si('bkdn-tbl').innerHTML=tbl;
+  updateExtraBadge();
+  updateResultBadge();
+
+  // ── ガスケット参考寸法 ──────────────────────────────────────────────────
+  (function(){
+    let rfD1=null, rfD2=null, ffD2=null;
+    const tab=state.mainTab;
+    const sizeKey = tab==='jis'  ? si('jis-size').value
+                  : tab==='pvc'  ? si('pvc-size').value
+                  : tab==='dcip' ? si('dcip-size').value
+                  :                si('lb-size').value;
+
+    if(tab==='jis'){
+      rfD1 = JIS_GK_D1[sizeKey] ?? null;
+      rfD2 = JIS_RF_D2[state.jisRating]?.[sizeKey] ?? null;
+      ffD2 = JIS_FF_D2[state.jisRating]?.[sizeKey] ?? null;
+    } else if(tab==='pvc'){
+      // PVCはRFなし（全面座FFのみ）
+      if(state.pvcType==='tsf12'){
+        // TS-F12はDCIP 7.5K FF寸法を使用
+        const g = DCIP_GASKET[sizeKey];
+        if(g){ rfD1=g.d1; ffD2=g.ff; }
+      } else {
+        const rat = PVC_TO_JIS_RATING[state.pvcType];
+        rfD1 = JIS_GK_D1[sizeKey] ?? null;
+        ffD2 = JIS_FF_D2[rat]?.[sizeKey] ?? null;
+      }
+      rfD2 = null; // PVCはRFなし
+    } else if(tab==='dcip'){
+      // sizeKeyはすでにA呼び（80A, 100A …）
+      const aKey = sizeKey;
+      if(state.dcipRating==='7.5k'){
+        const g = DCIP_GASKET[aKey];
+        if(g){ rfD1=g.d1; rfD2=g.rf; ffD2=g.ff; }
+      } else {
+        // 10K → JIS 10K寸法を使用
+        rfD1 = JIS_GK_D1[aKey] ?? null;
+        rfD2 = JIS_RF_D2['10k']?.[aKey] ?? null;
+        ffD2 = JIS_FF_D2['10k']?.[aKey] ?? null;
+      }
+    } else if(tab==='lb'){
+      const aKey = LB_B_TO_A[sizeKey];
+      const clsKey = state.lbRating==='150lb' ? '150' : '300';
+      if(aKey){
+        rfD1 = LB_GK_D1[aKey] ?? null;
+        rfD2 = LB_RF_D2[clsKey]?.[aKey] ?? null;
+        ffD2 = LB_FF_D2[clsKey]?.[aKey] ?? null;
+      }
+    }
+
+    const hasRf = rfD1!=null && rfD2!=null;
+    const hasFf = rfD1!=null && ffD2!=null;
+    const showSec = hasRf || hasFf;
+    si('gk-section').style.display = showSec ? '' : 'none';
+    if(hasRf){
+      si('gk-rf-row').style.display='';
+      si('gk-rf-d1').innerHTML=`${rfD1}<span class="gk-unit">mm</span>`;
+      si('gk-rf-d2').innerHTML=`${rfD2}<span class="gk-unit">mm</span>`;
+    } else {
+      si('gk-rf-row').style.display='none';
+    }
+    if(hasFf){
+      si('gk-ff-row').style.display='';
+      si('gk-ff-d1').innerHTML=`${rfD1}<span class="gk-unit">mm</span>`;
+      si('gk-ff-d2').innerHTML=`${ffD2}<span class="gk-unit">mm</span>`;
+    } else {
+      si('gk-ff-row').style.display='none';
+    }
+  })();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════════════════════
+function activateSeg(seg, idx){ seg.querySelectorAll('.seg-btn').forEach((b,i)=>b.classList.toggle('active',i===idx)); }
+function activateRtab(tabs, btn){ tabs.querySelectorAll('.rtab-btn,.main-tab-btn,.pvc-tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+
+function setMainTab(btn, tab){
+  state.mainTab=tab;
+  activateRtab(si('main-tabs'), btn);
+  ['jis','pvc','dcip','lb'].forEach(t=>{ si('in-'+t).hidden=(t!==tab); });
+  // タブ切替時に追加オプションをリセット
+  clearAllExtras();
+  // populate sizes for the newly active tab
+  switch(tab){
+    case 'jis':  populateSelect('jis-size', Object.keys(JIS_TABLE[state.jisRating]), '15A'); break;
+    case 'pvc':  populateSelect('pvc-size', Object.keys(PVC_TABLE[state.pvcType]), '15A'); break;
+    case 'dcip': populateDcipSizes(); break;
+    case 'lb':   populateSelect('lb-size', Object.keys(LB_TABLE[state.lbRating]), '1/2B'); break;
+  }
+  update();
+}
+
+function setJisRating(btn, rating){
+  state.jisRating=rating;
+  activateRtab(si('jis-rtabs'), btn);
+  populateSelect('jis-size', Object.keys(JIS_TABLE[rating]), '15A');
+  update();
+}
+function setPvcType(btn, type){
+  state.pvcType=type;
+  activateRtab(si('pvc-ttabs'), btn);
+  populateSelect('pvc-size', Object.keys(PVC_TABLE[type]), '15A');
+  update();
+}
+function setDcipRating(btn, rating){
+  state.dcipRating=rating;
+  activateRtab(si('dcip-rtabs'), btn);
+  populateDcipSizes();
+  update();
+}
+function populateDcipSizes(){
+  populateSelect('dcip-size', Object.keys(DCIP_TABLE[state.dcipRating]));
+}
+function setDcipLen(btn, len){
+  state.dcipLen=len;
+  activateSeg(si('dcip-lseg'), len==='l1'?0:1);
+  update();
+}
+function setLbRating(btn, rating){
+  state.lbRating=rating;
+  activateRtab(si('lb-rtabs'), btn);
+  populateSelect('lb-size', Object.keys(LB_TABLE[rating]), '1/2B');
+  update();
+}
+function setLbBolt(btn, type){
+  state.lbBolt=type;
+  activateSeg(si('lb-bseg'), type==='machine'?0:1);
+  update();
+}
+function setWasher(btn, n){
+  state.washerCount=n;
+  si('washer-seg').querySelectorAll('.seg-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  update();
+}
+function setDnut(btn, v){
+  state.dnut=v;
+  activateSeg(si('dnut-seg'), v?1:0);
+  update();
+}
+function setOther(btn, v){
+  state.other=v;
+  activateSeg(si('other-seg'), v?1:0);
+  update();
+}
+function clearWasher(){ state.washerCount=0; activateSeg(si('washer-seg'),0); update(); }
+function clearDnut(){   state.dnut=false;    activateSeg(si('dnut-seg'),0);   update(); }
+function clearOther(){  state.other=false;   activateSeg(si('other-seg'),0);  update(); }
+function clearAllExtras(){ clearWasher(); clearDnut(); clearOther(); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════════════════
+populateSelect('jis-size', Object.keys(JIS_TABLE['10k']), '15A');
+populateSelect('pvc-size', Object.keys(PVC_TABLE['ts10k']), '15A');
+populateDcipSizes();
+populateSelect('lb-size', Object.keys(LB_TABLE['150lb']), '1/2B');
+update();
+
+
+/* ── 折りたたみ ── */
+function toggleResult(){
+  const body=si('result-body'), chev=si('result-chevron');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+function updateResultBadge(){
+  const dia=si('info-dia')?.textContent||'';
+  const len=si('info-len')?.textContent||'';
+  const badge=si('result-badge');
+  if(!badge) return;
+  badge.textContent=(dia&&dia!=='—'&&len&&len!=='—')?'（'+dia+' × '+len+'）':'';
+}
+function toggleExtra(){
+  const body=si('extra-body'), chev=si('extra-chevron');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+function toggleGasket(){
+  const body=si('gk-body'), chev=si('gk-chevron');
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'';
+  chev.classList.toggle('open',!open);
+}
+function updateExtraBadge(){
+  const parts=[];
+  if(state.washerCount>0) parts.push('W×'+state.washerCount);
+  if(state.dnut) parts.push('ダブルナット');
+  if(state.other){ const v=parseFloat(document.getElementById('other-h')?.value||0); parts.push('追加'+v+'mm'); }
+  si('extra-badge').textContent=parts.length?'（'+parts.join(' + ')+'）':'';
+}
+
+/* ── その他追加 ステッパーボタン ── */
+(function(){
+  const input = si('other-h');
+  if(!input) return;
+  const step = 0.1, decimals = 1, min = 0, max = 200;
+  function clamp(v){ return Math.max(min, Math.min(max, v)); }
+  const dec = document.createElement('button');
+  dec.type='button'; dec.className='stepper-btn'; dec.textContent='−';
+  const inc = document.createElement('button');
+  inc.type='button'; inc.className='stepper-btn'; inc.textContent='+';
+  function bump(dir){
+    const cur = parseFloat(input.value||'0');
+    const factor = Math.pow(10, decimals);
+    const next = clamp(Math.round((cur + dir*step)*factor)/factor);
+    input.value = next;
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  let repeatTimer = null;
+  function startRepeat(dir){ bump(dir); repeatTimer = setTimeout(function repeat(){ bump(dir); repeatTimer = setTimeout(repeat,90); },400); }
+  function stopRepeat(){ clearTimeout(repeatTimer); repeatTimer = null; }
+  [[dec,-1],[inc,1]].forEach(([btn,dir])=>{
+    btn.addEventListener('mousedown', e=>{ e.preventDefault(); startRepeat(dir); });
+    btn.addEventListener('touchstart', e=>{ e.preventDefault(); startRepeat(dir); },{passive:false});
+  });
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>{ dec.addEventListener(evt,stopRepeat); inc.addEventListener(evt,stopRepeat); });
+  input.insertAdjacentElement('afterend', inc);
+  input.insertAdjacentElement('afterend', dec);
+})();
+</script>
+<style>
+.site-nav{
+  background:var(--bp);
+  border-top:3px solid var(--bp-deep);
+  padding:12px 16px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.site-nav a{
+  color:#aac4df;
+  font-size:.78rem;
+  text-decoration:none;
+  padding:6px 14px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:4px;
+  transition:all .15s;
+}
+.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+</style>
+<nav class="site-nav">
+  <a href="index.html">🏠 トップ</a>
+  <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="pipe-identify.html">🔍 サイズ特定</a>
+  <a href="flange-bolt.html" class="current">🔩 ボルト寸法</a>
+  <a href="pipe-weight-calc.html">📦 配管重量計算</a>
+  <a href="cast-iron-weight.html">🏭 鋳鉄管重量計算</a>
+</nav>

@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>配管重量計算</title>
+<style>
+:root{
+  --paper:#F3EFE6; --paper-line:#D9D2BF; --ink:#16324F; --ink-soft:#4A6178;
+  --blueprint:#1B3A5C; --blueprint-deep:#0F2843;
+  --accent:#C1541F; --accent-soft:#F0DCC9;
+  --sw:#5C6B1B; --sw-soft:#E8ECD3;
+  --card:#fff; --row:#f8f8f6; --row-hover:#f1efe9;
+  font-size:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--paper-line) 1px,transparent 1px);
+  background-size:100% 28px;
+  color:var(--ink);
+  font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;
+  min-height:100vh;
+}
+header{
+  background:var(--blueprint);
+  position:sticky;top:0;z-index:20;
+  padding:10px 16px;
+  border-bottom:4px solid var(--accent);
+}
+.hdr-inner{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+header h1{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:1;text-align:center}
+.all-clear-btn{
+  padding:5px 11px;border:1.5px solid rgba(255,255,255,.3);border-radius:4px;
+  background:var(--paper);color:var(--ink);font-size:.75rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.all-clear-btn:hover{border-color:#fff;background:#fff;color:var(--blueprint)}
+.total-bar{
+  background:var(--blueprint-deep);padding:10px 16px;
+  position:sticky;top:88px;z-index:19;border-bottom:2px solid var(--accent);
+}
+.total-bar-inner{max-width:560px;margin:0 auto;display:flex;align-items:baseline;gap:8px;}
+.total-label{color:#aac4df;font-size:.875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.total-value{font-family:'Courier New',monospace;font-size:2.2rem;font-weight:700;color:#fff;line-height:1;flex:1;text-align:right;font-variant-numeric:tabular-nums;}
+.total-unit{color:#aac4df;font-size:.85rem}
+main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+/* ─── グループ折り畳み ─── */
+.group-card{
+  border:2px solid var(--blueprint);
+  border-radius:6px;
+  margin-bottom:12px;
+  overflow:hidden;
+}
+.group-head{
+  background:var(--blueprint);
+  padding:9px 12px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  user-select:none;-webkit-user-select:none;
+}
+.group-head:hover{background:var(--blueprint-deep)}
+.group-chevron{font-size:.65rem;color:rgba(255,255,255,.7);transition:transform .2s;flex-shrink:0}
+.group-card.open .group-chevron{transform:rotate(90deg)}
+.group-title{font-size:.82rem;font-weight:700;letter-spacing:.08em;color:#fff;flex:1}
+.group-sub-total{font-family:'Courier New',monospace;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.group-sub-total.has-data{color:#fff}
+.group-body{display:none;padding:8px 8px 4px;}
+.group-card.open .group-body{display:block}
+.group-note{font-size:.73rem;color:var(--ink-soft);padding:2px 4px 8px;font-style:italic;}
+.sec-card{background:var(--card);border:1px solid var(--paper-line);border-radius:4px;margin-bottom:8px;overflow:hidden;}
+.sec-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.sec-head:hover{background:var(--row-hover)}
+.sec-chevron{font-size:.65rem;color:var(--ink-soft);transition:transform .2s;flex-shrink:0}
+.sec-card.open .sec-chevron{transform:rotate(90deg)}
+.sec-name{font-size:.875rem;font-weight:700;flex:1;color:var(--ink)}
+.sec-sub{font-family:'Courier New',monospace;font-size:.82rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.sec-sub.has-data{color:var(--accent);font-size:.9rem}
+.sec-body{display:none;padding:0 10px 10px}
+.sec-card.open .sec-body{display:block}
+.entry-list{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.entry-row{background:var(--row);border:1px solid var(--paper-line);border-radius:3px;padding:7px 8px;}
+.row-l1,.row-l2,.row-l3{display:flex;align-items:center;gap:5px}
+.row-l2,.row-l3{margin-top:5px}
+.row-lbl{font-size:.68rem;font-weight:700;color:var(--ink-soft);white-space:nowrap;width:2.2em;flex-shrink:0}
+.row-wt{font-family:'Courier New',monospace;font-size:1rem;font-weight:700;color:var(--accent);white-space:nowrap;text-align:right;min-width:62px;flex-shrink:0;font-variant-numeric:tabular-nums;}
+.row-wt.empty{color:var(--paper-line)}
+.wt-unit{font-size:.68rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.sz-sel{flex:1;min-width:0;padding:7px 22px 7px 8px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:.85rem;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%234A6178' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;}
+.sz-sel:focus{outline:none;border-color:var(--blueprint)}
+.sch-sel{flex-shrink:0;width:72px;padding:7px 6px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:.78rem;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%234A6178' d='M4 5L0 0h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;cursor:pointer;text-align:center;}
+.sch-sel:focus{outline:none;border-color:var(--blueprint)}
+.num-inp{border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--blueprint);font-family:'Courier New',monospace;font-size:.9rem;font-weight:700;text-align:right;padding:7px 5px;appearance:none;-webkit-appearance:none;}
+.num-inp:focus{outline:none;border-color:var(--blueprint)}
+.num-inp::-webkit-inner-spin-button,.num-inp::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.num-inp[type=number]{-moz-appearance:textfield}
+.len-inp{width:68px}
+.qty-inp{width:46px}
+.adj-btn{width:32px;height:32px;flex-shrink:0;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.adj-btn:active{background:var(--accent-soft)}
+.teishaku-btn{padding:5px 7px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--sw-soft);color:var(--sw);font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.teishaku-btn:hover{border-color:var(--sw);background:var(--sw);color:#fff}
+.del-btn{width:28px;height:28px;flex-shrink:0;border:1px solid var(--paper-line);border-radius:3px;background:transparent;color:var(--ink-soft);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.add-btn{width:100%;padding:7px;border:1.5px dashed var(--paper-line);border-radius:4px;background:transparent;color:var(--ink-soft);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.add-btn:hover{border-color:var(--blueprint);color:var(--blueprint);background:var(--row-hover)}
+.empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}.site-nav{background:var(--blueprint);border-top:3px solid var(--blueprint-deep);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.site-nav a{color:#aac4df;font-size:.78rem;text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:4px;transition:all .15s;}
+.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
+/* ─── タブ ─── */
+.tab-row{display:flex;gap:4px;padding:4px 8px 8px;max-width:560px;margin:0 auto;}
+.tab-btn{flex:1;padding:5px 8px;border:none;border-radius:4px;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
+.tab-btn.active{background:var(--accent);color:#fff;}
+.tab-btn:not(.active){background:rgba(255,255,255,.15);color:#aac4df;}
+.tab-btn:not(.active):hover{background:rgba(255,255,255,.25);color:#fff;}
+/* ─── マニュアル ─── */
+.man-wrap{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+.man-section{background:var(--card);border:1px solid var(--paper-line);border-radius:4px;margin-bottom:12px;padding:14px}
+.man-h2{font-size:.85rem;font-weight:700;color:#fff;background:var(--blueprint);padding:6px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.06em}
+.man-h3{font-size:.8rem;font-weight:700;color:var(--blueprint);margin:10px 0 6px;border-bottom:1px solid var(--paper-line);padding-bottom:4px}
+.man-ol{margin:0 0 4px 1.4em;padding:0;font-size:.8rem;line-height:1.9;color:var(--ink)}
+.man-tbl{width:100%;border-collapse:collapse;font-size:.75rem;margin-bottom:4px}
+.man-tbl th{background:var(--blueprint);color:#fff;padding:5px 7px;text-align:left;font-weight:700}
+.man-tbl td{padding:4px 7px;border-bottom:1px solid var(--paper-line);vertical-align:middle}
+.man-tbl tr:nth-child(even) td{background:var(--row)}
+.man-note{font-size:.74rem;color:var(--ink-soft);line-height:1.7;margin-top:4px}
+.man-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:4px;white-space:nowrap}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <h1>配管重量　計算</h1>
+    <button class="all-clear-btn" id="clear-btn" onclick="clearAll()">⟳ 全クリア</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" id="tab-calc" onclick="showTab('calc')">計算</button>
+    <button class="tab-btn" id="tab-manual" onclick="showTab('manual')">マニュアル</button>
+  </div>
+</header>
+
+<div class="total-bar" id="total-bar-el">
+  <div class="total-bar-inner">
+    <span class="total-label">合計重量</span>
+    <span class="total-value" id="grand-total">0.0</span>
+    <span class="total-unit">kg</span>
+  </div>
+</div>
+
+
+<main id="main-wrap"></main>
+
+<div id="disclaimer-div" style="max-width:560px;margin:0 auto;padding:0 14px 24px">
+  <div style="background:#fff;border:1px solid var(--paper-line);border-radius:4px;padding:14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="background:var(--ink-soft);color:#fff;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:3px">!</span>
+      <span style="font-size:.8rem;font-weight:700;color:var(--ink-soft);letter-spacing:.05em">免責事項</span>
+    </div>
+    <div style="font-size:.78rem;color:var(--ink-soft);line-height:1.75">
+      <p style="margin:0 0 8px">本ツールの計算結果は重量の参考値としてのみご使用ください。</p>
+      <ul style="margin:0 0 8px 1.2em;padding:0;list-style:disc">
+        <li>配管重量: W=K×t×(D-t)　K＝SGP/STPG:0.02466、SUS304:0.02491　大口径SUSはTOSTEカタログ直読値</li>
+        <li>継手重量: BENKAN KIKOH カタログ参考値（JIS B2312相当）</li>
+        <li>フランジ重量: JIS B2220・G3443-2 参考値（SS400・SUS共通）</li>
+        <li>計算結果の誤りに起因するいかなる損害についても制作者は責任を負いません。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="manual-div" style="display:none">
+<div class="man-wrap">
+
+  <div class="man-section">
+    <div class="man-h2">操 作 方 法</div>
+    <ol class="man-ol">
+      <li>まず <strong>直管セクション</strong> を展開し、「＋ 行を追加」で使用する口径・スケジュールを入力します。</li>
+      <li>直管に口径を入力すると、同じ材質グループの <strong>継手・フランジのサイズリストが自動的に絞り込まれます</strong>。<br>
+          <span style="font-size:.74rem;color:var(--ink-soft)">例：CS直管に100Aだけ入力 → CS継手のサイズは100Aのみ表示</span></li>
+      <li>同様に、直管のスケジュール（Sch40 等）も継手の <strong>スケジュールリストに反映</strong> されます。<br>
+          <span style="font-size:.74rem;color:var(--ink-soft)">例：STPG Sch40・Sch80を入力 → CS継手にSch40とSch80のみ表示</span></li>
+      <li>継手・フランジ行を追加すると、直管で入力済みのスケジュール・サイズが <strong>自動でデフォルト設定</strong> されます（1種類の場合）。数量は <strong>１</strong> が自動入力されます。</li>
+      <li>フランジ行は形式が <strong>SOP または SOH</strong>（圧力クラスに応じて自動選択）に設定されます。</li>
+      <li>直管は長さ（mm）を入力、「定尺」ボタンで規格定尺長を自動入力できます。</li>
+      <li>合計重量は画面上部に常時表示されます。</li>
+      <li>全て入力し直す場合は「⟳ 全クリア」ボタンを使用してください。</li>
+    </ol>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">✕ ボ タ ン の 動 作</div>
+    <p class="man-note" style="margin-bottom:8px">継手・フランジ行の <strong>✕</strong> ボタンは、状態によって動作が変わります。</p>
+    <table class="man-tbl">
+      <thead><tr><th>押す前の状態</th><th>動作</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>スケジュール・サイズに値が入っている</td>
+          <td><strong>値をクリア＋フィルター解除</strong><br>
+              <span style="color:var(--ink-soft)">全スケジュール・全口径が選択できる状態になります。他の口径の重量を一時的に調べたいときに使います。</span></td>
+        </tr>
+        <tr>
+          <td>値がない（クリア後の空行）</td>
+          <td><strong>行を削除</strong></td>
+        </tr>
+        <tr>
+          <td>直管・大口径管行</td>
+          <td><strong>即削除</strong>（フィルターなし）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="man-note" style="margin-top:6px">💡 継手で絞り込み外の口径を一時的に調べたいときに活用してください。</p>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">注 意 事 項</div>
+    <div class="man-h3">ティーズ（T字管）</div>
+    <p class="man-note"><span class="man-badge">同径重量適用</span>データは同径ティーズ（15A×15A 等）の重量です。異径ティーズも同じ重量で計算します。</p>
+    <div class="man-h3">レジューサ（径違い継手）</div>
+    <p class="man-note"><span class="man-badge">１段落ち重量適用</span>データは１段落ち（例：50A×40A）の重量です。２段落ち以降の異径も同じ重量で計算します。</p>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">直 管 類　サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>スケジュール</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>SGP 直管</td><td>—</td><td>10A ～ 500A</td></tr>
+        <tr><td rowspan="2">STPG 直管</td><td>Sch40 / Sch80</td><td>10A ～ 650A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 650A</td></tr>
+        <tr><td rowspan="6">SUS 直管</td><td>Sch5S</td><td>150A ～ 750A</td></tr>
+        <tr><td>Sch10S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch20S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch40S</td><td>10A ～ 1000A</td></tr>
+        <tr><td>Sch80S</td><td>10A ～ 650A</td></tr>
+        <tr><td>Sch160S</td><td>15A ～ 500A</td></tr>
+        <tr><td>STPY400 直管</td><td>LG / STD</td><td>400A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">継 手 類　CS（炭素鋼）　サイズ範囲</div>
+    <div class="man-h3">エルボ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>規格</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">90°エルボ（ロング）</td><td>SGP / Sch40 / Sch80</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 400A</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td rowspan="2">90°エルボ（ショート）</td><td>SGP</td><td>25A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80 / Sch160</td><td>25A ～ 650A</td></tr>
+        <tr><td rowspan="3">45°エルボ（ロング）</td><td>SGP / Sch40 / Sch80</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch160</td><td>15A ～ 400A</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td rowspan="2">45°エルボ（ショート）</td><td>SGP</td><td>40A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80 / Sch160</td><td>40A ～ 650A</td></tr>
+      </tbody>
+    </table>
+    <div class="man-h3">ティーズ・レジューサ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>規格</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">ティーズ</td><td>SGP</td><td>15A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80</td><td>15A ～ 600A</td></tr>
+        <tr><td>Sch160</td><td>32A ～ 600A</td></tr>
+        <tr><td rowspan="3">レジューサ</td><td>SGP</td><td>20A ～ 500A</td></tr>
+        <tr><td>Sch40 / Sch80</td><td>20A ～ 600A</td></tr>
+        <tr><td>Sch160</td><td>25A ～ 600A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">継 手 類　SUS（ステンレス）　サイズ範囲</div>
+    <div class="man-h3">エルボ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>Sch5S / Sch80S</th><th>Sch10S / Sch20S / Sch40S</th><th>Sch160S</th></tr></thead>
+      <tbody>
+        <tr><td>90°エルボ（ロング）</td><td>15A ～ 300A</td><td>15A ～ 1000A</td><td>15A ～ 650A</td></tr>
+        <tr><td>90°エルボ（ショート）</td><td>25A ～ 300A</td><td>25A ～ 1000A</td><td>25A ～ 650A</td></tr>
+        <tr><td>45°エルボ（ロング）</td><td>15A ～ 300A</td><td>15A ～ 1000A</td><td>15A ～ 650A</td></tr>
+        <tr><td>45°エルボ（ショート）</td><td>32A ～ 300A</td><td>32A ～ 1000A</td><td>40A ～ 650A</td></tr>
+      </tbody>
+    </table>
+    <div class="man-h3">ティーズ・レジューサ</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>Sch5S / Sch80S</th><th>Sch10S / Sch20S</th><th>Sch40S</th><th>Sch160S</th></tr></thead>
+      <tbody>
+        <tr><td>ティーズ</td><td>15A ～ 300A</td><td>15A ～ 1000A</td><td>15A ～ 600A</td><td>15A ～ 650A</td></tr>
+        <tr><td>レジューサ</td><td>20A ～ 300A</td><td>20A ～ 1000A</td><td>20A ～ 600A</td><td>25A ～ 600A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">フ ラ ン ジ 類　サイズ範囲</div>
+    <div class="man-h3">形式の見方</div>
+    <table class="man-tbl">
+      <thead><tr><th>略称</th><th>正式名称</th><th>現場での通称・特徴</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP</strong></td>
+          <td>スリップオン<br>プレート形</td>
+          <td>板フランジ（ハブなし）。配管を差し込んで溶接する平板タイプ。2K・5K・10K・F12 で使用。</td>
+        </tr>
+        <tr>
+          <td><strong>SOH</strong></td>
+          <td>スリップオン<br>ハブ付き形</td>
+          <td>板フランジ（ハブ付き）。差込口に首（ハブ）が付くため強度が高い。20K で使用。</td>
+        </tr>
+        <tr>
+          <td><strong>BL</strong></td>
+          <td>ブラインド<br>フランジ</td>
+          <td>仕切りフランジ。管端を塞ぐ蓋型。全圧力クラスに設定あり。</td>
+        </tr>
+        <tr>
+          <td><strong>F12</strong></td>
+          <td>7.5K 上水道用<br>（JIS G3443-2）</td>
+          <td>上水道配管専用の低圧フランジ。形式は SOP・BL のみ。80A ～ 1500A。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="man-h3">サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>規格</th><th>形式</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>2K フランジ</td><td>SOP / BL</td><td>450A ～ 1500A</td></tr>
+        <tr><td>5K フランジ</td><td>SOP / BL</td><td>15A ～ 1500A</td></tr>
+        <tr><td>10K フランジ</td><td>SOP / BL</td><td>15A ～ 1500A</td></tr>
+        <tr><td>20K フランジ</td><td>SOH / BL</td><td>15A ～ 600A</td></tr>
+        <tr><td>F12（7.5K）フランジ</td><td>SOP / BL</td><td>80A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="man-section">
+    <div class="man-h2">大 口 径 管 継 手 類（LG, STD）　サイズ範囲</div>
+    <div class="man-h3">肉厚区分</div>
+    <table class="man-tbl">
+      <thead><tr><th>記号</th><th>肉厚</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td><strong>LG</strong></td><td>7.9 mm</td><td>ライトゲージ。軽量タイプ。</td></tr>
+        <tr><td><strong>STD</strong></td><td>9.5 mm</td><td>スタンダード。標準タイプ。</td></tr>
+      </tbody>
+    </table>
+    <div class="man-h3">サイズ範囲</div>
+    <table class="man-tbl">
+      <thead><tr><th>種別</th><th>サイズ範囲</th></tr></thead>
+      <tbody>
+        <tr><td>90°エルボ（ロング）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>90°エルボ（ショート）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>45°エルボ（ロング）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>45°エルボ（ショート）</td><td>400A ～ 1500A</td></tr>
+        <tr><td>ティーズ</td><td>650A ～ 1500A</td></tr>
+        <tr><td>レジューサ</td><td>400A ～ 1500A</td></tr>
+      </tbody>
+    </table>
+    <p class="man-note">※ 600A超はJIS規格外・BENKANカタログ社内規格値</p>
+  </div>
+
+</div>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html">🏠 トップ</a>
+  <a href="pipe-cutting.html">✂️ 面間計算</a>
+  <a href="pipe-identify.html">🔍 サイズ特定</a>
+  <a href="flange-bolt.html">🔩 ボルト寸法</a>
+  <a href="pipe-weight-calc.html" class="current">📦 配管重量計算</a>
+  <a href="cast-iron-weight.html">🏭 鋳鉄管重量計算</a>
+</nav>
+
+<script>
+/* ======================================================
+   外径・肉厚データ
+====================================================== */
+const OD={10:17.3,15:21.7,20:27.2,25:34.0,32:42.7,40:48.6,50:60.5,65:76.3,80:89.1,90:101.6,100:114.3,125:139.8,150:165.2,200:216.3,250:267.4,300:318.5,350:355.6,400:406.4,450:457.2,500:508.0,550:558.8,600:609.6,650:660.4};
+const T={
+  SGP:{10:2.3,15:2.8,20:2.8,25:3.2,32:3.5,40:3.5,50:3.8,65:4.2,80:4.2,100:4.5,125:4.5,150:5.0,200:5.8,250:6.6,300:6.9,350:7.9,400:7.9,450:7.9,500:7.9},
+  STPG:{
+    Sch40:{10:2.3,15:2.8,20:2.9,25:3.4,32:3.6,40:3.7,50:3.9,65:5.2,80:5.5,100:6.0,125:6.6,150:7.1,200:8.2,250:9.3,300:10.3,350:11.1,400:12.7,450:14.3,500:15.1,550:15.9,600:17.5,650:18.9},
+    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0},
+    Sch160:{15:4.7,20:5.5,25:6.4,32:6.4,40:7.1,50:8.7,65:9.5,80:11.13,100:13.49,125:15.88,150:18.26,200:23.0,250:28.6,300:33.3,350:35.7,400:40.5,450:45.2,500:50.0,550:54.0,600:59.5,650:64.2}
+  },
+  SUS:{
+    Sch10:{10:1.65,15:2.1,20:2.1,25:2.8,32:2.8,40:2.8,50:2.8,65:3.0,80:3.0,100:3.0,125:3.4,150:3.4,200:4.0,250:4.0,300:4.5,350:4.8,400:5.6,450:6.4,500:6.4,550:7.1,600:7.9,650:7.9},
+    Sch20:{10:2.0,15:2.5,20:2.5,25:3.0,32:3.0,40:3.0,50:3.5,65:3.5,80:4.0,100:4.0,125:5.0,150:5.0,200:6.5,250:6.5,300:6.5},
+    Sch40:{10:2.3,15:2.8,20:2.9,25:3.4,32:3.6,40:3.7,50:3.9,65:5.2,80:5.5,100:6.0,125:6.6,150:7.1,200:8.2,250:9.3,300:10.3,350:11.1,400:12.7,450:14.3,500:15.1,550:15.9,600:17.5,650:18.9},
+    Sch80:{10:3.2,15:3.7,20:3.9,25:4.5,32:4.9,40:5.1,50:5.5,65:7.0,80:7.6,100:8.6,125:9.5,150:11.0,200:12.7,250:15.1,300:17.4,350:19.0,400:21.4,450:23.8,500:26.2,550:28.6,600:31.0,650:34.0},
+    Sch160:{15:4.78,20:5.54,25:6.35,32:6.35,40:7.14,50:8.74,65:9.53,80:11.13,100:13.49,125:15.88,150:18.26,200:23.01,250:28.58,300:33.32,350:35.71,400:40.49,450:45.24,500:49.99}
+  }
+};
+const K_PIPE={SGP:0.02466,STPG:0.02466,SUS304:0.02491};
+const TEISHAKU={SGP:5500,STPG:5500,SUS304:4000,STPY400:6000};
+
+/* STPY400 大口径直管 kg/m 直読 */
+const STPY_KGM={
+  LG: {400:77.6,450:87.5,500:97.4,550:107,600:117,650:127,700:137,750:147,800:157,850:167,900:177,1000:196,1100:216,1200:236,1350:266,1500:295},
+  STD:{400:93,450:105,500:117,550:129,600:141,650:152,700:164,750:176,800:188,850:200,900:212,1000:236,1100:260,1200:283,1350:319,1500:355}
+};
+
+/* SUS304 大口径直管 kg/m (JIS G3468 SUS-TPY1 / TOSTEカタログ) */
+const SUS_KGM={
+  '5S': {150:11.3,200:14.9,250:22.4,300:31.3,350:35.0,400:45.1,450:50.7,500:62.6,550:69.0,600:82.8,650:89.7,700:96.7,750:122},
+  '10S':{150:13.7,200:21.2,250:26.2,300:35.2,350:43.7,400:50.0,450:56.3,500:68.8,550:75.8,600:97.7,650:130,700:140,750:150,800:160,850:171,900:181,1000:238},
+  '20S':{150:20.0,200:34.0,250:42.2,300:50.5,350:69.3,400:79.4,450:89.5,500:118,550:130,600:142,650:205,700:221,750:237,800:253,850:269,900:285,1000:357},
+  '40': {150:28.0,200:42.5,250:59.8,300:79.1,350:95.3,400:125,450:158,500:185,550:215,600:258,650:280,700:302,750:325,800:347,850:369,900:425,1000:646}
+};
+
+function pipeKgM(mat,sch,sz){
+  if(mat==='STPY400'){
+    const kgm=(STPY_KGM[sch]||{})[+sz];
+    return kgm!=null?kgm:null;
+  }
+  if(mat==='SUS304'){
+    const schToKgm={Sch5S:'5S',Sch10S:'10S',Sch20S:'20S',Sch40S:'40'};
+    const kgmKey=schToKgm[sch];
+    if(kgmKey){
+      const kgm=(SUS_KGM[kgmKey]||{})[+sz];
+      if(kgm!=null) return kgm;
+    }
+    const d=OD[+sz]; if(!d) return null;
+    const schKey=sch?sch.replace(/S$/,''):'Sch10';
+    const t=(T.SUS[schKey]||{})[+sz];
+    if(!t) return null;
+    return K_PIPE['SUS304']*t*(d-t);
+  }
+  const d=OD[+sz]; if(!d) return null;
+  let t=null;
+  if(mat==='SGP') t=(T.SGP[+sz]);
+  else if(mat==='STPG') t=(T.STPG[sch]||{})[+sz];
+  if(!t) return null;
+  return K_PIPE[mat]*t*(d-t);
+}
+
+/* ======================================================
+   継手重量データ (BENKAN KIKOH / TOSTE カタログ)
+   SUS エルボ: TOSTEカタログ (JIS B2312相当)
+   CS エルボ/ティー/レジューサ: BENKANカタログ
+====================================================== */
+const FIT={
+  e90l:{
+    sgp:{
+      SGP:   {15:0.078,20:0.1,25:0.146,32:0.252,40:0.35,50:0.634,65:1.12,80:1.58,100:2.91,125:4.49,150:7.09,200:14.4,250:25.4,300:38.1,350:56.7,400:74.3,450:94.2,500:117},
+      Sch40: {15:0.078,20:0.103,25:0.154,32:0.26,40:0.368,50:0.652,65:1.37,80:2.04,100:3.84,125:6.48,150:9.94,200:20.1,250:35.4,300:56.2,350:79,400:118,450:168,500:220},
+      Sch80: {15:0.099,20:0.134,25:0.196,32:0.341,40:0.492,50:0.891,65:1.79,80:2.74,100:5.36,125:9.13,150:15,200:30.5,250:56.2,300:92.7,350:132,400:194,450:274,500:372},
+      Sch160:{15:0.118,20:0.176,25:0.26,32:0.427,40:0.653,50:1.33,65:2.34,80:3.83,100:8.03,125:14.5,150:23.7,200:52.5,250:101,300:168,350:236,400:350}
+    },
+    sus:{
+      Sch5S: {15:0.049,20:0.062,25:0.078,32:0.125,40:0.170,50:0.286,65:0.576,80:0.810,100:1.39,125:2.83,150:4.03,200:7.06,250:13.2,300:22.3},
+      Sch10S:{15:0.061,20:0.078,25:0.128,32:0.206,40:0.283,50:0.478,65:0.812,80:1.14,100:1.97,125:3.42,150:4.87,200:10.0,250:15.5,300:25.0,350:36.2,400:47.3,450:60.0,500:81.5,550:98.7,600:138.7,650:200.1,700:232.2,750:266.8,800:303.8,850:343.1,900:384.9,1000:563.9},
+      Sch20S:{15:0.071,20:0.092,25:0.137,32:0.219,40:0.303,50:0.590,65:0.941,80:1.50,100:2.60,125:4.97,150:7.09,200:16.1,250:25.0,300:35.9,350:57.4,400:75.2,450:95.4,500:139.7,550:169.3,600:201.7,650:315.3,700:366.2,750:420.9,800:479.4,850:541.7,900:607.8,1000:844.8},
+      Sch40S: {15:0.078,20:0.103,25:0.154,32:0.260,40:0.368,50:0.652,65:1.37,80:2.04,100:3.84,125:6.48,150:9.94,200:20.1,250:35.4,300:56.2,350:78.9,400:118.0,450:168.1,500:219.5,550:280.0,600:366.7,700:501.2,900:907.7,1000:1529.4},
+      Sch80S: {15:0.089,20:0.134,25:0.196,32:0.341,40:0.492,50:0.891,65:1.79,80:2.74,100:5.36,125:9.13,150:15.0,200:30.5,250:56.2,300:92.7},
+      Sch160S:{15:0.119,20:0.178,25:0.263,32:0.433,40:0.660,50:1.34,65:2.37,80:3.87,100:8.12,125:14.7,150:23.9,200:53.0,250:102,300:170,350:238,400:354,450:500,500:683,550:894,600:1171,650:1484}
+    }
+  },
+  e90s:{
+    sgp:{
+      SGP:   {25:0.097,32:0.169,40:0.233,50:0.424,65:0.745,80:1.05,100:1.94,125:3.00,150:4.73,200:9.61,250:16.9,300:25.4,350:37.8,400:49.4,450:62.9,500:77.7},
+      Sch40: {25:0.102,32:0.173,40:0.245,50:0.434,65:0.909,80:1.36,100:2.56,125:4.33,150:6.63,200:13.4,250:23.6,300:37.5,350:52.7,400:78.5,450:112,500:146,550:187,600:245,650:310},
+      Sch80: {25:0.131,32:0.228,40:0.327,50:0.595,65:1.19,80:1.83,100:3.58,125:6.09,150:10.0,200:20.4,250:37.5,300:61.9,350:88.1,400:129,450:183,500:248,550:328,600:424,650:545},
+      Sch160:{25:0.174,32:0.286,40:0.435,50:0.887,65:1.56,80:2.56,100:5.36,125:9.69,150:15.8,200:35.0,250:67.2,300:112,350:157,400:233,450:330,500:451,550:590,600:773,650:979}
+    },
+    sus:{
+      Sch5S: {25:0.052,32:0.083,40:0.114,50:0.191,65:0.383,80:0.540,100:0.928,125:1.89,150:2.68,200:4.71,250:8.83,300:14.8},
+      Sch10S:{25:0.086,32:0.137,40:0.189,50:0.318,65:0.541,80:0.761,100:1.31,125:2.28,150:3.24,200:6.68,250:10.4,300:16.7,350:24.1,400:31.6,450:40.0,500:54.3,550:65.8,600:92.5,650:133.4,700:154.8,750:177.9,800:202.5,850:228.8,900:256.6,1000:376.0},
+      Sch20S:{25:0.091,32:0.147,40:0.202,50:0.393,65:0.627,80:1.00,100:1.73,125:3.31,150:4.73,200:10.7,250:16.7,300:20.0,350:38.3,400:50.1,450:63.6,500:93.1,550:112.8,600:134.5,650:210.2,700:244.2,750:280.6,800:319.6,850:361.2,900:405.2,1000:563.2},
+      Sch40S: {25:0.102,32:0.174,40:0.245,50:0.434,65:0.909,80:1.36,100:2.56,125:4.32,150:6.63,200:13.4,250:23.6,300:37.5,350:52.6,400:78.6,450:112.1,500:146.3,550:186.7,600:244.4,700:334.1,900:605.1,1000:1019.6},
+      Sch80S: {25:0.131,32:0.228,40:0.328,50:0.594,65:1.19,80:1.83,100:3.58,125:6.09,150:10.0,200:20.3,250:37.5,300:61.8},
+      Sch160S:{25:0.176,32:0.289,40:0.439,50:0.896,65:1.58,80:2.58,100:5.41,125:9.79,150:16.0,200:35.4,250:67.9,300:113,350:159,400:235,450:333,500:455,550:596,600:781,650:989}
+    }
+  },
+  e45l:{
+    sgp:{
+      SGP:   {15:0.039,20:0.05,25:0.073,32:0.126,40:0.175,50:0.317,65:0.559,80:0.79,100:1.46,125:2.25,150:3.54,200:7.2,250:12.7,300:19,350:28.4,400:37.1,450:47.1,500:58.3},
+      Sch40: {15:0.039,20:0.052,25:0.077,32:0.13,40:0.184,50:0.326,65:0.683,80:1.02,100:1.92,125:3.24,150:4.97,200:10.1,250:17.7,300:28.1,350:39.5,400:59,450:84.1,500:110},
+      Sch80: {15:0.049,20:0.067,25:0.098,32:0.17,40:0.246,50:0.445,65:0.895,80:1.37,100:2.68,125:4.57,150:7.5,200:15.3,250:28.1,300:46.4,350:66,400:97.2,450:137,500:186},
+      Sch160:{15:0.059,20:0.088,25:0.13,32:0.214,40:0.327,50:0.665,65:1.17,80:1.92,100:4.01,125:7.27,150:11.8,200:26.2,250:50.4,300:84,350:118,400:175}
+    },
+    sus:{
+      Sch5S: {15:0.024,20:0.031,25:0.039,32:0.063,40:0.085,50:0.143,65:0.288,80:0.405,100:0.696,125:1.42,150:2.01,200:3.43,250:6.62,300:11.1},
+      Sch10S:{15:0.030,20:0.039,25:0.064,32:0.103,40:0.142,50:0.239,65:0.406,80:0.571,100:0.985,125:1.71,150:2.43,200:5.01,250:7.77,300:12.5,350:18.1,400:23.7,450:30.0,500:40.7,550:49.4,600:69.4,650:100.0,700:116.1,750:133.4,800:151.9,850:171.6,900:192.4,1000:282.0},
+      Sch20S:{15:0.035,20:0.046,25:0.069,32:0.110,40:0.152,50:0.295,65:0.470,80:0.752,100:1.30,125:2.49,150:3.54,200:8.05,250:12.5,300:17.9,350:28.7,400:37.6,450:47.7,500:69.8,550:84.6,600:100.9,650:157.7,700:183.1,750:210.5,800:239.7,850:270.9,900:303.9,1000:422.4},
+      Sch40S: {15:0.039,20:0.052,25:0.077,32:0.130,40:0.184,50:0.326,65:0.683,80:1.02,100:1.92,125:3.24,150:4.97,200:10.1,250:17.7,300:28.1,350:39.5,400:59.0,450:84.0,500:109.7,550:140.0,600:183.3,700:250.6,900:453.8,1000:764.7},
+      Sch80S: {15:0.049,20:0.067,25:0.098,32:0.170,40:0.246,50:0.445,65:0.895,80:1.37,100:2.68,125:4.57,150:7.50,200:15.3,250:28.1,300:46.4},
+      Sch160S:{15:0.060,20:0.089,25:0.132,32:0.216,40:0.330,50:0.672,65:1.18,80:1.94,100:4.06,125:7.34,150:12.0,200:26.5,250:50.9,300:85.0,350:119,400:177,450:250,500:341,550:447,600:586,650:742}
+    }
+  },
+  e45s:{
+    sgp:{
+      SGP:   {40:0.116,50:0.212,65:0.372,80:0.526,100:0.972,125:1.50,150:2.36,200:4.81,250:8.47,300:12.7,350:18.9,400:24.7,450:31.4,500:38.9},
+      Sch40: {40:0.123,50:0.217,65:0.455,80:0.679,100:1.28,125:2.16,150:3.31,200:6.72,250:11.8,300:18.7,350:26.3,400:39.3,450:56.1,500:73.2,550:93.4,600:122,650:155},
+      Sch80: {40:0.164,50:0.298,65:0.597,80:0.914,100:1.79,125:3.04,150:5.01,200:10.2,250:18.7,300:30.9,350:44.0,400:64.7,450:91.3,500:124,550:164,600:212,650:272},
+      Sch160:{40:0.217,50:0.443,65:0.781,80:1.28,100:2.68,125:4.85,150:7.90,200:17.5,250:33.6,300:56.1,350:78.7,400:116,450:165,500:225,550:295,600:386,650:490}
+    },
+    sus:{
+      Sch5S: {32:0.042,40:0.057,50:0.096,65:0.192,80:0.270,100:0.464,125:0.944,150:1.34,200:2.35,250:4.42,300:7.40},
+      Sch10S:{32:0.068,40:0.094,50:0.159,65:0.270,80:0.381,100:0.657,125:1.14,150:1.62,200:3.34,250:5.18,300:8.34,350:12.1,400:15.8,450:20.0,500:27.2,550:32.9,600:46.2,650:66.7,700:77.4,750:88.9,800:101.3,850:114.4,900:128.3,1000:188.0},
+      Sch20S:{32:0.074,40:0.101,50:0.196,65:0.313,80:0.502,100:0.867,125:1.66,150:2.36,200:5.35,250:8.35,300:10.0,350:19.1,400:25.1,450:31.8,500:46.5,550:56.4,600:67.2,650:105.1,700:122.1,750:140.3,800:159.8,850:180.6,900:202.6,1000:281.6},
+      Sch40S: {32:0.087,40:0.122,50:0.217,65:0.455,80:0.678,100:1.28,125:2.16,150:3.31,200:6.71,250:11.8,300:18.7,350:26.3,400:39.3,450:56.0,500:73.2,550:93.3,600:122.2,700:167.1,900:302.5,1000:509.8},
+      Sch80S: {32:0.114,40:0.164,50:0.297,65:0.596,80:0.913,100:1.79,125:3.04,150:5.00,200:10.2,250:18.7,300:30.9},
+      Sch160S:{40:0.220,50:0.448,65:0.788,80:1.29,100:2.71,125:4.01,150:7.98,200:17.7,250:33.9,300:56.6,350:79.5,400:118,450:167,500:228,550:298,600:390,650:495}
+    }
+  },
+  tee:{
+    sgp:{
+      SGP:   {15:0.085,20:0.122,25:0.236,32:0.411,40:0.573,50:0.851,65:1.42,80:1.87,100:3.13,125:4.53,150:6.84,200:12.8,250:21.8,300:32,350:44.7,400:55.2,450:70,500:86.6},
+      Sch40: {15:0.085,20:0.126,25:0.25,32:0.422,40:0.604,50:0.872,65:1.74,80:2.41,100:4.12,125:6.54,150:9.58,200:17.9,250:30.4,300:47.2,350:62.3,400:87.7,450:125,500:163,550:208,600:253},
+      Sch80: {15:0.107,20:0.162,25:0.319,32:0.555,40:0.806,50:1.2,65:2.28,80:3.25,100:5.77,125:9.2,150:14.5,200:27.1,250:48.3,300:77.9,350:105,400:144,450:203,500:277,550:366,600:438},
+      Sch160:{32:0.695,40:1.07,50:1.78,65:2.98,80:4.54,100:8.63,125:14.6,150:22.8,200:46.6,250:86.6,300:141,350:186,400:260,450:367,500:502,550:657,600:799}
+    },
+    sus:{
+      Sch5S: {15:0.053,20:0.075,25:0.128,32:0.203,40:0.281,50:0.384,65:0.732,80:0.958,100:1.49,125:2.85,150:3.88,200:6.27,250:11.4,300:18.7},
+      Sch10S:{15:0.067,20:0.095,25:0.212,32:0.338,40:0.471,50:0.645,65:1.04,80:1.37,100:2.14,125:3.48,150:4.74,200:9,250:13.5,300:21.2,350:28.8,400:35.6,450:45.1,500:61.2,550:74.1,600:96.7,650:150.3,700:169.1,750:194.7,800:222,850:251.2,900:282.2,1000:414.5},
+      Sch20S:{15:0.078,20:0.111,25:0.225,32:0.36,40:0.502,50:0.796,65:1.21,80:1.8,100:2.83,125:5.06,150:6.91,200:14.4,250:21.7,300:30.5,350:45.8,400:56.5,450:71.6,500:104.9,550:127.1,600:140.7,650:236.8,700:266.6,750:307.1,800:350.4,850:396.6,900:445.7,1000:620.9},
+      Sch40S:{15:0.086,20:0.127,25:0.252,32:0.426,40:0.61,50:0.881,65:1.75,80:2.43,100:4.16,125:6.6,150:9.68,200:18.1,250:30.7,300:47.7,350:62.9,400:88.6,450:126.2,500:164.8,550:210.3,600:255.7},
+      Sch80S:{15:0.108,20:0.163,25:0.322,32:0.56,40:0.814,50:1.21,65:2.3,80:3.28,100:5.83,125:9.3,150:14.6,200:27.4,250:48.8,300:78.7},
+      Sch160S:{15:0.130,20:0.213,25:0.424,32:0.693,40:1.06,50:1.77,65:2.94,80:4.47,100:8.48,125:14.3,150:22.3,200:45.4,250:84.2,300:137,350:180,400:251,450:355,500:485,550:635,600:770,650:1054}
+    }
+  },
+  red:{
+    sgp:{
+      SGP:   {20:0.057,25:0.11,32:0.154,40:0.232,50:0.364,65:0.594,80:0.725,100:1.17,125:1.74,150:2.55,200:4.17,250:6.87,300:9.97,350:21.2,400:25.9,450:31.5,500:47},
+      Sch40: {20:0.059,25:0.116,32:0.157,40:0.243,50:0.372,65:0.724,80:0.933,100:1.54,125:2.5,150:3.57,200:5.71,250:9.58,300:14.7,350:29.5,400:41.1,450:56.2,500:88.5,550:103.2,600:124.3},
+      Sch80: {20:0.075,25:0.147,32:0.206,40:0.324,50:0.508,65:0.946,80:1.25,100:2.14,125:3.52,150:5.38,200:8.63,250:15.2,300:24.2,350:49.3,400:67.7,450:91.4,500:149.9,550:181,600:215},
+      Sch160:{25:0.194,32:0.257,40:0.429,50:0.752,65:1.23,80:1.75,100:3.2,125:5.57,150:8.45,200:14.7,250:27,300:43.6,350:87.7,400:121,450:165,500:271.2,550:324.5,600:391.4}
+    },
+    sus:{
+      Sch5S: {20:0.035,25:0.06,32:0.066,40:0.114,50:0.164,65:0.307,80:0.372,100:0.528,125:1.107,150:1.45,200:2.01,250:3.59,300:5.83},
+      Sch10S:{20:0.045,25:0.099,32:0.126,40:0.19,50:0.275,65:0.435,80:0.53,100:0.8,125:1.33,150:1.76,200:2.84,250:4.21,300:6.57,350:13.7,400:16.7,450:20.3,500:33.2,550:36.7,600:47.5,650:76.2,700:82.3,750:88.5,800:94.7,850:100.9,900:107,1000:141.5},
+      Sch20S:{20:0.052,25:0.105,32:0.134,40:0.202,50:0.339,65:0.503,80:0.697,100:1.05,125:1.93,150:2.57,200:4.55,250:6.78,300:9.43,350:21.7,400:26.4,450:32.2,500:56.9,550:63,600:69.1,650:120,700:129.8,750:139.6,800:149.4,850:159.2,900:169,1000:212},
+      Sch40S:{20:0.059,25:0.117,32:0.158,40:0.246,50:0.375,65:0.728,80:0.94,100:1.55,125:2.52,150:3.59,200:5.68,250:9.58,300:14.7,350:29.8,400:41.4,450:56.7,500:89.3,550:104.1,600:125.5},
+      Sch80S:{20:0.076,25:0.149,32:0.207,40:0.327,50:0.512,65:0.952,80:1.26,100:2.16,125:3.53,150:5.42,200:8.59,250:15.2,300:24.3},
+      Sch160S:{25:0.194,32:0.257,40:0.429,50:0.752,65:1.23,80:1.75,100:3.2,125:5.57,150:8.45,200:14.7,250:27,300:43.6,350:87.7,400:121,450:165,500:271.2,550:324.5,600:391.4}
+    }
+  }
+};
+
+/* ======================================================
+   大口径継手重量データ (BENKAN KIKOH / 400A〜1500A)
+   cs: LG(7.9mm)/STD(9.5mm)のみ残す
+====================================================== */
+const LB_FIT={
+  e90l:{
+    cs:{
+      LG: {400:74.3,450:94.2,500:116,550:141,600:168,650:198,700:229,750:264,800:300,850:338,900:380,1000:470,1100:569,1200:677,1350:858,1500:1060},
+      STD:{400:89,450:113,500:140,550:169,600:202,650:237,700:275,750:316,800:360,850:407,900:457,1000:564,1100:683,1200:814,1350:1033,1500:1276}
+    }
+  },
+  e90s:{
+    cs:{
+      LG: {400:49.5,450:62.8,500:77.7,550:94.1,600:112,650:132,700:153,750:176,800:200,850:226,900:253,1000:313,1100:379,1200:451,1350:572,1500:706},
+      STD:{400:59.1,450:75.3,500:93.1,550:113,600:135,650:158,700:184,750:211,800:240,850:271,900:304,1000:376,1100:456,1200:543,1350:687,1500:848}
+    }
+  },
+  e45l:{
+    cs:{
+      LG: {400:37.1,450:47.1,500:58.3,550:70.6,600:84.1,650:98.8,700:115,750:132,800:150,850:169,900:190,1000:235,1100:284,1200:339,1350:429,1500:530},
+      STD:{400:44.5,450:56.5,500:69.9,550:84.7,600:101,650:119,700:138,750:158,800:180,850:203,900:228,1000:282,1100:342,1200:407,1350:517,1500:638}
+    }
+  },
+  e45s:{
+    cs:{
+      LG: {400:24.8,450:31.4,500:38.8,550:47.1,600:56.1,650:65.9,700:76.5,750:87.8,800:100,850:113,900:127,1000:157,1100:190,1200:226,1350:286,1500:353},
+      STD:{400:29.5,450:37.6,500:46.6,550:56.4,600:67.3,650:79.1,700:91.8,750:105,800:120,850:136,900:152,1000:188,1100:228,1200:272,1350:344,1500:424}
+    }
+  },
+  tee:{
+    cs:{
+      LG: {650:147,700:165,750:190,800:217,850:245,900:276,1000:342,1100:395,1200:473,1300:558,1500:750},
+      STD:{650:176,700:198,750:228,800:261,850:295,900:331,1000:410,1100:475,1200:568,1300:671,1500:901}
+    }
+  },
+  red:{
+    cs:{
+      LG: {400:25.9,450:31.5,500:47,550:52,600:57.1,650:74.5,700:80.5,750:86.5,800:92.6,850:98.6,900:105,1000:117,1100:129,1200:164,1300:178,1500:207},
+      STD:{400:31,450:37.8,500:56.4,550:62.4,600:68.5,650:89.3,700:96.6,750:104,800:111,850:118,900:126,1000:140,1100:155,1200:197,1300:214,1500:248}
+    }
+  }
+};
+
+/* ======================================================
+   フランジ重量データ (Excel 実測値)
+====================================================== */
+const FL={
+  k2:{
+    types:['SOP','BL'],
+    data:{450:[19.9,48.8],500:[21.5,57.1],550:[28.2,75.2],600:[30.4,86.3],650:[33.5,99.1],700:[35.8,111.8],750:[43,130.3],800:[45.4,144.7],850:[47.8,159.9],900:[50.1,175.8],1000:[58.9,226.9],1100:[67.9,271.2],1200:[79.7,321.2],1350:[90.5,396.2],1500:[109.6,515.4]}
+  },
+  k5:{
+    types:['SOP','BL'],
+    data:{15:[0.3,0.32],20:[0.36,0.41],25:[0.45,0.52],32:[0.77,0.91],40:[0.82,1],50:[1.06,1.38],65:[1.48,2],80:[1.97,2.67],100:[2.35,3.66],125:[3.2,5.16],150:[4.39,7.47],200:[6.24,12.1],250:[9.39,19.2],300:[10.2,24.2],350:[14,33],400:[16.9,41.7],450:[21.4,52.7],500:[23,61.6],550:[30.1,80.8],600:[32.5,92.7],650:[35.6,114],700:[38,138],750:[48.4,171],800:[51.2,202],850:[53.9,237],900:[60.7,260],1000:[70.1,345],1100:[81.6,454],1200:[101,586],1350:[116,814],1500:[137,1060]}
+  },
+  k10:{
+    types:['SOP','BL'],
+    data:{15:[0.56,0.6],20:[0.72,0.79],25:[1.12,1.22],32:[1.47,1.66],40:[1.55,1.79],50:[1.86,2.23],65:[2.58,3.24],80:[2.58,3.48],100:[3.1,4.57],125:[4.73,7.18],150:[6.3,10.1],200:[7.46,13.9],250:[11.8,22.6],300:[12.6,27.8],350:[16.3,36.9],400:[23.2,52.1],450:[29.3,68.4],500:[33.3,81.6],550:[42.9,112],600:[45.4,134],650:[51.8,161],700:[59,196],750:[72.8,248],800:[76,286],850:[80.1,330],900:[88.9,377],1000:[109,512],1100:[131,675],1200:[163,854],1350:[204,1180],1500:[248,1590]}
+  },
+  k20:{
+    types:['SOH','BL'],
+    data:{15:[0.65,0.67],20:[0.81,0.86],25:[1.27,1.34],32:[1.58,1.73],40:[1.68,1.87],50:[1.89,2.2],65:[2.73,3.24],80:[3.85,4.63],100:[5.03,6.61],125:[7.94,10.5],150:[10.4,14.4],200:[13.1,20.8],250:[23.1,36.2],300:[27.2,47.4],350:[38.4,66.1],400:[53.9,97],450:[71,126],500:[84.6,155],550:[102,190],600:[115,223]}
+  },
+  f12:{
+    types:['SOP','BL'],
+    data:{80:[3.9,4.8],100:[4.6,6.1],125:[5.8,8.3],150:[7.4,11.2],200:[9.1,15.4],250:[13.6,24.4],300:[16.2,31],350:[23.6,44.3],400:[28.4,53.4],450:[35.6,72.3],500:[40,85],600:[49.9,119.8],700:[67.1,167.4],800:[81.9,220.8],900:[106.2,293.4],1000:[125.4,363.1],1100:[147.1,467.7],1200:[168.6,568],1350:[211.3,740.3],1500:[254,949.7]}
+  }
+};
+
+/* ======================================================
+   セクション定義
+====================================================== */
+const SECTIONS=[
+  // ─ 直管 ─
+  {id:'sgp',   g:'pipe', name:'SGP 直管',      type:'pipe',     mat:'SGP'},
+  {id:'stpg',  g:'pipe', name:'STPG 直管',     type:'pipe_sch', mat:'STPG',    schs:['Sch40','Sch80','Sch160']},
+  {id:'s304',  g:'pipe', name:'SUS 直管',        type:'pipe_sch', mat:'SUS304',  schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  // ─ 継手 SGP/CS ─
+  {id:'e90s_c',  g:'fit_sgp', name:'90°エルボ（ロング）',          type:'fit', fitKey:'e90l', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'e90ss_c', g:'fit_sgp', name:'90°エルボ（ショート）',        type:'fit', fitKey:'e90s', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'e45s_c',  g:'fit_sgp', name:'45°エルボ（ロング）',          type:'fit', fitKey:'e45l', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'e45ss_c', g:'fit_sgp', name:'45°エルボ（ショート）',        type:'fit', fitKey:'e45s', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'tees',    g:'fit_sgp', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  {id:'reds',    g:'fit_sgp', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red', matKey:'sgp', schs:['SGP','Sch40','Sch80','Sch160']},
+  // ─ 継手 SUS（統合 15A〜900A）─
+  {id:'e90l_u', g:'fit_sus', name:'90°エルボ（ロング）',             type:'fit', fitKey:'e90l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  {id:'e90s_u', g:'fit_sus', name:'90°エルボ（ショート）',           type:'fit', fitKey:'e90s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  {id:'e45l_u', g:'fit_sus', name:'45°エルボ（ロング）',             type:'fit', fitKey:'e45l', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  {id:'e45s_u', g:'fit_sus', name:'45°エルボ（ショート）',           type:'fit', fitKey:'e45s', matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  {id:'teeu',  g:'fit_sus', name:'ティーズ（同径重量・異径共用）', type:'fit', fitKey:'tee',  matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  {id:'redu',  g:'fit_sus', name:'レジューサ（1段落ち重量）',     type:'fit', fitKey:'red',  matKey:'sus', schs:['Sch5S','Sch10S','Sch20S','Sch40S','Sch80S','Sch160S']},
+  // ─ フランジ ─
+  {id:'fl2k',  g:'flange', name:'2K フランジ',          type:'flange', flKey:'k2'},
+  {id:'fl5k',  g:'flange', name:'5K フランジ',          type:'flange', flKey:'k5'},
+  {id:'fl10k', g:'flange', name:'10K フランジ',         type:'flange', flKey:'k10'},
+  {id:'fl20k', g:'flange', name:'20K フランジ',         type:'flange', flKey:'k20', pipeSrcs:['sgp','stpg','s304']},
+  {id:'flf12', g:'flange', name:'F12（7.5K）フランジ',  type:'flange', flKey:'f12'},
+  // ─ 大口径 CS（STPY＋炭素鋼 LG/STD）─
+  {id:'stpy',     g:'lbo', name:'STPY400 直管',                   type:'pipe_sch', mat:'STPY400', schs:['LG','STD']},
+  {id:'lbe90l_c', g:'lbo', name:'90°エルボ（ロング）',          type:'fit_lb', lbKey:'e90l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe90s_c', g:'lbo', name:'90°エルボ（ショート）',        type:'fit_lb', lbKey:'e90s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe45l_c', g:'lbo', name:'45°エルボ（ロング）',          type:'fit_lb', lbKey:'e45l', matKey:'cs', schs:['LG','STD']},
+  {id:'lbe45s_c', g:'lbo', name:'45°エルボ（ショート）',        type:'fit_lb', lbKey:'e45s', matKey:'cs', schs:['LG','STD']},
+  {id:'lbtee_c',  g:'lbo', name:'ティーズ（同径重量・異径共用）', type:'fit_lb', lbKey:'tee',  matKey:'cs', schs:['LG','STD']},
+  {id:'lbred_c',  g:'lbo', name:'レジューサ（1段落ち重量）',     type:'fit_lb', lbKey:'red',  matKey:'cs', schs:['LG','STD']},
+];
+
+/* ======================================================
+   状態管理
+====================================================== */
+const state={};
+SECTIONS.forEach(s=>{state[s.id]=[];});
+// グループ別「最後に使ったサイズ・スケジュール」記憶（継手行削除時に保存、直管に口径なし時のフォールバック用）
+const grpLastSize={};
+const grpLastSch={};
+function rememberLastUsed(sec,row){
+  if(!sec.g) return;
+  const isFit=sec.type==='fit'||sec.type==='fit_lb'||sec.type==='flange';
+  if(!isFit) return;
+  if(row.size) grpLastSize[sec.g]=String(row.size);
+  if(row.sch)  grpLastSch[sec.g]=row.sch;
+}
+let uidCnt=0;
+const mkUid=()=>'r'+(++uidCnt);
+
+/* ======================================================
+   スケジュールのグループ別デフォルト値
+====================================================== */
+// グループ → 参照すべき直管セクションID
+const GROUP_PIPE_SRCS={
+  fit_sgp: ['sgp','stpg'],
+  fit_sus: ['s304'],
+  flange:  ['sgp','stpg','s304','stpy'],
+  lbo:     ['stpy'],
+};
+// 直管が未入力のときのスケジュールフォールバック
+const GROUP_SCH_FALLBACK={ lbo:'LG' };
+
+function getSmartDefault(sec){
+  const pipeIds=sec.pipeSrcs||GROUP_PIPE_SRCS[sec.g]||[];
+  if(!pipeIds.length) return {sch:GROUP_SCH_FALLBACK[sec.g]||'', size:''};
+
+  // sch と size を別々に収集（STPGはsch入力だけでもschを拾う）
+  const schSet=new Set();
+  const sizeSet=new Set();
+  pipeIds.forEach(pid=>{
+    (state[pid]||[]).forEach(r=>{
+      if(pid==='sgp'){
+        // SGP直管: sizeがあればSGPを追加
+        if(r.size){ schSet.add('SGP'); sizeSet.add(String(r.size)); }
+      } else {
+        // STPG・SUS等: schだけでも追加（sizeは両方ある時のみ）
+        if(r.sch) schSet.add(r.sch);
+        if(r.sch&&r.size) sizeSet.add(String(r.size));
+      }
+    });
+  });
+
+  const schs=[...schSet];
+  const sizes=[...sizeSet];
+  return {
+    sch : schs.length===1 ? schs[0] : (GROUP_SCH_FALLBACK[sec.g]||grpLastSch[sec.g]||''),
+    size: sizes.length===1 ? sizes[0] : (sizes.length===0 ? (grpLastSize[sec.g]||'') : ''),
+  };
+}
+
+/* ======================================================
+   重量計算
+====================================================== */
+function calcWt(sec,row){
+  const qty=+row.qty||0;
+  if(!qty||qty<=0) return null;
+
+  if(sec.type==='pipe'){
+    const w=pipeKgM(sec.mat,null,row.size);
+    const len=+row.len||0;
+    if(!w||!len) return null;
+    return w*(len/1000)*qty;
+  }
+  if(sec.type==='pipe_sch'){
+    if(!row.sch) return null;
+    const w=pipeKgM(sec.mat,row.sch,row.size);
+    const len=+row.len||0;
+    if(!w||!len) return null;
+    return w*(len/1000)*qty;
+  }
+  if(sec.type==='fit'){
+    if(!row.sch||!row.size) return null;
+    const tbl=(FIT[sec.fitKey]||{})[sec.matKey]||{};
+    const w=(tbl[row.sch]||{})[+row.size];
+    return w!=null?w*qty:null;
+  }
+  if(sec.type==='fit_lb'){
+    if(!row.sch||!row.size) return null;
+    const tbl=(LB_FIT[sec.lbKey]||{})[sec.matKey]||{};
+    const w=(tbl[row.sch]||{})[+row.size];
+    return w!=null?w*qty:null;
+  }
+  if(sec.type==='flange'){
+    const fd=FL[sec.flKey];
+    if(!row.fltype||!row.size) return null;
+    const idx=fd.types.indexOf(row.fltype);
+    if(idx<0) return null;
+    const row_data=(fd.data[+row.size]);
+    if(!row_data) return null;
+    const w=row_data[idx];
+    return w!=null?w*qty:null;
+  }
+  return null;
+}
+
+/* ======================================================
+   サイズ選択肢生成
+====================================================== */
+function pipeSizeOpts(mat,sch,sel){
+  if(mat==='STPY400'){
+    const kgm=STPY_KGM[sch]||{};
+    const sizes=Object.keys(kgm).map(Number).sort((a,b)=>a-b);
+    return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+  }
+  if(mat==='SUS304'){
+    const schToKgm={Sch5S:'5S',Sch10S:'10S',Sch20S:'20S',Sch40S:'40'};
+    const kgmKey=schToKgm[sch];
+    const schKey=sch?sch.replace(/S$/,''):'Sch10';
+    const smallSizes=Object.keys(T.SUS[schKey]||{}).map(Number);
+    const largeSizes=kgmKey?Object.keys(SUS_KGM[kgmKey]||{}).map(Number):[];
+    const allSizes=[...new Set([...smallSizes,...largeSizes])].sort((a,b)=>a-b);
+    return '<option value="">— サイズ —</option>'+allSizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+  }
+  let tmap;
+  if(mat==='SGP') tmap=T.SGP;
+  else if(mat==='STPG') tmap=(T.STPG[sch]||{});
+  else tmap={};
+  const sizes=Object.keys(tmap).map(Number).sort((a,b)=>a-b);
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+function fitSizeOpts(sec,sch,sel,bypass){
+  const active=bypass?[]:getActiveSizesForGroup(sec.g);
+  if(sec.type==='fit_lb'){
+    const tbl=(LB_FIT[sec.lbKey]||{})[sec.matKey]||{};
+    const data=tbl[sch]||{};
+    let sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+    if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
+    return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+  }
+  const tbl=(FIT[sec.fitKey]||{})[sec.matKey]||{};
+  const data=tbl[sch]||{};
+  let sizes=Object.keys(data).map(Number).sort((a,b)=>a-b);
+  if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+function flangeSizeOpts(flKey,sel,g,bypass,pipeIds){
+  const fd=FL[flKey];
+  const active=bypass?[]:(g?getActiveSizesForGroup(g,pipeIds):getActiveSizes());
+  let sizes=Object.keys(fd.data).map(Number).sort((a,b)=>a-b);
+  if(active.length>0) sizes=sizes.filter(s=>active.includes(s));
+  return '<option value="">— サイズ —</option>'+sizes.map(s=>`<option value="${s}"${sel==s?' selected':''}>${s}A</option>`).join('');
+}
+
+/* ======================================================
+   行 HTML 生成
+====================================================== */
+function rowHTML(sec,row){
+  const wt=calcWt(sec,row);
+  const wtStr=wt!=null?wt.toFixed(2):'—';
+  const wtCls='row-wt'+(wt==null?' empty':'');
+  const s=sec.id, u=row.uid;
+
+  const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
+    ontouchstart="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
+    onmousedown="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
+    ontouchend="stopAdj()" ontouchcancel="stopAdj()" onmouseup="stopAdj()" onmouseleave="stopAdj()">${lbl}</button>`;
+  const delBtn=`<button class="del-btn" onclick="delOrClear('${s}','${u}')" title="値あり→クリア＆フィルター解除 / 空行→削除">✕</button>`;
+
+  if(sec.type==='pipe'){
+    const sOpts=pipeSizeOpts(sec.mat,null,row.size);
+    const teishaku=TEISHAKU[sec.mat]||5500;
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="saveLenOnly(this,'${s}','${u}')" onchange="onNum(this,'${s}','${u}','len')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',-1,'−')}
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',-1,'−')}
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='pipe_sch'){
+    const schOpts='<option value="">—</option>'+sec.schs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
+    const sOpts=row.sch?pipeSizeOpts(sec.mat,row.sch,row.size):'<option value="">— スケジュール先に —</option>';
+    const teishaku=TEISHAKU[sec.mat]||5500;
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" onchange="onSel(this,'${s}','${u}','sch')">${schOpts}</select>
+        <select class="sz-sel" id="ss-${u}" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">長さ</span>
+        <button class="teishaku-btn" onclick="setTeishaku('${s}','${u}',${teishaku})">定尺</button>
+        <input class="num-inp len-inp" type="number" id="li-${u}" value="${row.len||''}" placeholder="0" oninput="saveLenOnly(this,'${s}','${u}')" onchange="onNum(this,'${s}','${u}','len')">
+        <span class="unit-txt">mm</span>
+        ${adjBtn('len',-1,'−')}
+        ${adjBtn('len',1,'＋')}
+      </div>
+      <div class="row-l3">
+        <span class="row-lbl">本数</span>
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">本</span>
+        ${adjBtn('qty',-1,'−')}
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='fit'||sec.type==='fit_lb'){
+    const bypass=row.bypass||false;
+    const activeSchs=bypass?[]:getActiveSchsForGroup(sec.g);
+    const visSchs=activeSchs.length>0 ? sec.schs.filter(sc=>activeSchs.includes(sc)) : sec.schs;
+    const schOpts='<option value="">—</option>'+visSchs.map(sc=>`<option value="${sc}"${row.sch===sc?' selected':''}>${SCH_LABEL[sc]||sc}</option>`).join('');
+    const sOpts=row.sch?fitSizeOpts(sec,row.sch,row.size,bypass):'<option value="">— スケジュール先に —</option>';
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" onchange="onSel(this,'${s}','${u}','sch')">${schOpts}</select>
+        <select class="sz-sel" id="ss-${u}" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">個数</span>
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">個</span>
+        ${adjBtn('qty',-1,'−')}
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+
+  if(sec.type==='flange'){
+    const fd=FL[sec.flKey];
+    const bypass=row.bypass||false;
+    const typeOpts='<option value="">— 形式 —</option>'+fd.types.map(t=>`<option value="${t}"${row.fltype===t?' selected':''}>${t}形</option>`).join('');
+    const sOpts=flangeSizeOpts(sec.flKey,row.size,sec.g,bypass,sec.pipeSrcs);
+    return `<div class="entry-row" id="er-${u}">
+      <div class="row-l1">
+        <select class="sch-sel" style="width:58px" onchange="onSel(this,'${s}','${u}','fltype')">${typeOpts}</select>
+        <select class="sz-sel" onchange="onSel(this,'${s}','${u}','size')">${sOpts}</select>
+        <span class="${wtCls}" id="wt-${u}">${wtStr}</span><span class="wt-unit">kg</span>
+        ${delBtn}
+      </div>
+      <div class="row-l2">
+        <span class="row-lbl">枚数</span>
+        <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onNum(this,'${s}','${u}','qty')">
+        <span class="unit-txt">枚</span>
+        ${adjBtn('qty',-1,'−')}
+        ${adjBtn('qty',1,'＋')}
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+/* ======================================================
+   セクション再描画
+====================================================== */
+function renderSec(sec){
+  const rows=state[sec.id];
+  const sub=rows.reduce((s,r)=>{const w=calcWt(sec,r);return s+(w||0);},0);
+  const card=document.getElementById('card-'+sec.id);
+  if(!card) return;
+  const subEl=card.querySelector('.sec-sub');
+  subEl.textContent=sub>0?sub.toFixed(1)+' kg':'—';
+  subEl.className='sec-sub'+(sub>0?' has-data':'');
+  const list=card.querySelector('.entry-list');
+  list.innerHTML=rows.length===0?'<div class="empty-msg">項目なし — 下の＋ボタンで追加</div>':rows.map(r=>rowHTML(sec,r)).join('');
+}
+
+function renderTotal(){
+  let t=0;
+  SECTIONS.forEach(s=>state[s.id].forEach(r=>{const w=calcWt(s,r);if(w)t+=w;}));
+  document.getElementById('grand-total').textContent=t.toFixed(1);
+  renderGroupSubs();
+}
+
+function renderGroupSubs(){
+  const gMap={};
+  SECTIONS.forEach(sec=>{if(!gMap[sec.g])gMap[sec.g]=[];gMap[sec.g].push(sec);});
+  Object.entries(gMap).forEach(([g,secs])=>{
+    const el=document.getElementById('gst-'+g);if(!el)return;
+    const tot=secs.reduce((s,sec)=>s+state[sec.id].reduce((ss,r)=>{const w=calcWt(sec,r);return ss+(w||0);},0),0);
+    el.textContent=tot>0?tot.toFixed(1)+' kg':'—';
+    el.className='group-sub-total'+(tot>0?' has-data':'');
+  });
+}
+
+function renderAll(){SECTIONS.forEach(renderSec);renderTotal();}
+
+/* ======================================================
+   行重量更新（軽量版）
+====================================================== */
+function updateRowWt(sec,row){
+  const wt=calcWt(sec,row);
+  const el=document.getElementById('wt-'+row.uid);
+  if(el){el.textContent=wt!=null?wt.toFixed(2):'—';el.className='row-wt'+(wt==null?' empty':'');}
+  renderSec(sec);renderTotal();
+}
+
+/* ======================================================
+   イベントハンドラ
+====================================================== */
+function findSecRow(secId,uid){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row=state[secId].find(r=>r.uid===uid);
+  return {sec,row};
+}
+
+function onSel(el,secId,uid,field){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  const prev=row[field];
+  row[field]=el.value;
+  if(field==='sch'&&prev!==el.value){
+    row.size='';
+    const ssSel=document.getElementById('ss-'+uid);
+    if(ssSel){
+      if(sec.type==='pipe_sch') ssSel.innerHTML=pipeSizeOpts(sec.mat,row.sch,'');
+      else if(sec.type==='fit'||sec.type==='fit_lb') ssSel.innerHTML=fitSizeOpts(sec,row.sch,'',row.bypass||false);
+    }
+    // 直管スケジュール変更時 → 継手のスケジュール選択肢も更新
+    if(sec.type==='pipe_sch') refreshFitSections();
+  }
+  // 直管サイズ変更時 → 継手・フランジの選択肢を更新
+  if(field==='size' && (sec.type==='pipe'||sec.type==='pipe_sch')){
+    refreshFitSections();
+  }
+  updateRowWt(sec,row);
+}
+
+function saveLenOnly(el,secId,uid){
+  // oninput: データだけ保存、再描画なし（入力中キーボードが消えるのを防ぐ）
+  const {row}=findSecRow(secId,uid); if(!row) return;
+  if(el.value!=='') row.len=+el.value;
+}
+function onNum(el,secId,uid,field){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  if(field==='len' && el.value==='') return; // Android: blur時に空値が来ても無視
+  row[field]=el.value?+el.value:null;
+  // blur中にrenderSecを呼ぶとNotFoundError → 0msで遅延してblur完了後に実行
+  setTimeout(()=>updateRowWt(sec,row), 0);
+}
+
+function setTeishaku(secId,uid,len){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  row.len=len;
+  const inp=document.getElementById('li-'+uid);
+  if(inp) inp.value=len;
+  updateRowWt(sec,row);
+}
+
+function addRow(secId){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const def=getSmartDefault(sec);
+  // フランジはデフォルト形式を SOP/SOH（types[0]）に設定。BL は × クリア後に選択可
+  const defaultFltype=sec.type==='flange'?(FL[sec.flKey].types[0]||''):'';
+  const row={uid:mkUid(),sch:def.sch,size:def.size,fltype:defaultFltype,len:null,qty:1,bypass:false};
+  state[secId].push(row);
+  document.getElementById('card-'+secId).classList.add('open');
+  renderSec(sec);
+  renderTotal();
+  setTimeout(()=>{
+    const el=document.getElementById('er-'+row.uid);
+    if(el) el.querySelector('select').focus();
+  },60);
+}
+
+
+
+function delRow(secId,uid){
+  const sec=SECTIONS.find(s=>s.id===secId);
+  const row=state[secId].find(r=>r.uid===uid);
+  if(row) rememberLastUsed(sec,row); // 削除前にサイズを記憶
+  state[secId]=state[secId].filter(r=>r.uid!==uid);
+  renderSec(sec);renderTotal();
+  // 直管の行を削除したら継手・フランジの選択肢も更新
+  if(sec.type==='pipe'||sec.type==='pipe_sch') refreshFitSections();
+}
+
+// × ボタン: 値あり → クリア＆フィルター解除 / 空行 → 削除
+function delOrClear(secId,uid){
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  const hasFitRow=sec.type==='fit'||sec.type==='fit_lb'||sec.type==='flange';
+  if(hasFitRow && (row.sch||row.size||row.fltype)){
+    // 1回目: 使用サイズを記憶してからクリア＆フィルター解除
+    rememberLastUsed(sec,row);
+    row.sch=''; row.size=''; row.fltype=''; row.bypass=true;
+    renderSec(sec); renderTotal();
+  } else {
+    // 空行（または直管行）はそのまま削除
+    delRow(secId,uid);
+  }
+}
+
+function clearAll(){
+  SECTIONS.forEach(s=>{state[s.id]=[];});
+  document.querySelectorAll('.sec-card.open').forEach(el=>el.classList.remove('open'));
+  renderAll();
+}
+function toggleCard(secId){document.getElementById('card-'+secId).classList.toggle('open');}
+function toggleGroup(g){document.getElementById('grp-'+g).classList.toggle('open');}
+
+/* ======================================================
+   直管入力済み口径の取得 → 継手サイズリスト絞り込み用
+====================================================== */
+function getActiveSizes(){
+  const s=new Set();
+  SECTIONS.filter(x=>x.type==='pipe'||x.type==='pipe_sch').forEach(sec=>{
+    (state[sec.id]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
+  });
+  return [...s].sort((a,b)=>a-b);
+}
+
+// グループ（fit_sgp / fit_sus / flange / lbo）に対応する直管だけのサイズ
+function getActiveSizesForGroup(g,pipeIds){
+  const ids=pipeIds||GROUP_PIPE_SRCS[g];
+  if(!ids||!ids.length) return getActiveSizes(); // 未定義グループはフォールバック
+  const s=new Set();
+  ids.forEach(pid=>{
+    (state[pid]||[]).forEach(row=>{ if(row.size) s.add(+row.size); });
+  });
+  const result=[...s].sort((a,b)=>a-b);
+  // 直管に口径が未設定の場合は「最後に使った口径」をフォールバックとして使用
+  if(result.length===0 && grpLastSize[g]) return [+grpLastSize[g]];
+  return result;
+}
+
+// グループの関連直管で実際に選択されているスケジュールを返す
+// （行が存在しない or スケジュール未選択の場合は空配列 → 全スケジュール表示）
+function getActiveSchsForGroup(g){
+  const pipeIds=GROUP_PIPE_SRCS[g]||[];
+  const s=new Set();
+  pipeIds.forEach(pid=>{
+    (state[pid]||[]).forEach(row=>{
+      // SGP直管はschフィールドなし → 行があれば'SGP'相当
+      if(pid==='sgp'){ if(row.size) s.add('SGP'); }
+      else{ if(row.sch) s.add(row.sch); }
+    });
+  });
+  return [...s];
+}
+
+function refreshFitSections(){
+  // 継手・フランジセクションのサイズ選択肢を再描画
+  SECTIONS.filter(x=>x.type==='fit'||x.type==='fit_lb'||x.type==='flange').forEach(sec=>{
+    if(state[sec.id].length>0) renderSec(sec);
+  });
+}
+
+/* ======================================================
+   ±ボタン長押し
+====================================================== */
+let _adjTimer=null,_curAdj=null;
+
+function doAdj(){
+  if(!_curAdj) return;
+  const {secId,uid,fld,dir}=_curAdj;
+  const {sec,row}=findSecRow(secId,uid); if(!row) return;
+  if(fld==='len'){
+    row.len=Math.max(1,(+row.len||0)+dir*1);
+    const inp=document.getElementById('li-'+uid);
+    if(inp) inp.value=row.len;
+  } else {
+    row.qty=Math.max(1,(+row.qty||0)+dir);
+    const inp=document.getElementById('qi-'+uid);
+    if(inp) inp.value=row.qty;
+  }
+  updateRowWt(sec,row);
+}
+
+function startAdj(secId,uid,fld,dir){
+  stopAdj();
+  _curAdj={secId,uid,fld,dir};
+  doAdj();
+  _adjTimer=setTimeout(function rpt(){doAdj();_adjTimer=setTimeout(rpt,85);},380);
+}
+function stopAdj(){clearTimeout(_adjTimer);_adjTimer=null;}
+
+/* ======================================================
+   スケジュール表示名（LG/STD 肉厚付き）
+====================================================== */
+const SCH_LABEL={LG:'LG（t7.9mm）',STD:'STD（t9.5mm）'};
+
+/* ======================================================
+   グループラベルテキスト
+====================================================== */
+const GROUP_LABELS={
+  pipe:    '直　管　類',
+  fit_sgp: '継　手　類　CS（炭素鋼）',
+  fit_sus: '継　手　類　SUS（ステンレス）',
+  flange:  'フ ラ ン ジ 類',
+  lbo:     '大 口 径 管 継 手 類（LG, STD）'
+};
+const GROUP_NOTE={
+  fit_sgp:'※ ショートエルボ（90ES/45ES）: jts-tokyo.comカタログ（JIS B2311,2312）',
+  fit_sus:'※ 90°/45°エルボ: TOSTEカタログ（JIS G3468）。ティーズ/レジューサ: BENKANカタログ',
+  lbo:'※ 600A超はJIS規格外・BENKANカタログ社内規格値'
+};
+
+/* ======================================================
+   DOM生成
+====================================================== */
+function buildDOM(){
+  const wrap=document.getElementById('main-wrap');
+  let html='';
+  let lastG='';
+  SECTIONS.forEach(sec=>{
+    if(sec.g!==lastG){
+      if(lastG) html+='</div></div>'; // close group-body, group-card
+      html+=`<div class="group-card" id="grp-${sec.g}">
+        <div class="group-head" onclick="toggleGroup('${sec.g}')">
+          <span class="group-chevron">▶</span>
+          <span class="group-title">${GROUP_LABELS[sec.g]||sec.g}</span>
+          <span class="group-sub-total" id="gst-${sec.g}">—</span>
+        </div>
+        <div class="group-body">`;
+      if(GROUP_NOTE[sec.g]) html+=`<div class="group-note">${GROUP_NOTE[sec.g]}</div>`;
+      lastG=sec.g;
+    }
+    html+=`<div class="sec-card" id="card-${sec.id}">
+      <div class="sec-head" onclick="toggleCard('${sec.id}')">
+        <span class="sec-chevron">▶</span>
+        <span class="sec-name">${sec.name}</span>
+        <span class="sec-sub">—</span>
+      </div>
+      <div class="sec-body">
+        <div class="entry-list"></div>
+        <button class="add-btn" onclick="addRow('${sec.id}')">＋ 行を追加</button>
+      </div>
+    </div>`;
+  });
+  if(lastG) html+='</div></div>'; // close last group-body, group-card
+  wrap.innerHTML=html;
+}
+
+/* ======================================================
+   タブ切り替え
+====================================================== */
+function showTab(t){
+  const isCalc=(t==='calc');
+  document.getElementById('total-bar-el').style.display  = isCalc ? '' : 'none';
+  document.getElementById('main-wrap').style.display     = isCalc ? '' : 'none';
+  document.getElementById('disclaimer-div').style.display= isCalc ? '' : 'none';
+  document.getElementById('manual-div').style.display    = isCalc ? 'none' : '';
+  document.getElementById('tab-calc').classList.toggle('active',  isCalc);
+  document.getElementById('tab-manual').classList.toggle('active', !isCalc);
+}
+
+buildDOM();
+renderAll();
+</script>
+</body>
+</html>
