@@ -297,9 +297,17 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
   <div class="man-section">
     <div class="man-h2">注 意 事 項</div>
     <div class="man-h3">三フランジT字管</div>
-    <p class="man-note"><span class="man-badge">JDPA G 3007 形式2 7.5K</span>D×d の各組み合わせの重量を個別に収録しています。同径・異径ともに該当する組み合わせの重量を直接使用します。</p>
+    <p class="man-note">
+      <span class="man-badge">～600A 形式１</span>全フランジ RFフランジの重量を収録。<br>
+      <span class="man-badge">700A～ 形式２</span>片側 GFフランジ・他 RFフランジの重量を収録。<br>
+      特注で全フランジRF仕様の場合は重量が異なります。D×d の各組み合わせを個別収録、該当する組み合わせを直接使用します。
+    </p>
     <div class="man-h3">フランジ片落管</div>
-    <p class="man-note"><span class="man-badge">JDPA G 3007 形式2 7.5K</span>D×d の各組み合わせの重量を個別に収録しています。該当する組み合わせの重量を直接使用します。</p>
+    <p class="man-note">
+      <span class="man-badge">～600A 形式１</span>全フランジ RFフランジの重量を収録。<br>
+      <span class="man-badge">700A～ 形式２</span>片側 GFフランジ・他 RFフランジの重量を収録。<br>
+      特注で全フランジRF仕様の場合は重量が異なります。D×d の各組み合わせを個別収録、該当する組み合わせを直接使用します。
+    </p>
   </div>
 
   <div class="man-section">
@@ -529,6 +537,10 @@ function rowHTML(sec,row){
   const wtCls='row-wt'+(wt==null?' empty':'');
   const sOpts=sizeOpts(sec,row.size);
   const s=sec.id, u=row.uid;
+  const _qty=+row.qty||0;
+  const unitWtStr=(wt!=null&&_qty>1)
+    ?`<span style="margin-left:auto;font-size:.72rem;color:var(--ink-soft);white-space:nowrap">単重 ${(wt/_qty).toFixed(1)} kg</span>`
+    :'';
 
   // 定尺ボタン（長さ入力セクション用）
   const tBtn=`<button class="teishaku-btn" data-sec="${s}" data-uid="${u}" onclick="setTeishaku('${s}','${u}')">定尺</button>`;
@@ -561,6 +573,7 @@ function rowHTML(sec,row){
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
         ${adjBtn('qty',1,'＋')}
+        ${unitWtStr}
       </div>
     </div>`;
   }
@@ -586,6 +599,7 @@ function rowHTML(sec,row){
         <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
         <span class="unit-txt">本</span>
         ${adjBtn('qty',1,'＋')}
+        ${unitWtStr}
       </div>
     </div>`;
   }
@@ -604,6 +618,7 @@ function rowHTML(sec,row){
       <input class="num-inp qty-inp" type="number" id="qi-${u}" value="${row.qty||''}" placeholder="0" onchange="onQty(this,'${s}','${u}')">
       <span class="unit-txt">個</span>
       ${adjBtn('qty',1,'＋')}
+      ${unitWtStr}
     </div>
   </div>`;
 }
@@ -893,6 +908,13 @@ function buildDOM(){
       html+=`<div class="group-label">${grpLabel}</div>`;
       lastG=sec.g;
     }
+    const shikiNote=(sec.id==='tman'||sec.id==='kata')
+      ?`<div style="font-size:.72rem;color:var(--ink-soft);background:var(--row);border:1px solid var(--paper-line);border-radius:3px;padding:5px 8px;margin-bottom:6px;line-height:1.7">
+          <span style="font-weight:700;color:var(--accent)">注</span>
+          ～600A: 形式１（全フランジ RFフランジ）<br>
+          700A～: 形式２（片側 GFフランジ・他 RFフランジ）
+        </div>`
+      :'';
     html+=`<div class="sec-card" id="card-${sec.id}">
       <div class="sec-head" onclick="toggleCard('${sec.id}')">
         <span class="sec-chevron">▶</span>
@@ -900,6 +922,7 @@ function buildDOM(){
         <span class="sec-sub">—</span>
       </div>
       <div class="sec-body">
+        ${shikiNote}
         <div class="entry-list"></div>
         <button class="add-btn" onclick="addRow('${sec.id}')">＋ 行を追加</button>
       </div>
