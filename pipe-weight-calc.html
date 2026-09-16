@@ -102,6 +102,7 @@ main{max-width:560px;margin:0 auto;padding:14px 14px 48px}
 .teishaku-btn:hover{border-color:var(--sw);background:var(--sw);color:#fff}
 .del-btn{width:28px;height:28px;flex-shrink:0;border:1px solid var(--paper-line);border-radius:3px;background:transparent;color:var(--ink-soft);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
 .del-btn:hover,.del-btn:active{background:var(--accent);border-color:var(--accent);color:#fff}.unit-txt{font-size:.7rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+.unit-wt-lbl{font-size:.65rem;color:var(--ink-soft);white-space:nowrap;flex-shrink:1;margin-left:auto;}
 .add-btn{width:100%;padding:7px;border:1.5px dashed var(--paper-line);border-radius:4px;background:transparent;color:var(--ink-soft);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
 .add-btn:hover{border-color:var(--blueprint);color:var(--blueprint);background:var(--row-hover)}
 .empty-msg{text-align:center;padding:8px;font-size:.72rem;color:var(--ink-soft)}.site-nav{background:var(--blueprint);border-top:3px solid var(--blueprint-deep);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
@@ -809,6 +810,9 @@ function rowHTML(sec,row){
   const wtStr=wt!=null?wt.toFixed(2):'—';
   const wtCls='row-wt'+(wt==null?' empty':'');
   const s=sec.id, u=row.uid;
+  const _qty=+row.qty||0;
+  const _unitWt=(wt!=null&&_qty>1)?wt/_qty:null;
+  const unitWtHTML=`<span class="unit-wt-lbl" id="uwt-${u}">${_unitWt!=null?`（単重 ${_unitWt.toFixed(2)} kg）`:''}</span>`;
 
   const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
     ontouchstart="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
@@ -832,6 +836,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
+        ${unitWtHTML}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
@@ -861,6 +866,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
+        ${unitWtHTML}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
@@ -891,6 +897,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">個</span>
         ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
+        ${unitWtHTML}
       </div>
     </div>`;
   }
@@ -913,6 +920,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">枚</span>
         ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
+        ${unitWtHTML}
       </div>
     </div>`;
   }
@@ -1116,6 +1124,30 @@ function refreshFitSections(){
 /* ======================================================
    ±ボタン長押し
 ====================================================== */
+/* ±ボタン押下中にDOM再構築せず必要箇所だけ更新する軽量版 */
+function updateRowWtInPlace(sec,row){
+  const wt=calcWt(sec,row);
+  // 合計重量
+  const wtEl=document.getElementById('wt-'+row.uid);
+  if(wtEl){wtEl.textContent=wt!=null?wt.toFixed(2):'—';wtEl.className='row-wt'+(wt==null?' empty':'');}
+  // 単重
+  const uwtEl=document.getElementById('uwt-'+row.uid);
+  if(uwtEl){
+    const qty=+row.qty||0;
+    const unitWt=(wt!=null&&qty>1)?wt/qty:null;
+    uwtEl.textContent=unitWt!=null?`（単重 ${unitWt.toFixed(2)} kg）`:'';
+  }
+  // セクション小計
+  const rows=state[sec.id];
+  const sub=rows.reduce((s,r)=>{const w=calcWt(sec,r);return s+(w||0);},0);
+  const card=document.getElementById('card-'+sec.id);
+  if(card){
+    const subEl=card.querySelector('.sec-sub');
+    if(subEl){subEl.textContent=sub>0?sub.toFixed(1)+' kg':'—';subEl.className='sec-sub'+(sub>0?' has-data':'');}
+  }
+  renderTotal();
+}
+
 let _adjTimer=null,_curAdj=null;
 
 function doAdj(){
@@ -1131,7 +1163,7 @@ function doAdj(){
     const inp=document.getElementById('qi-'+uid);
     if(inp) inp.value=row.qty;
   }
-  updateRowWt(sec,row);
+  updateRowWtInPlace(sec,row);
 }
 
 function startAdj(secId,uid,fld,dir){
@@ -1211,6 +1243,11 @@ function showTab(t){
   document.getElementById('tab-calc').classList.toggle('active',  isCalc);
   document.getElementById('tab-manual').classList.toggle('active', !isCalc);
 }
+
+/* 要素が再構築された後もタイマーを確実に停止する */
+document.addEventListener('mouseup',stopAdj);
+document.addEventListener('touchend',stopAdj);
+document.addEventListener('touchcancel',stopAdj);
 
 buildDOM();
 renderAll();
