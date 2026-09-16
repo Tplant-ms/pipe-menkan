@@ -812,7 +812,7 @@ function rowHTML(sec,row){
   const s=sec.id, u=row.uid;
   const _qty=+row.qty||0;
   const _unitWt=(wt!=null&&_qty>1)?wt/_qty:null;
-  const unitWtHTML=`<span class="unit-wt-lbl" id="uwt-${u}">${_unitWt!=null?`（単重 ${_unitWt.toFixed(2)} kg）`:''}</span>`;
+  const unitWtHTML=`<span class="unit-wt-lbl" id="uwt-${u}">${_unitWt!=null?`単重 ${_unitWt.toFixed(1)} kg`:''}</span>`;
 
   const adjBtn=(fld,dir,lbl)=>`<button class="adj-btn"
     ontouchstart="event.preventDefault();startAdj('${s}','${u}','${fld}',${dir})"
@@ -836,7 +836,6 @@ function rowHTML(sec,row){
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
-        ${unitWtHTML}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
@@ -844,6 +843,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">本</span>
         ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
+        ${unitWtHTML}
       </div>
     </div>`;
   }
@@ -866,7 +866,6 @@ function rowHTML(sec,row){
         <span class="unit-txt">mm</span>
         ${adjBtn('len',-1,'−')}
         ${adjBtn('len',1,'＋')}
-        ${unitWtHTML}
       </div>
       <div class="row-l3">
         <span class="row-lbl">本数</span>
@@ -874,6 +873,7 @@ function rowHTML(sec,row){
         <span class="unit-txt">本</span>
         ${adjBtn('qty',-1,'−')}
         ${adjBtn('qty',1,'＋')}
+        ${unitWtHTML}
       </div>
     </div>`;
   }
@@ -1135,7 +1135,7 @@ function updateRowWtInPlace(sec,row){
   if(uwtEl){
     const qty=+row.qty||0;
     const unitWt=(wt!=null&&qty>1)?wt/qty:null;
-    uwtEl.textContent=unitWt!=null?`（単重 ${unitWt.toFixed(2)} kg）`:'';
+    uwtEl.textContent=unitWt!=null?`単重 ${unitWt.toFixed(1)} kg`:'';
   }
   // セクション小計
   const rows=state[sec.id];
