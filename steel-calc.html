@@ -42,6 +42,9 @@ body{
 .hdr-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px;}
 .hdr-title{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:1;text-align:center;}
 .hdr-sub{color:#aac4df;font-size:.7rem;margin-top:1px;text-align:center;}
+.home-btn{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;font-size:.78rem;font-weight:700;flex-shrink:0;transition:background .15s;white-space:nowrap;}
+.home-btn span.icon{font-size:1rem;line-height:1;}
+.home-btn:hover{background:rgba(255,255,255,.15);}
 
 main{max-width:600px;margin:0 auto;padding:14px 14px 0;}
 
@@ -262,6 +265,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
 
 <header class="site-header">
   <div class="hdr-inner">
+    <a class="home-btn" href="index.html"><span class="icon">🏠</span>トップ</a>
     <div style="flex:1">
       <div class="hdr-title">鋼材重量計算</div>
       <div class="hdr-sub">Steel Weight Calculator V3.2</div>
