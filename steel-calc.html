@@ -193,6 +193,17 @@ select:focus{border-color:var(--blueprint);outline:none;}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
+/* ── カスタム形状：種別タブ（PL / 縞鋼板CPL） ── */
+.custom-type-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;}
+.custom-type-tab{
+  padding:7px 4px;border:1.5px solid var(--paper-line);border-radius:4px;
+  background:var(--row);color:var(--ink-soft);font-family:inherit;
+  font-size:.8rem;font-weight:700;cursor:pointer;text-align:center;
+  transition:all .12s;
+}
+.custom-type-tab.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
+.custom-type-tab:disabled{opacity:.35;cursor:not-allowed;}
+
 /* ── プレビュー ── */
 .weight-preview{
   background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:4px;
@@ -451,6 +462,15 @@ select:focus{border-color:var(--blueprint);outline:none;}
             </div>
           </div>
 
+          <!-- ── 種別（PL / 縞鋼板CPL）（角板・丸板・ドーナツ共通） ── -->
+          <div id="custom-type-wrap" class="hidden">
+            <div class="section-divider">種別</div>
+            <div class="custom-type-tabs">
+              <button class="custom-type-tab active" id="ctab-pl"  onclick="setCustomType('PL')">鋼板（PL）</button>
+              <button class="custom-type-tab"        id="ctab-cpl" onclick="setCustomType('CPL')">縞鋼板（CPL）</button>
+            </div>
+          </div>
+
           <!-- ── 角板 ── -->
           <div id="shape-rect" class="hidden">
             <div class="grid2">
@@ -634,6 +654,14 @@ const PLATE_DATA = {
 };
 
 const DENSITY = {'SS400':7850,'SUS304':7930,'SUS316':7980};
+// 縞鋼板：切板計算用の縞パターン加算重量 (kg/m²) — カタログ実測値より算定
+const CPL_PATTERN = {'SS400':1.68,'SUS304':1.9}; // SUS316は縞鋼板なし
+// カスタム切板用 縞鋼板の板厚ラインナップ（PL_CUSTOM_THKと異なるため別定義）
+const CUSTOM_CPL_THK = {
+  'SS400': [3.2,4.5,6,9,12,16,19,22,25],
+  'SUS304':[2.5,3,3.5,4,4.5,6]
+  // SUS316: 縞鋼板製品なし
+};
 const CUSTOM_THK = {
   'SS400':[1.6,2.3,3.2,4.5,6,9,12,16,19,22,25,28,32],
   'SUS304':[0.3,0.4,0.5,0.6,0.8,0.9,1,1.2,1.5,2,2.5,3,4,5,6,8,10,12,15,16,18,20],
@@ -647,6 +675,7 @@ const CUSTOM_THK_DEFAULT = {'SS400':9,'SUS304':3,'SUS316':3};
 let mode = 'linear';
 let linearMat = 'SS400';
 let plateShape = 'std';
+let customPlateType = 'PL'; // 'PL' or 'CPL'
 let entries = [];
 let nextId = 1;
 let stdThkArr = [], stdThkIdx = 0;
@@ -814,6 +843,11 @@ function onPlateMatChange() {
   document.getElementById('plate-shape-section').classList.toggle('hidden', !mat);
   if (!mat) return;
   document.getElementById('cpl-option').disabled = (mat === 'SUS316');
+  // カスタム種別：材質変更時はPLに戻す & SUS316はCPLボタン無効
+  setCustomType('PL', true); // true = skipPreviewUpdate
+  const cplBtn = document.getElementById('ctab-cpl');
+  cplBtn.disabled = (mat === 'SUS316');
+  cplBtn.title = (mat === 'SUS316') ? 'SUS316の縞鋼板製品はありません' : '';
   resetStdForm();
   initCustomThk(mat);
   setPlateShape(plateShape);
@@ -841,7 +875,9 @@ function setPlateShape(shape) {
     if (s !== 'std') document.getElementById('shape-'+s).classList.toggle('hidden', s!==shape);
   });
   document.getElementById('shape-std').classList.toggle('hidden', shape!=='std');
-  document.getElementById('custom-thk-wrap').classList.toggle('hidden', shape==='std');
+  const isCustom = shape !== 'std';
+  document.getElementById('custom-type-wrap').classList.toggle('hidden', !isCustom);
+  document.getElementById('custom-thk-wrap').classList.toggle('hidden', !isCustom);
   hidePreview(); setAddBtn(false);
 }
 
@@ -942,10 +978,15 @@ function updateStdPreview() {
 // カスタム形状：板厚ステッパー
 // ================================================================
 function initCustomThk(mat) {
-  cThkArr = CUSTOM_THK[mat] || [];
-  const def = CUSTOM_THK_DEFAULT[mat];
-  cThkIdx = cThkArr.indexOf(def);
-  if (cThkIdx < 0) cThkIdx = 0;
+  const isCpl = customPlateType === 'CPL';
+  cThkArr = (isCpl ? CUSTOM_CPL_THK[mat] : CUSTOM_THK[mat]) || [];
+  if (!isCpl) {
+    const def = CUSTOM_THK_DEFAULT[mat];
+    cThkIdx = cThkArr.indexOf(def);
+    if (cThkIdx < 0) cThkIdx = 0;
+  } else {
+    cThkIdx = 0; // CPLはラインナップ先頭から
+  }
   renderCThkDisplay();
 }
 
@@ -969,24 +1010,47 @@ function getCustomThk() { return cThkArr[cThkIdx] || 0; }
 // ================================================================
 // カスタム形状：計算・プレビュー
 // ================================================================
+function setCustomType(type, skipPreview) {
+  customPlateType = type;
+  ['PL','CPL'].forEach(t => {
+    const btn = document.getElementById('ctab-'+t.toLowerCase());
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  const mat = document.getElementById('plate-mat').value;
+  if (mat) {
+    initCustomThk(mat);
+    if (!skipPreview) updateCustomPreview();
+  }
+}
+
+function isCplOn() {
+  return customPlateType === 'CPL';
+}
+
 function calcCustomSingle() {
   const mat = document.getElementById('plate-mat').value;
   const t = getCustomThk();
   if (!mat || !t) return null;
   const ρ = DENSITY[mat];
+  let baseKg = null, areaMm2 = 0;
   if (plateShape === 'rect') {
     const w = parseFloat(document.getElementById('rect-w').value);
     const l = parseFloat(document.getElementById('rect-l').value);
-    return (w>0 && l>0) ? ρ * t * w * l / 1e9 : null;
+    if (w>0 && l>0) { areaMm2 = w*l; baseKg = ρ * t * areaMm2 / 1e9; }
   } else if (plateShape === 'circ') {
     const d = parseFloat(document.getElementById('circ-d').value);
-    return (d>0) ? ρ * Math.PI * d*d * t / (4*1e9) : null;
+    if (d>0) { areaMm2 = Math.PI*d*d/4; baseKg = ρ * areaMm2 * t / 1e9; }
   } else if (plateShape === 'donut') {
     const dO = parseFloat(document.getElementById('donut-do').value);
     const dI = parseFloat(document.getElementById('donut-di').value);
-    return (dO>0 && dI>0 && dO>dI) ? ρ * Math.PI * (dO*dO - dI*dI) * t / (4*1e9) : null;
+    if (dO>0 && dI>0 && dO>dI) { areaMm2 = Math.PI*(dO*dO-dI*dI)/4; baseKg = ρ * areaMm2 * t / 1e9; }
   }
-  return null;
+  if (baseKg == null) return null;
+  // 縞鋼板補正：縞パターン分の重量を面積に比例して加算
+  if (isCplOn() && CPL_PATTERN[mat]) {
+    baseKg += CPL_PATTERN[mat] * areaMm2 / 1e6;
+  }
+  return baseKg;
 }
 
 function updateCustomPreview() {
@@ -1037,7 +1101,8 @@ function addEntry() {
       if (!single) return;
       const t = getCustomThk();
       const shapeNames = {rect:'角板',circ:'丸板',donut:'ドーナツ板'};
-      name = shapeNames[plateShape]+'（'+mat+'）';
+      const cplLabel = isCplOn() ? '縞鋼板(CPL) ' : '';
+      name = cplLabel+shapeNames[plateShape]+'（'+mat+'）';
       spec = 't='+t+' mm';
       if (plateShape==='rect') {
         const w=parseFloat(document.getElementById('rect-w').value),l=parseFloat(document.getElementById('rect-l').value);
@@ -1073,6 +1138,11 @@ function clearAll() {
   document.getElementById('plate-shape-section').classList.add('hidden');
   resetStdForm();
   plateShape = 'std';
+  customPlateType = 'PL';
+  ['PL','CPL'].forEach(t => {
+    const btn = document.getElementById('ctab-'+t.toLowerCase());
+    if (btn) { btn.classList.toggle('active', t==='PL'); btn.disabled = false; }
+  });
   setPlateShape('std');
   document.getElementById('qty-plate').value = 1;
 
