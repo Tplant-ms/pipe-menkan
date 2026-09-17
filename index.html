@@ -103,6 +103,51 @@ body{
 .tool-card:hover .arrow{
   color:var(--blueprint);
 }
+/* ─── 免責 ─── */
+.disclaimer{
+  margin-top:32px;
+  border:1.5px solid var(--paper-line);
+  border-radius:8px;
+  overflow:hidden;
+}
+.disclaimer-hdr{
+  background:var(--blueprint);
+  color:#fff;
+  font-size:.68rem;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  padding:7px 16px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.disclaimer-body{
+  background:#fff;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.disclaimer-item{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  font-size:.78rem;
+  line-height:1.65;
+  color:var(--ink-soft);
+}
+.disclaimer-icon{
+  flex-shrink:0;
+  font-size:.9rem;
+  margin-top:.05em;
+}
+.disclaimer-item strong{
+  color:var(--ink);
+  font-weight:700;
+  display:block;
+  margin-bottom:1px;
+}
 </style>
 </head>
 <body>
@@ -171,6 +216,38 @@ body{
     </a>
 
   </div>
+
+  <div class="disclaimer">
+    <div class="disclaimer-hdr">⚠️&ensp;免責事項 / 利用上の注意</div>
+    <div class="disclaimer-body">
+
+      <div class="disclaimer-item">
+        <span class="disclaimer-icon">🔒</span>
+        <div>
+          <strong>社内利用限定</strong>
+          本ツール群は社内業務の参考用として作成されたものです。担当者の許可なく社外への配布・公開・転用を禁止します。
+        </div>
+      </div>
+
+      <div class="disclaimer-item">
+        <span class="disclaimer-icon">📐</span>
+        <div>
+          <strong>計算値は参考値</strong>
+          各ツールの計算結果は施工計画の参考値としてのみ使用してください。実際の施工にあたっては JIS・メーカーカタログ・設計図書の最新版を必ず確認し、担当者が検証した値を使用してください。
+        </div>
+      </div>
+
+      <div class="disclaimer-item">
+        <span class="disclaimer-icon">⚖️</span>
+        <div>
+          <strong>損害免責</strong>
+          本ツールの計算結果を使用したことにより生じた損害・損失・トラブルについて、作成者は一切の責任を負いません。利用者の判断と責任においてご使用ください。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 </body>
