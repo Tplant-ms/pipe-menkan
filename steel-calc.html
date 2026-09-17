@@ -346,7 +346,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
               <label class="fl">長さ</label>
               <div class="num-wrap">
                 <div class="num-field">
-                  <input type="number" id="length-mm" min="0" step="1" value="0" oninput="updateLinearPreview()">
+                  <input type="number" id="length-mm" min="0" step="1" value="0" onfocus="this.select()" oninput="updateLinearPreview()">
                   <span class="num-unit">mm</span>
                 </div>
                 <button class="num-adj"
@@ -361,7 +361,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
               <label class="fl">数量</label>
               <div class="num-wrap">
                 <div class="num-field">
-                  <input type="number" id="qty-linear" min="0" max="9999" value="0" oninput="updateLinearPreview()">
+                  <input type="number" id="qty-linear" min="1" max="9999" value="1" onfocus="this.select()" oninput="updateLinearPreview()">
                   <span class="num-unit">本</span>
                 </div>
                 <button class="num-adj"
@@ -454,7 +454,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
                 <label class="fl">幅 W</label>
                 <div class="num-wrap">
                   <div class="num-field">
-                    <input type="number" id="rect-w" min="1" placeholder="500" oninput="updateCustomPreview()">
+                    <input type="number" id="rect-w" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
                     <span class="num-unit">mm</span>
                   </div>
                   <button class="num-adj"
@@ -469,7 +469,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
                 <label class="fl">長さ L</label>
                 <div class="num-wrap">
                   <div class="num-field">
-                    <input type="number" id="rect-l" min="1" placeholder="800" oninput="updateCustomPreview()">
+                    <input type="number" id="rect-l" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
                     <span class="num-unit">mm</span>
                   </div>
                   <button class="num-adj"
@@ -489,7 +489,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
               <label class="fl">外径 D</label>
               <div class="num-wrap">
                 <div class="num-field">
-                  <input type="number" id="circ-d" min="1" placeholder="400" oninput="updateCustomPreview()">
+                  <input type="number" id="circ-d" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
                   <span class="num-unit">mm</span>
                 </div>
                 <button class="num-adj"
@@ -509,7 +509,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
                 <label class="fl">外径 OD</label>
                 <div class="num-wrap">
                   <div class="num-field">
-                    <input type="number" id="donut-do" min="1" placeholder="600" oninput="updateCustomPreview()">
+                    <input type="number" id="donut-do" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
                     <span class="num-unit">mm</span>
                   </div>
                   <button class="num-adj"
@@ -524,7 +524,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
                 <label class="fl">内径 ID</label>
                 <div class="num-wrap">
                   <div class="num-field">
-                    <input type="number" id="donut-di" min="1" placeholder="200" oninput="updateCustomPreview()">
+                    <input type="number" id="donut-di" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
                     <span class="num-unit">mm</span>
                   </div>
                   <button class="num-adj"
@@ -544,7 +544,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
             <label class="fl">数量</label>
             <div class="num-wrap">
               <div class="num-field">
-                <input type="number" id="qty-plate" min="1" max="9999" value="1" oninput="updateAnyPlatePreview()">
+                <input type="number" id="qty-plate" min="1" max="9999" value="1" onfocus="this.select()" oninput="updateAnyPlatePreview()">
                 <span class="num-unit">枚</span>
               </div>
               <button class="num-adj"
@@ -821,6 +821,10 @@ function resetStdForm() {
   document.getElementById('std-size-field').classList.add('hidden');
   document.getElementById('plate-size').innerHTML = '<option value="">-- サイズ --</option>';
   document.getElementById('std-thk-weight').textContent = '';
+  // カスタムサイズ入力もリセット
+  ['rect-w','rect-l','circ-d','donut-do','donut-di'].forEach(id => {
+    document.getElementById(id).value = 0;
+  });
 }
 
 // ================================================================
@@ -1058,7 +1062,7 @@ function clearAll() {
   document.getElementById('field-size').classList.add('hidden');
   document.getElementById('field-dims').classList.add('hidden');
   document.getElementById('length-mm').value = 0;
-  document.getElementById('qty-linear').value = 0;
+  document.getElementById('qty-linear').value = 1;
 
   // 鋼板モード リセット
   document.getElementById('plate-mat').value = '';
