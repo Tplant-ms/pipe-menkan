@@ -60,7 +60,7 @@ main{max-width:600px;margin:0 auto;padding:14px 14px 0;}
 .card-body{padding:10px;}
 
 /* ── モードタブ ── */
-.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
 .mode-tab{
   padding:9px;border:1.5px solid var(--paper-line);border-radius:4px;
   background:var(--row);color:var(--ink-soft);font-family:inherit;
@@ -267,6 +267,34 @@ select:focus{border-color:var(--blueprint);outline:none;}
 
 .hidden{display:none!important;}
 
+/* ── マニュアル ── */
+.manual-section{padding:4px 0 2px;}
+.manual-chapter{margin-bottom:18px;}
+.manual-chapter:last-child{margin-bottom:0;}
+.manual-chapter-head{
+  font-size:.82rem;font-weight:700;letter-spacing:.05em;
+  color:var(--blueprint);border-left:3px solid var(--accent);
+  padding:3px 0 3px 9px;margin-bottom:10px;
+}
+.manual-sub-head{
+  font-size:.75rem;font-weight:700;color:var(--ink-soft);
+  margin:10px 0 5px;letter-spacing:.04em;
+}
+.manual-steps{
+  margin:0 0 0 1.2em;padding:0;
+  font-size:.82rem;color:var(--ink);line-height:1.7;
+}
+.manual-steps li{margin-bottom:4px;}
+.manual-steps li:last-child{margin-bottom:0;}
+.manual-caution{list-style:disc;}
+.manual-note{
+  background:var(--row);border:1px solid var(--paper-line);
+  border-radius:4px;padding:8px 10px;
+  font-size:.75rem;color:var(--ink-soft);line-height:1.65;
+  margin-top:10px;
+}
+.manual-note-head{font-weight:700;color:var(--ink);margin-right:4px;}
+
 @media(max-width:420px){
   .shape-tabs{grid-template-columns:repeat(2,1fr);}
 }
@@ -303,6 +331,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
       <div class="mode-tabs">
         <button class="mode-tab active" id="tab-linear" onclick="setMode('linear')">型鋼・棒材・パイプ</button>
         <button class="mode-tab" id="tab-plate" onclick="setMode('plate')">鋼板・縞鋼板</button>
+        <button class="mode-tab" id="tab-manual" onclick="setMode('manual')">マニュアル</button>
       </div>
 
       <!-- ======== 型鋼モード ======== -->
@@ -589,6 +618,83 @@ select:focus{border-color:var(--blueprint);outline:none;}
       </div>
 
       <button class="btn-add" id="btn-add" onclick="addEntry()" disabled>＋ リストに追加</button>
+
+      <!-- ======== マニュアル ======== -->
+      <div id="form-manual" class="hidden">
+        <div class="manual-section">
+
+          <div class="manual-chapter">
+            <div class="manual-chapter-head">① 型鋼・棒材・パイプ モード</div>
+            <ol class="manual-steps">
+              <li>「材質」タブで <strong>SS400 / SUS304 / SUS316</strong> を選択します。</li>
+              <li>「品種」ドロップダウンから形鋼の種類を選びます（H形鋼・アングル・チャンネル・フラットバー・丸棒・SGP・角パイプ など）。</li>
+              <li>サイズ絞り込み欄に数字を入力すると候補が絞れます。「サイズ」ドロップダウンで規格サイズを選んでください。</li>
+              <li>定尺ボタン（5m・5.5m など）を押すか、「長さ」欄に切断寸法を mm で入力します。</li>
+              <li>「数量」を設定し、プレビューに小計重量が表示されたら <strong>＋ リストに追加</strong> を押します。</li>
+            </ol>
+            <div class="manual-note">
+              <span class="manual-note-head">📌 補足</span>
+              サイズ欄の数値は <strong>単重（kg/m）</strong>です。長さ × 単重 × 数量 で計算します。<br>
+              定尺は SS400 が 5m・5.5m・10m・11m・12m、SUS は 4m・6m が一般的です。
+            </div>
+          </div>
+
+          <div class="manual-chapter">
+            <div class="manual-chapter-head">② 鋼板・縞鋼板 モード</div>
+
+            <div class="manual-sub-head">【定尺板】</div>
+            <ol class="manual-steps">
+              <li>「材質」を選択後、「種別」で <strong>鋼板（PL）</strong> または <strong>縞鋼板（CPL）</strong> を選びます。</li>
+              <li>板厚ステッパー（‹ ›）で板厚を選びます。右側に単重（kg/m²）が表示されます。</li>
+              <li>「定尺サイズ」ドロップダウンで規格サイズを選ぶと重量（kg/枚）が表示されます。</li>
+              <li>数量を入力して <strong>＋ リストに追加</strong> を押します。</li>
+            </ol>
+
+            <div class="manual-sub-head">【角板（切板）】</div>
+            <ol class="manual-steps">
+              <li>形状タブで <strong>角板 □</strong> を選びます。</li>
+              <li>「種別」タブで PL か CPL を選択します（材質によって選べる板厚が変わります）。</li>
+              <li>板厚を選び、幅 W と 長さ L を mm で入力します。数量を設定して追加。</li>
+            </ol>
+
+            <div class="manual-sub-head">【丸板・ドーナツ板（切板）】</div>
+            <ol class="manual-steps">
+              <li>形状タブで <strong>丸板 ○</strong> または <strong>ドーナツ ◎</strong> を選びます。</li>
+              <li>種別（PL / CPL）と板厚を選び、外径 D（ドーナツは穴径 d も）を mm で入力します。</li>
+              <li>数量を設定して <strong>＋ リストに追加</strong> を押します。</li>
+            </ol>
+
+            <div class="manual-note">
+              <span class="manual-note-head">📌 補足</span>
+              縞鋼板（CPL）は菱形突起パターン分の加算重量を含めて計算します。<br>
+              SUS316 の縞鋼板はカタログデータ未収録のため選択できません。<br>
+              ドーナツ板の重量 ＝ 丸板の重量 − 穴部分の重量 で計算します。
+            </div>
+          </div>
+
+          <div class="manual-chapter">
+            <div class="manual-chapter-head">③ 集計リストの操作</div>
+            <ol class="manual-steps">
+              <li>追加した品目は画面下の <strong>集計リスト</strong> に表示されます。</li>
+              <li>各品目右の <strong>削除</strong> ボタンで個別削除できます。</li>
+              <li>画面上部の <strong>合計重量バー</strong>（常時表示）で全品目の合計 kg が確認できます。</li>
+              <li><strong>全消去</strong> ボタンでリストをすべてクリアします。</li>
+            </ol>
+          </div>
+
+          <div class="manual-chapter">
+            <div class="manual-chapter-head">④ 注意事項・免責</div>
+            <ul class="manual-steps manual-caution">
+              <li>本ツールの計算値はあくまで <strong>理論重量</strong> の概算です。実際の製品重量とは製造公差・表面処理等により誤差が生じます。</li>
+              <li>密度は SS400：7,850 kg/m³、SUS304：7,930 kg/m³、SUS316：7,980 kg/m³ を使用しています。</li>
+              <li>定尺板の重量データはカタログ値を参照していますが、メーカー・ロットによって異なる場合があります。</li>
+              <li>重要な発注・設計への使用は必ずメーカーカタログ・JIS規格と照合してください。</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -725,9 +831,15 @@ function setMode(m) {
   mode = m;
   document.getElementById('tab-linear').classList.toggle('active', m==='linear');
   document.getElementById('tab-plate').classList.toggle('active', m==='plate');
+  document.getElementById('tab-manual').classList.toggle('active', m==='manual');
   document.getElementById('form-linear').classList.toggle('hidden', m!=='linear');
-  document.getElementById('form-plate').classList.toggle('hidden', m==='linear');
-  hidePreview(); setAddBtn(false);
+  document.getElementById('form-plate').classList.toggle('hidden', m!=='plate');
+  document.getElementById('form-manual').classList.toggle('hidden', m!=='manual');
+  // マニュアル表示中はプレビューと追加ボタンを隠す
+  const isManual = m==='manual';
+  document.getElementById('preview').classList.add('hidden');
+  document.getElementById('btn-add').classList.toggle('hidden', isManual);
+  if (!isManual) { setAddBtn(false); }
 }
 
 // ================================================================
