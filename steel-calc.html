@@ -244,7 +244,8 @@ select:focus{border-color:var(--blueprint);outline:none;}
 .entry-name{font-weight:700;font-size:.85rem;color:var(--ink);}
 .entry-spec{font-weight:400;color:var(--ink-soft);}
 .entry-detail{font-size:.72rem;color:var(--ink-soft);margin-top:2px;}
-.entry-weight{font-family:'Courier New',monospace;font-size:.92rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);margin-top:3px;}
+.entry-weight{font-family:'Courier New',monospace;font-size:.92rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);margin-top:3px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.entry-unit-wt{font-size:.72rem;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
 .btn-del{
   background:transparent;border:1px solid var(--paper-line);
   color:var(--ink-soft);padding:4px 7px;cursor:pointer;font-size:.8rem;
@@ -1194,7 +1195,7 @@ function addEntry() {
     const kgPerM = LINEAR_DATA[cat].sizes[size];
     const single = kgPerM * lenMm / 1000;
     entry = {id:nextId++,name:LINEAR_DATA[cat].label,spec:size,
-      detail:lenMm.toLocaleString()+' mm × '+qty+'本', totalKg:single*qty};
+      detail:lenMm.toLocaleString()+' mm × '+qty+'本', totalKg:single*qty, singleKg:single, qty};
   } else {
     const mat = document.getElementById('plate-mat').value;
     const qty = Math.max(1, parseInt(document.getElementById('qty-plate').value)||1);
@@ -1227,7 +1228,7 @@ function addEntry() {
         detail='φ'+dO+'/φ'+dI+' mm × '+qty+'枚';
       }
     }
-    entry = {id:nextId++,name,spec,detail,totalKg:single*qty};
+    entry = {id:nextId++,name,spec,detail,totalKg:single*qty,singleKg:single,qty};
   }
   entries.push(entry);
   renderEntries();
@@ -1261,20 +1262,34 @@ function clearAll() {
   hidePreview(); setAddBtn(false);
 }
 
+const LS_KEY = 'steelCalcEntries';
+function saveEntries() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({entries, nextId})); } catch(e) {}
+}
+function loadEntries() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if (d && Array.isArray(d.entries)) { entries = d.entries; nextId = d.nextId||1; }
+  } catch(e) {}
+}
+
 function renderEntries() {
   const list=document.getElementById('entries-list'), empty=document.getElementById('empty-state');
-  if (!entries.length) { list.innerHTML=''; empty.style.display='block'; updateTotal(); return; }
+  if (!entries.length) { list.innerHTML=''; empty.style.display='block'; updateTotal(); saveEntries(); return; }
   empty.style.display='none';
   list.innerHTML=entries.map(e=>`
     <div class="entry-item">
       <div>
         <div class="entry-name">${esc(e.name)} <span class="entry-spec">${esc(e.spec)}</span></div>
         <div class="entry-detail">${esc(e.detail)}</div>
-        <div class="entry-weight">${fmt(e.totalKg)} kg</div>
+        <div class="entry-weight">
+          <span>${fmt(e.totalKg)} kg</span>${e.qty>1?`<span class="entry-unit-wt">単重 ${fmt(e.singleKg)} kg</span>`:''}
+        </div>
       </div>
       <button class="btn-del" onclick="deleteEntry(${e.id})">✕</button>
     </div>`).join('');
   updateTotal();
+  saveEntries();
 }
 
 function updateTotal() {
@@ -1292,6 +1307,7 @@ function setAddBtn(on){document.getElementById('btn-add').disabled=!on;}
 function fmt(n){if(n==null||isNaN(n))return'—';if(n>=1000)return n.toLocaleString('ja-JP',{maximumFractionDigits:1});if(n>=100)return n.toFixed(1);if(n>=10)return n.toFixed(2);return n.toFixed(3);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+loadEntries();
 renderEntries();
 populateCatSelect();
 </script>
