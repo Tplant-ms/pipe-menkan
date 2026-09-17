@@ -34,9 +34,16 @@ body{
   min-height:100vh;
   padding-bottom:40px;
 }
-.hdr{background:var(--bp);border-bottom:4px solid var(--accent);padding:12px 16px;position:sticky;top:0;z-index:10;text-align:center;}
+.hdr{background:var(--bp);border-bottom:4px solid var(--accent);padding:12px 16px;position:sticky;top:0;z-index:10;}
 .hdr h1{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:.02em;}
 .hdr-sub{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-top:1px;}
+.hdr-inner{max-width:660px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+.hdr-center{flex:1;text-align:center;}
+.home-btn{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;font-size:.78rem;font-weight:700;flex-shrink:0;transition:background .15s;white-space:nowrap;}
+.home-btn span.icon{font-size:1rem;line-height:1;}
+.home-btn:hover{background:rgba(255,255,255,.15);}
+.home-btn span.icon{font-size:1rem;line-height:1;}
+.home-btn:hover{background:rgba(255,255,255,.15);}
 .wrap{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:8px;}
 .card{background:#fff;border:1.5px solid var(--paper-line);border-radius:6px;overflow:hidden;}
 .card-ttl{background:var(--bp);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;}
@@ -131,8 +138,13 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 </style>
 
 <header class="hdr">
-  <h1>🔩 フランジ ボルト長さ・ガスケット寸法</h1>
-  <div class="hdr-sub">JIS B 2220 / PVC / DCIP / LB　ボルト長さ選定・ガスケット参考寸法</div>
+  <div class="hdr-inner">
+    <a class="home-btn" href="index.html"><span class="icon">🏠</span>トップ</a>
+    <div class="hdr-center">
+      <h1>🔩 フランジ ボルト長さ・ガスケット寸法</h1>
+      <div class="hdr-sub">JIS B 2220 / PVC / DCIP / LB　ボルト長さ選定・ガスケット参考寸法</div>
+    </div>
+  </div>
 </header>
 
 <div class="wrap">
@@ -1015,33 +1027,3 @@ function updateExtraBadge(){
   input.insertAdjacentElement('afterend', dec);
 })();
 </script>
-<style>
-.site-nav{
-  background:var(--bp);
-  border-top:3px solid var(--bp-deep);
-  padding:12px 16px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-.site-nav a{
-  color:#aac4df;
-  font-size:.78rem;
-  text-decoration:none;
-  padding:6px 14px;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:4px;
-  transition:all .15s;
-}
-.site-nav a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
-.site-nav a.current{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.1);pointer-events:none}
-</style>
-<nav class="site-nav">
-  <a href="index.html">🏠 トップ</a>
-  <a href="pipe-cutting.html">✂️ 面間計算</a>
-  <a href="pipe-identify.html">🔍 サイズ特定</a>
-  <a href="flange-bolt.html" class="current">🔩 ボルト寸法</a>
-  <a href="pipe-weight-calc.html">📦 配管重量計算</a>
-  <a href="cast-iron-weight.html">🏭 鋳鉄管重量計算</a>
-</nav>
