@@ -19,24 +19,6 @@
   --danger:#b91c1c;--shadow:0 1px 3px rgba(22,50,79,0.10);
   --btn-bg:var(--blueprint);--btn-active:var(--blueprint-deep);
 }
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#0e1a28;--paper-line:#1a2f44;--ink:#d4e4f0;--ink-soft:#7aa0bc;
-    --blueprint:#1a3a5c;--blueprint-deep:#0c1f33;
-    --accent:#e06830;--accent-soft:#3a1f0a;
-    --card:#132031;--row:#0f1c2a;--row-hover:#162538;
-    --danger:#ef4444;--shadow:0 1px 3px rgba(0,0,0,0.4);
-    --btn-bg:var(--accent);--btn-active:#b85520;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#0e1a28;--paper-line:#1a2f44;--ink:#d4e4f0;--ink-soft:#7aa0bc;
-  --blueprint:#1a3a5c;--blueprint-deep:#0c1f33;
-  --accent:#e06830;--accent-soft:#3a1f0a;
-  --card:#132031;--row:#0f1c2a;--row-hover:#162538;
-  --danger:#ef4444;--shadow:0 1px 3px rgba(0,0,0,0.4);
-  --btn-bg:var(--accent);--btn-active:#b85520;
-}
 
 *,*::before,*::after{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -60,12 +42,6 @@ body{
 .hdr-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px;}
 .hdr-title{color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.04em;flex:1;text-align:center;}
 .hdr-sub{color:#aac4df;font-size:.7rem;margin-top:1px;text-align:center;}
-.theme-btn{
-  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);
-  border-radius:4px;padding:5px 10px;font-size:.75rem;cursor:pointer;
-  color:rgba(255,255,255,.85);font-family:inherit;flex-shrink:0;transition:all .15s;
-}
-.theme-btn:hover{background:rgba(255,255,255,.22);}
 
 main{max-width:600px;margin:0 auto;padding:14px 14px 0;}
 
@@ -144,8 +120,6 @@ select:focus{border-color:var(--blueprint);outline:none;}
   touch-action:none;user-select:none;-webkit-user-select:none;
   -webkit-tap-highlight-color:transparent;
 }
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .step-btn{color:var(--accent);}}
-:root[data-theme="dark"] .step-btn{color:var(--accent);}
 .step-btn:first-child{border-right:1.5px solid var(--paper-line);}
 .step-btn:last-child{border-left:1.5px solid var(--paper-line);}
 .step-btn:disabled{opacity:.3;cursor:not-allowed;}
@@ -198,8 +172,18 @@ select:focus{border-color:var(--blueprint);outline:none;}
   background:transparent;
   padding:8px 4px 8px 8px;
   font-family:'Courier New',monospace;font-size:.92rem;font-weight:700;
-  color:var(--ink);text-align:right;
+  color:var(--ink);-webkit-text-fill-color:var(--ink);text-align:right;
 }
+.teishaku-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.teishaku-btn{
+  font-size:.75rem;padding:4px 10px;
+  border:1.5px solid var(--blueprint);border-radius:4px;
+  background:transparent;color:var(--blueprint);
+  cursor:pointer;font-weight:700;line-height:1;
+  transition:background .12s,color .12s;
+}
+.teishaku-btn:hover{background:var(--accent-soft);}
+.teishaku-btn:active{background:var(--blueprint);color:#fff;}
 .grid2 .num-field input{padding:6px 2px 6px 5px;font-size:.83rem;}
 .num-unit{font-size:.72rem;color:var(--ink-soft);padding-right:6px;flex-shrink:0;white-space:nowrap;}
 .grid2 .num-unit{padding-right:4px;font-size:.68rem;}
@@ -282,7 +266,6 @@ select:focus{border-color:var(--blueprint);outline:none;}
       <div class="hdr-title">鋼材重量計算</div>
       <div class="hdr-sub">Steel Weight Calculator V3.2</div>
     </div>
-    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
   </div>
 </header>
 
@@ -341,35 +324,53 @@ select:focus{border-color:var(--blueprint);outline:none;}
           </div>
         </div>
 
-        <div class="grid2 hidden" id="field-dims">
+        <div class="hidden" id="field-dims">
+          <!-- 定尺ボタン -->
           <div class="field">
-            <label class="fl">長さ</label>
-            <div class="num-wrap">
-              <div class="num-field">
-                <input type="number" id="length-mm" min="0" step="1" value="0" oninput="updateLinearPreview()">
-                <span class="num-unit">mm</span>
-              </div>
-              <button class="num-adj"
-                onpointerdown="startPress('length-mm',-1,0,updateLinearPreview)"
-                onpointerup="stopPress()" onpointerleave="stopPress()">−</button>
-              <button class="num-adj"
-                onpointerdown="startPress('length-mm',1,0,updateLinearPreview)"
-                onpointerup="stopPress()" onpointerleave="stopPress()">＋</button>
+            <label class="fl">定尺</label>
+            <div id="teishaku-ss" class="teishaku-row">
+              <button class="teishaku-btn" onclick="setTeishaku(5000)">5m</button>
+              <button class="teishaku-btn" onclick="setTeishaku(5500)">5.5m</button>
+              <button class="teishaku-btn" onclick="setTeishaku(10000)">10m</button>
+              <button class="teishaku-btn" onclick="setTeishaku(11000)">11m</button>
+              <button class="teishaku-btn" onclick="setTeishaku(12000)">12m</button>
+            </div>
+            <div id="teishaku-sus" class="teishaku-row hidden">
+              <button class="teishaku-btn" onclick="setTeishaku(4000)">4m</button>
+              <button class="teishaku-btn" onclick="setTeishaku(6000)">6m</button>
             </div>
           </div>
-          <div class="field">
-            <label class="fl">数量</label>
-            <div class="num-wrap">
-              <div class="num-field">
-                <input type="number" id="qty-linear" min="0" max="9999" value="0" oninput="updateLinearPreview()">
-                <span class="num-unit">本</span>
+          <!-- 長さ・数量 -->
+          <div class="grid2">
+            <div class="field">
+              <label class="fl">長さ</label>
+              <div class="num-wrap">
+                <div class="num-field">
+                  <input type="number" id="length-mm" min="0" step="1" value="0" oninput="updateLinearPreview()">
+                  <span class="num-unit">mm</span>
+                </div>
+                <button class="num-adj"
+                  onpointerdown="startPress('length-mm',-1,0,updateLinearPreview)"
+                  onpointerup="stopPress()" onpointerleave="stopPress()">−</button>
+                <button class="num-adj"
+                  onpointerdown="startPress('length-mm',1,0,updateLinearPreview)"
+                  onpointerup="stopPress()" onpointerleave="stopPress()">＋</button>
               </div>
-              <button class="num-adj"
-                onpointerdown="startPress('qty-linear',-1,0,updateLinearPreview)"
-                onpointerup="stopPress()" onpointerleave="stopPress()">−</button>
-              <button class="num-adj"
-                onpointerdown="startPress('qty-linear',1,0,updateLinearPreview)"
-                onpointerup="stopPress()" onpointerleave="stopPress()">＋</button>
+            </div>
+            <div class="field">
+              <label class="fl">数量</label>
+              <div class="num-wrap">
+                <div class="num-field">
+                  <input type="number" id="qty-linear" min="0" max="9999" value="0" oninput="updateLinearPreview()">
+                  <span class="num-unit">本</span>
+                </div>
+                <button class="num-adj"
+                  onpointerdown="startPress('qty-linear',-1,0,updateLinearPreview)"
+                  onpointerup="stopPress()" onpointerleave="stopPress()">−</button>
+                <button class="num-adj"
+                  onpointerdown="startPress('qty-linear',1,0,updateLinearPreview)"
+                  onpointerup="stopPress()" onpointerleave="stopPress()">＋</button>
+              </div>
             </div>
           </div>
         </div>
@@ -378,9 +379,9 @@ select:focus{border-color:var(--blueprint);outline:none;}
       <!-- ======== 鋼板モード ======== -->
       <div id="form-plate" class="hidden">
         <div class="field">
-          <label class="fl">材種</label>
+          <label class="fl">材質</label>
           <select id="plate-mat" onchange="onPlateMatChange()">
-            <option value="">-- 材種を選択 --</option>
+            <option value="">-- 材質を選択 --</option>
             <option value="SS400">SS400</option>
             <option value="SUS304">SUS304</option>
             <option value="SUS316">SUS316</option>
@@ -648,19 +649,6 @@ let stdThkArr = [], stdThkIdx = 0;
 let cThkArr = [], cThkIdx = 0;
 
 // ================================================================
-// テーマ
-// ================================================================
-function toggleTheme() {
-  const root = document.documentElement;
-  const cur = root.getAttribute('data-theme');
-  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light';
-  const next = (!cur ? sys==='dark' : cur==='dark') ? 'light':'dark';
-  root.setAttribute('data-theme', next);
-  try{localStorage.setItem('theme',next);}catch(e){}
-}
-(function(){try{const t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
-
-// ================================================================
 // 長押し連続変化（加速付き：1→10→100倍）
 // ================================================================
 let _ph = null, _pi = null, _ticks = 0;
@@ -722,6 +710,15 @@ function setLinearMat(mat) {
   hidePreview(); setAddBtn(false);
   document.getElementById('field-size').classList.add('hidden');
   document.getElementById('field-dims').classList.add('hidden');
+  // 定尺ボタンを材質で切り替え
+  const isSUS = mat === 'SUS304' || mat === 'SUS316';
+  document.getElementById('teishaku-ss').classList.toggle('hidden', isSUS);
+  document.getElementById('teishaku-sus').classList.toggle('hidden', !isSUS);
+}
+
+function setTeishaku(mm) {
+  document.getElementById('length-mm').value = mm;
+  updateLinearPreview();
 }
 
 function populateCatSelect() {
@@ -805,7 +802,7 @@ function updateLinearPreview() {
 }
 
 // ================================================================
-// 鋼板：材種
+// 鋼板：材質
 // ================================================================
 function onPlateMatChange() {
   const mat = document.getElementById('plate-mat').value;
@@ -1055,6 +1052,23 @@ function deleteEntry(id) { entries=entries.filter(e=>e.id!==id); renderEntries()
 function clearAll() {
   if (!entries.length) return;
   entries=[]; renderEntries();
+
+  // 型鋼モード リセット
+  document.getElementById('cat-linear').value = '';
+  document.getElementById('field-size').classList.add('hidden');
+  document.getElementById('field-dims').classList.add('hidden');
+  document.getElementById('length-mm').value = 0;
+  document.getElementById('qty-linear').value = 0;
+
+  // 鋼板モード リセット
+  document.getElementById('plate-mat').value = '';
+  document.getElementById('plate-shape-section').classList.add('hidden');
+  resetStdForm();
+  plateShape = 'std';
+  setPlateShape('std');
+  document.getElementById('qty-plate').value = 1;
+
+  hidePreview(); setAddBtn(false);
 }
 
 function renderEntries() {
