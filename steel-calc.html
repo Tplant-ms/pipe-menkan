@@ -59,8 +59,12 @@ main{max-width:600px;margin:0 auto;padding:14px 14px 0;}
 }
 .card-body{padding:10px;}
 
-/* ── モードタブ ── */
-.mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
+/* ── ヘッダータブ (pipe-cutting準拠) ── */
+.tabbar{display:flex;gap:2px;max-width:600px;margin:6px auto 0;}
+.tabbtn{flex:1;text-align:center;padding:8px 0;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.08);color:#B7C7D6;border:none;cursor:pointer;border-radius:6px 6px 0 0;-webkit-tap-highlight-color:transparent;font-family:inherit;}
+.tabbtn.active{background:var(--paper);color:var(--blueprint);}
+/* ── モードタブ（カード内） ── */
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
 .mode-tab{
   padding:9px;border:1.5px solid var(--paper-line);border-radius:4px;
   background:var(--row);color:var(--ink-soft);font-family:inherit;
@@ -311,6 +315,11 @@ select:focus{border-color:var(--blueprint);outline:none;}
       <div class="hdr-sub">Steel Weight Calculator V3.2</div>
     </div>
   </div>
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-linear" onclick="setMode('linear')">型鋼・棒材・パイプ</button>
+    <button class="tabbtn" id="tab-plate" onclick="setMode('plate')">鋼板・縞鋼板</button>
+    <button class="tabbtn" id="tab-manual" onclick="setMode('manual')">マニュアル</button>
+  </div>
 </header>
 
 <div class="total-bar">
@@ -325,15 +334,10 @@ select:focus{border-color:var(--blueprint);outline:none;}
 <main>
   <div class="card">
     <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;">
-      <span>計算モード</span>
+      <span id="card-mode-label">型鋼・棒材・パイプ</span>
       <button class="btn-clear-all" onclick="clearAll()">全消去</button>
     </div>
     <div class="card-body">
-      <div class="mode-tabs">
-        <button class="mode-tab active" id="tab-linear" onclick="setMode('linear')">型鋼・棒材・パイプ</button>
-        <button class="mode-tab" id="tab-plate" onclick="setMode('plate')">鋼板・縞鋼板</button>
-        <button class="mode-tab" id="tab-manual" onclick="setMode('manual')">マニュアル</button>
-      </div>
 
       <!-- ======== 型鋼モード ======== -->
       <div id="form-linear">
@@ -833,6 +837,9 @@ function setMode(m) {
   document.getElementById('tab-linear').classList.toggle('active', m==='linear');
   document.getElementById('tab-plate').classList.toggle('active', m==='plate');
   document.getElementById('tab-manual').classList.toggle('active', m==='manual');
+  const labels={linear:'型鋼・棒材・パイプ',plate:'鋼板・縞鋼板',manual:'マニュアル'};
+  const lbl=document.getElementById('card-mode-label');
+  if(lbl) lbl.textContent=labels[m]||'';
   document.getElementById('form-linear').classList.toggle('hidden', m!=='linear');
   document.getElementById('form-plate').classList.toggle('hidden', m!=='plate');
   document.getElementById('form-manual').classList.toggle('hidden', m!=='manual');
