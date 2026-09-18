@@ -140,6 +140,20 @@ main{max-width:560px;margin:0 auto;padding:16px 14px 40px}
   .cand-size{font-size:1.6rem}
   .dim-grid{gap:4px}
 }
+/* ─── ヘッダータブ (pipe-cutting準拠) ─── */
+.tabbar{display:flex;gap:2px;max-width:580px;margin:6px auto 0;}
+.tabbtn{flex:1;text-align:center;padding:8px 0;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.08);color:#B7C7D6;border:none;cursor:pointer;border-radius:6px 6px 0 0;-webkit-tap-highlight-color:transparent;}
+.tabbtn.active{background:var(--paper);color:var(--blueprint);}
+/* ─── マニュアル ─── */
+.man-wrap{max-width:560px;margin:0 auto;padding:14px 14px 48px}
+.man-section{background:#fff;border:1px solid var(--paper-line);border-radius:4px;margin-bottom:12px;padding:14px}
+.man-h2{font-size:.85rem;font-weight:700;color:#fff;background:var(--blueprint);padding:6px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.06em}
+.man-h3{font-size:.8rem;font-weight:700;color:var(--blueprint);margin:10px 0 6px;border-bottom:1px solid var(--paper-line);padding-bottom:4px}
+.man-p{font-size:.8rem;line-height:1.9;color:var(--ink);margin-bottom:6px}
+.man-tbl{width:100%;border-collapse:collapse;font-size:.75rem;margin-bottom:8px}
+.man-tbl th{background:var(--blueprint);color:#fff;padding:5px 7px;text-align:left;font-weight:700}
+.man-tbl td{padding:4px 7px;border-bottom:1px solid var(--paper-line);vertical-align:middle}
+.man-tbl tr:nth-child(even) td{background:#f6f4ef}
 </style>
 </head>
 <body>
@@ -152,8 +166,13 @@ main{max-width:560px;margin:0 auto;padding:16px 14px 40px}
       <p>外周 / 外径（＋肉厚）→ 呼び径・スケジュールを推定</p>
     </div>
   </div>
+  <div class="tabbar">
+    <button class="tabbtn active" onclick="showTab('calc')">計算</button>
+    <button class="tabbtn" onclick="showTab('manual')">マニュアル</button>
+  </div>
 </header>
 
+<div id="panel-calc">
 <main>
 
 <!-- STEP 1: 材質 -->
@@ -255,9 +274,65 @@ main{max-width:560px;margin:0 auto;padding:16px 14px 40px}
 </p>
 
 </main>
+</div><!-- /panel-calc -->
 
+<div id="panel-manual" hidden>
+<div class="man-wrap">
+  <div class="man-section">
+    <div class="man-h2">使い方</div>
+    <p class="man-p">現場で採寸した配管の外周・外径から、呼び径とスケジュールを推定するツールです。</p>
+    <div class="man-h3">手順</div>
+    <ol style="margin:0 0 8px 1.4em;padding:0;font-size:.8rem;line-height:1.9;color:var(--ink)">
+      <li>材質を選択（SGP / STPG / SUS / STPY / 不明）</li>
+      <li>測定モードを選択（外周 / 外径）</li>
+      <li>測定値を入力</li>
+      <li>必要に応じて肉厚も入力</li>
+      <li>結果の候補が自動表示されます</li>
+    </ol>
+    <p class="man-p">※「不明」を選択すると全材質を横断して検索します。</p>
+  </div>
+  <div class="man-section">
+    <div class="man-h2">測定のコツ</div>
+    <div class="man-h3">外周で測る場合（推奨）</div>
+    <p class="man-p">メジャーを管の外側に巻き付けて1周の長さを読み取ります。外径計算式：外径 = 外周 ÷ π</p>
+    <div class="man-h3">外径で測る場合</div>
+    <p class="man-p">ノギスやパイプゲージで直径を直接測定します。測定位置は錆・塗装の影響が少ない場所を選んでください。</p>
+    <div class="man-h3">肉厚の測定</div>
+    <p class="man-p">超音波厚さ計や切断面で確認できる場合は入力することで候補を絞り込めます。</p>
+  </div>
+  <div class="man-section">
+    <div class="man-h2">材質別の呼び径範囲</div>
+    <table class="man-tbl">
+      <tr><th>材質</th><th>規格</th><th>呼び径範囲</th></tr>
+      <tr><td>SGP（一般配管用鋼管）</td><td>JIS G 3452</td><td>10A〜500A</td></tr>
+      <tr><td>STPG（圧力配管用炭素鋼管）</td><td>JIS G 3454</td><td>10A〜650A</td></tr>
+      <tr><td>SUS（ステンレス鋼管）</td><td>JIS G 3459/3468</td><td>10A〜650A</td></tr>
+      <tr><td>STPY（一般構造用炭素鋼管）</td><td>JIS G 3457</td><td>350A〜1500A</td></tr>
+    </table>
+  </div>
+  <div class="man-section">
+    <div class="man-h2">結果の見方</div>
+    <p class="man-p">候補は外径誤差の小さい順に表示されます。</p>
+    <table class="man-tbl">
+      <tr><th>バッジ</th><th>意味</th></tr>
+      <tr><td>✅ ほぼ一致</td><td>誤差 0.5mm 以内</td></tr>
+      <tr><td>🟦 良好</td><td>誤差 0.5〜1.0mm</td></tr>
+      <tr><td>🟡 参考</td><td>誤差 1.0〜2.0mm</td></tr>
+    </table>
+    <p class="man-p">本ツールの値は参考値です。正確なサイズは刻印・ミルシート等でご確認ください。</p>
+  </div>
+</div>
+</div><!-- /panel-manual -->
 
 <script>
+/* ===== タブ切替 ===== */
+function showTab(tab){
+  const tabs=document.querySelectorAll('.tabbtn');
+  tabs.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+tab+"'")));
+  document.getElementById('panel-calc').hidden=(tab!=='calc');
+  document.getElementById('panel-manual').hidden=(tab!=='manual');
+}
+
 /* ===== 材質定義 ===== */
 const MATERIALS = {
 
