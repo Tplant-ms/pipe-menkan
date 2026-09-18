@@ -249,7 +249,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
 .entry-spec{font-weight:400;color:var(--ink-soft);}
 .entry-detail{font-size:.72rem;color:var(--ink-soft);margin-top:2px;}
 .entry-weight{font-family:'Courier New',monospace;font-size:.92rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);margin-top:3px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
-.entry-unit-wt{font-size:.72rem;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+.entry-unit-wt{font-size:.72rem;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums;margin-left:.8em;}
 .btn-del{
   background:transparent;border:1px solid var(--paper-line);
   color:var(--ink-soft);padding:4px 7px;cursor:pointer;font-size:.8rem;
@@ -1271,11 +1271,11 @@ function clearAll() {
 
 const LS_KEY = 'steelCalcEntries';
 function saveEntries() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify({entries, nextId})); } catch(e) {}
+  try { sessionStorage.setItem(LS_KEY, JSON.stringify({entries, nextId})); } catch(e) {}
 }
 function loadEntries() {
   try {
-    const d = JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    const d = JSON.parse(sessionStorage.getItem(LS_KEY)||'null');
     if (d && Array.isArray(d.entries)) { entries = d.entries; nextId = d.nextId||1; }
   } catch(e) {}
 }
