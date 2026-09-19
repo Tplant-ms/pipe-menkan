@@ -59,38 +59,38 @@ body{
 .rtab-btn.active{background:var(--bp);color:#fff;}
 /* seg */
 .seg{display:flex;gap:2px;background:var(--paper-mid);padding:2px;border-radius:5px;border:1.5px solid var(--paper-line);}
-.seg-btn{flex:1;padding:8px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--sans);font-size:.9rem;cursor:pointer;text-align:center;line-height:1.3;transition:all .12s;}
+.seg-btn{flex:1;padding:6px 4px;border:none;border-radius:4px;background:transparent;color:var(--ink-soft);font-family:var(--sans);font-size:.82rem;cursor:pointer;text-align:center;line-height:1.3;transition:all .12s;}
 .seg-btn.active{background:#fff;color:var(--ink);border:1px solid var(--paper-line);font-weight:600;}
 /* select */
-select{width:100%;padding:11px 34px 11px 12px;background:var(--paper);color:var(--ink);border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--mono);font-size:1.1rem;font-weight:600;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%234A6178'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+select{width:100%;padding:7px 30px 7px 10px;background:var(--paper);color:var(--ink);border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--mono);font-size:.95rem;font-weight:600;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M0 0l6 7 6-7z' fill='%234A6178'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 /* extras */
-.extra-item{border:1.5px solid var(--paper-line);border-radius:5px;padding:10px;background:var(--paper);display:flex;flex-direction:column;gap:6px;}
+.extra-item{border:1.5px solid var(--paper-line);border-radius:5px;padding:7px 10px;background:var(--paper);display:flex;flex-direction:column;gap:5px;}
 .extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .extra-clear{border:none;background:none;color:var(--ink-faint);font-size:.7rem;text-decoration:underline;cursor:pointer;padding:2px 4px;line-height:1;margin-left:auto;}
 .reset-link{display:block;text-align:center;margin:2px 0 4px;font-size:.78rem;color:var(--ink-soft);text-decoration:underline;background:none;border:none;cursor:pointer;}
-.extra-title{font-size:.95rem;font-weight:600;}
-.extra-note{font-size:.78rem;color:var(--ink-faint);}
-.extra-tag{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--ink-faint);}
+.extra-title{font-size:.85rem;font-weight:600;}
+.extra-note{font-size:.74rem;color:var(--ink-faint);}
+.extra-tag{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--ink-faint);}
 .extra-tag.on{color:var(--accent);}
-.sub-row{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-soft);}
-.sub-row input{width:72px;padding:7px 10px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:1rem;color:var(--ink);}
+.sub-row{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink-soft);}
+.sub-row input{width:66px;padding:5px 8px;background:#fff;border:1.5px solid var(--paper-line);border-radius:4px;font-family:var(--mono);font-size:.9rem;color:var(--ink);}
 .sub-row input::-webkit-inner-spin-button,.sub-row input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .sub-row input{-moz-appearance:textfield;}
-.stepper-btn{flex:0 0 auto;width:36px;height:36px;border:1.5px solid var(--paper-line);background:#fff;color:var(--ink);border-radius:4px;font-size:1.1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;}
+.stepper-btn{flex:0 0 auto;width:30px;height:30px;border:1.5px solid var(--paper-line);background:#fff;color:var(--ink);border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;}
 .stepper-btn:active{background:var(--paper);}
 /* info strip */
 .info-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
+.info-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:6px 10px;}
 .info-cell.base-cell{background:var(--amber-bg);border-color:var(--amber);}
 .info-cell.accent-cell{background:var(--accent-bg);border-color:var(--accent);}
-.i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
+.i-lbl{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:2px;}
 .base-cell .i-lbl{color:var(--amber);}
 .accent-cell .i-lbl{color:var(--accent);}
-.i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;}
+.i-val{font-family:var(--mono);font-size:.95rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2;}
 .base-cell .i-val{color:var(--amber);}
 .accent-cell .i-val{color:var(--accent);}
-.i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
+.i-unit{font-size:.78rem;color:var(--ink-faint);font-weight:400;}
 /* flow row */
 .flow-row{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:12px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;}
 .flow-item{display:flex;flex-direction:column;}
@@ -130,10 +130,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 .gk-band{display:flex;flex-direction:column;gap:4px;}
 .gk-face-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);padding:8px 0 2px;border-top:1px solid var(--paper-line);}
 .gk-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.gk-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:10px 12px;}
-.gk-cell .i-lbl{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px;}
-.gk-cell .i-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;display:block;}
-.gk-cell .i-unit{font-size:.8rem;color:var(--ink-faint);font-weight:400;}
+.gk-cell{background:var(--paper);border:1.5px solid var(--paper-line);border-radius:5px;padding:6px 10px;}
+.gk-cell .i-lbl{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:2px;}
+.gk-cell .i-val{font-family:var(--mono);font-size:.95rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2;display:block;}
+.gk-cell .i-unit{font-size:.78rem;color:var(--ink-faint);font-weight:400;}
 
 /* ── 折りたたみ共通 ── */
 .coll-head{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;}
@@ -343,9 +343,9 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
     <div class="gk-section" id="gk-section" style="display:none;">
       <div class="coll-head gk-coll-head" id="gk-toggle" onclick="toggleGasket()">
         <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">ガスケット参考寸法</span>
-        <span class="chevron" id="gk-chevron">▼</span>
+        <span class="chevron open" id="gk-chevron">▼</span>
       </div>
-      <div id="gk-body" style="display:none;">
+      <div id="gk-body">
       <!-- RF 平面座 -->
       <div class="gk-band" id="gk-rf-row" style="display:none;">
         <div class="gk-face-lbl">平面座（RF）</div>
@@ -370,18 +370,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
 </div><!-- /main-content -->
 
 <!-- マニュアルパネル -->
-<div id="panel-manual" hidden style="max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:8px;">
-
-  <!-- 案内メッセージ -->
-  <div style="padding:10px 14px;background:var(--green-bg);border:1.5px solid var(--green);border-radius:6px;font-size:.82rem;color:var(--ink-soft);line-height:1.6;">
-    📖 <strong style="color:var(--green);">初回のみ一読ください。</strong>各項目はタップで開閉できます。
-  </div>
+<div id="panel-manual" style="display:none;max-width:560px;margin:0 auto;padding:14px;flex-direction:column;gap:8px;">
 
   <div class="card">
-    <div class="card-ttl coll-head" onclick="toggleManual('m-calc',this)" style="cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;">
-      ボルト長さ計算の考え方<span class="chevron">▼</span>
-    </div>
-    <div id="m-calc" style="display:none;">
+    <div class="card-ttl">ボルト長さ計算の考え方</div>
     <div style="padding:14px;font-size:.85rem;color:var(--ink-soft);line-height:1.8;">
       <p style="margin-bottom:10px;">フランジボルトの長さは、以下の要素の合計で算出されます。</p>
       <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
@@ -396,14 +388,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
         <strong style="color:var(--amber);">ガスケット厚みについて：</strong>本ツールはガスケット厚みを <strong>3mm</strong> として算出しています。異なる厚みのガスケットを使用する場合は「その他追加」オプションで差分を加算してください。フランジ本体の寸法は材質・メーカーにより誤差が生じる場合があります。
       </p>
     </div>
-    </div>
   </div>
 
   <div class="card">
-    <div class="card-ttl coll-head" onclick="toggleManual('m-spec',this)" style="cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;">
-      規格別の特徴<span class="chevron">▼</span>
-    </div>
-    <div id="m-spec" style="display:none;">
+    <div class="card-ttl">規格別の特徴</div>
     <div style="padding:14px;font-size:.85rem;color:var(--ink-soft);line-height:1.8;">
       <p style="margin-bottom:8px;font-weight:700;color:var(--ink);">JIS B 2220</p>
       <p style="margin-bottom:12px;">一般配管用の最も一般的な規格。2K・5K・10K・20Kのレーティング別に座面厚みが定められています。</p>
@@ -414,14 +402,10 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
       <p style="margin-bottom:8px;font-weight:700;color:var(--ink);">LB（ポンドレーティング）</p>
       <p>ANSI/ASME準拠の 150LB・300LB 規格。マシンボルトと全ネジボルトの区別があります。</p>
     </div>
-    </div>
   </div>
 
   <div class="card">
-    <div class="card-ttl coll-head" onclick="toggleManual('m-opt',this)" style="cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;">
-      追加部材オプション<span class="chevron">▼</span>
-    </div>
-    <div id="m-opt" style="display:none;">
+    <div class="card-ttl">追加部材オプション</div>
     <div style="padding:14px;font-size:.85rem;color:var(--ink-soft);line-height:1.8;">
       <p style="margin-bottom:8px;font-weight:700;color:var(--ink);">ワッシャー</p>
       <p style="margin-bottom:12px;">JIS規格の座金厚みが自動計算されます。ナット側1枚または両側2枚を選択できます。</p>
@@ -429,7 +413,6 @@ select:focus{outline:2px solid var(--bp);outline-offset:1px;}
       <p style="margin-bottom:12px;">振動環境などでナットが緩みやすい場合に使用。ナット1個分の高さが加算されます。</p>
       <p style="margin-bottom:8px;font-weight:700;color:var(--ink);">その他追加</p>
       <p>ウエハ形機器（チェッキ弁・バタフライ弁など）の挿入厚みや絶縁ワッシャー等、独自に追加厚みを指定できます（0〜200mm）。</p>
-    </div>
     </div>
   </div>
   <div class="card">
@@ -948,8 +931,8 @@ function activateRtab(tabs, btn){ tabs.querySelectorAll('.rtab-btn,.pvc-tab-btn,
 
 function showCalcPanel(tab){
   si('hdr-tabs').querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+tab+"'")));
-  si('main-content').hidden=(tab!=='calc');
-  si('panel-manual').hidden=(tab!=='manual');
+  si('main-content').style.display  = (tab==='calc')   ? '' : 'none';
+  si('panel-manual').style.display  = (tab==='manual') ? 'flex' : 'none';
 }
 
 function setMainTab(btn, tab){
