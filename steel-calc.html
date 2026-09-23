@@ -527,7 +527,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
                 <label class="fl">長さ L</label>
                 <div class="num-wrap">
                   <div class="num-field">
-                    <input type="number" id="rect-l" min="1" value="0" onfocus="this.select()" oninput="updateCustomPreview()">
+                    <input type="number" id="rect-l" min="1" value="0" onfocus="fillLengthFromWidth(this)" oninput="updateCustomPreview()">
                     <span class="num-unit">mm</span>
                   </div>
                   <button class="num-adj"
@@ -1182,6 +1182,15 @@ function updateCustomPreview() {
   const total = single * qty;
   showPreview(qty>1 ? fmt(single)+' kg × '+qty+' = '+fmt(total)+' kg' : fmt(total)+' kg');
   setAddBtn(true);
+}
+
+function fillLengthFromWidth(el){
+  const w = document.getElementById('rect-w').value;
+  if (w && Number(w) > 0){
+    el.value = w;
+    updateCustomPreview();
+  }
+  el.select();
 }
 
 function updateAnyPlatePreview() {
