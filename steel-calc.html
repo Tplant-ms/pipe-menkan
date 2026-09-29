@@ -300,6 +300,39 @@ select:focus{border-color:var(--blueprint);outline:none;}
 }
 .manual-note-head{font-weight:700;color:var(--ink);margin-right:4px;}
 
+
+/* ── 注文書出力 ── */
+[hidden]{display:none!important;}
+.ord-body{padding:10px;}
+.ord-body input[type=text]{width:100%;height:36px;padding:6px 10px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--card);color:var(--ink);font-family:inherit;font-size:14px;outline:none;}
+.ord-body input[type=text]:focus{border-color:var(--blueprint);}
+.ord-check{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--ink-soft);margin:8px 0;}
+.ord-prev{width:100%;height:160px;resize:vertical;padding:8px 10px;border:1.5px solid var(--paper-line);border-radius:4px;background:var(--row);color:var(--ink);font-family:'Courier New',monospace;font-size:.78rem;line-height:1.5;}
+.ord-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+.ord-btn{padding:10px 4px;border:none;border-radius:4px;background:var(--blueprint);color:#fff;font-family:inherit;font-size:.83rem;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.ord-btn.sub{background:var(--row);color:var(--blueprint);border:1.5px solid var(--blueprint);}
+.ord-btn:active{opacity:.75;}
+.ord-btn.done{background:#2A6840;color:#fff;border-color:#2A6840;}
+.ord-note{font-size:.7rem;color:var(--ink-soft);margin-top:6px;}
+.ord-link{display:block;margin:4px auto 0;background:none;border:none;color:var(--ink-soft);text-decoration:underline;font-size:.72rem;cursor:pointer;font-family:inherit;}
+.chevron{display:inline-block;font-style:normal;font-size:.68rem;opacity:.85;transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+#print-sheet{display:none;}
+#print-sheet h1{font-size:18pt;margin:0 0 4pt;}
+#print-sheet .ps-meta{font-size:10pt;margin-bottom:10pt;}
+#print-sheet table{width:100%;border-collapse:collapse;font-size:10.5pt;}
+#print-sheet th,#print-sheet td{border:1px solid #444;padding:5pt 7pt;text-align:left;}
+#print-sheet th{background:#eee;}
+#print-sheet .n{text-align:right!important;white-space:nowrap;}
+#print-sheet tr.t td{font-weight:700;background:#f3f3f3;}
+@media print{
+  @page{margin:14mm;}
+  html,body{background:#fff!important;}
+  body{background-image:none!important;padding:0!important;}
+  .site-header,.total-bar,main{display:none!important;}
+  #print-sheet{display:block!important;color:#000;}
+}
+
 @media(max-width:420px){
   .shape-tabs{grid-template-columns:repeat(2,1fr);}
 }
@@ -684,6 +717,7 @@ select:focus{border-color:var(--blueprint);outline:none;}
               <li>各品目右の <strong>削除</strong> ボタンで個別削除できます。</li>
               <li>画面上部の <strong>合計重量バー</strong>（常時表示）で全品目の合計 kg が確認できます。</li>
               <li><strong>全消去</strong> ボタンでリストをすべてクリアします。</li>
+              <li>リストの下の <strong>注文書の出力</strong>（初期は折りたたみ）では、同じ品名・規格・寸法の数量を合計し、重量なしで出力します。<strong>メールで送る</strong>（本文に集計を平文で入れてメールアプリを開く）・<strong>PDFにする</strong>・<strong>コピー</strong>・<strong>共有</strong>が使えます。本文は書き換えできます。</li>
             </ol>
           </div>
 
@@ -714,7 +748,29 @@ select:focus{border-color:var(--blueprint);outline:none;}
       <div id="entries-list"></div>
     </div>
   </div>
+  <!-- ── 注文書出力 ── -->
+  <div class="card" id="order-card" hidden>
+    <div class="card-head" style="cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between" onclick="toggleOrder()"><span>注文書の出力</span><i class="chevron" id="order-chev">▼</i></div>
+    <div class="ord-body" id="order-body" hidden>
+      <div class="field">
+        <label class="fl">現場名・件名（任意）</label>
+        <input type="text" id="order-title" placeholder="例：〇〇工場 架台製作" oninput="renderOrder()" autocomplete="off">
+      </div>
+      <div style="height:8px"></div>
+      <textarea class="ord-prev" id="order-text" oninput="orderEdited=true;document.getElementById('btn-regen').hidden=false"></textarea>
+      <button class="ord-link" id="btn-regen" onclick="regenOrder()" hidden>自動作成に戻す（書き換えた内容は消えます）</button>
+      <div class="ord-btns">
+        <button class="ord-btn" onclick="sendMail()">✉ メールで送る</button>
+        <button class="ord-btn" onclick="printPdf()">📄 PDFにする</button>
+        <button class="ord-btn sub" id="btn-copy" onclick="copyText()">コピー</button>
+        <button class="ord-btn sub" id="btn-share" onclick="shareText()" hidden>共有（LINE等）</button>
+      </div>
+      <div class="ord-note">本文は書き換えできます（書き換えた内容がメール・コピー・共有・PDFに使われます）。PDF：開いた画面で「PDFとして保存」または共有を選び、メールやLINEに添付してください。</div>
+    </div>
+  </div>
 </main>
+
+<div id="print-sheet"></div>
 
 <script>
 // ================================================================
@@ -1210,7 +1266,10 @@ function addEntry() {
     if (!cat||!size||!lenMm) return;
     const kgPerM = LINEAR_DATA[cat].sizes[size];
     const single = kgPerM * lenMm / 1000;
-    entry = {id:nextId++,name:LINEAR_DATA[cat].label,spec:size,
+    // 品名に材質が入っていない SS400 系の品種は「(SS400)」を付ける（SGP・STKR は規格名が材質のため付けない）
+    const SS_ADD = ['I','C','L等辺','L不等辺','FB','丸棒'];
+    const nm = LINEAR_DATA[cat].label + ((linearMat==='SS400' && SS_ADD.includes(cat)) ? ' (SS400)' : '');
+    entry = {id:nextId++,name:nm,spec:size,
       detail:lenMm.toLocaleString()+' mm × '+qty+'本', totalKg:single*qty, singleKg:single, qty};
   } else {
     const mat = document.getElementById('plate-mat').value;
@@ -1291,7 +1350,7 @@ function loadEntries() {
 
 function renderEntries() {
   const list=document.getElementById('entries-list'), empty=document.getElementById('empty-state');
-  if (!entries.length) { list.innerHTML=''; empty.style.display='block'; updateTotal(); saveEntries(); return; }
+  if (!entries.length) { list.innerHTML=''; empty.style.display='block'; updateTotal(); saveEntries(); renderOrder(); return; }
   empty.style.display='none';
   list.innerHTML=entries.map(e=>`
     <div class="entry-item">
@@ -1306,6 +1365,7 @@ function renderEntries() {
     </div>`).join('');
   updateTotal();
   saveEntries();
+  renderOrder();
 }
 
 function updateTotal() {
@@ -1322,6 +1382,83 @@ function hidePreview(){document.getElementById('preview').classList.add('hidden'
 function setAddBtn(on){document.getElementById('btn-add').disabled=!on;}
 function fmt(n){if(n==null||isNaN(n))return'—';if(n>=1000)return n.toLocaleString('ja-JP',{maximumFractionDigits:1});if(n>=100)return n.toFixed(1);if(n>=10)return n.toFixed(2);return n.toFixed(3);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ================================================================
+// 注文書出力（メール・PDF・コピー・共有）
+// ================================================================
+let orderEdited=false;
+function todayStr(){
+  const d=new Date(), z=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'/'+z(d.getMonth()+1)+'/'+z(d.getDate());
+}
+function orderTitle(){ return document.getElementById('order-title').value.trim(); }
+// 同じ 品名(材質込み)・規格・寸法 は数量を合計して注文用に集約
+function aggregate(){
+  const map=new Map();
+  entries.forEach(e=>{
+    const m=String(e.detail).match(/^(.*?)\s*×\s*(\d+)(本|枚)$/);
+    const dim=m?m[1]:e.detail, unit=m?m[3]:'', qty=e.qty||(m?parseInt(m[2],10):1);
+    const key=[e.name,e.spec,dim,unit].join('|');
+    const g=map.get(key);
+    if(g) g.qty+=qty; else map.set(key,{name:e.name,spec:e.spec,dim,unit,qty});
+  });
+  return [...map.values()];
+}
+function buildText(){
+  const L=['【鋼材注文】'+orderTitle(),'日付：'+todayStr(),''];
+  aggregate().forEach(r=>L.push(r.name+' '+r.spec+'　'+r.dim+' × '+r.qty+r.unit));
+  return L.join('\n');
+}
+function renderOrder(){
+  const has=entries.length>0;
+  document.getElementById('order-card').hidden=!has;
+  document.getElementById('btn-share').hidden=!navigator.share;
+  if(!has){ orderEdited=false; document.getElementById('btn-regen').hidden=true; }
+  if(has && !orderEdited) document.getElementById('order-text').value=buildText();
+}
+function regenOrder(){ orderEdited=false; document.getElementById('btn-regen').hidden=true; renderOrder(); }
+function orderText(){ return document.getElementById('order-text').value; }
+function toggleOrder(){
+  const b=document.getElementById('order-body'), c=document.getElementById('order-chev');
+  b.hidden=!b.hidden; c.classList.toggle('open',!b.hidden);
+}
+function flash(id,label,orig){
+  const b=document.getElementById(id); b.classList.add('done'); b.textContent=label;
+  setTimeout(()=>{ b.classList.remove('done'); b.textContent=orig; },1200);
+}
+function sendMail(){
+  if(!entries.length) return;
+  const subject='【鋼材注文】'+(orderTitle()||todayStr());
+  const body=orderText().replace(/\n/g,'\r\n');
+  location.href='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+function copyText(){
+  const txt=orderText();
+  const ok=()=>flash('btn-copy','✓ コピーしました','コピー');
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(ok,()=>fallbackCopy(ok));
+  } else fallbackCopy(ok);
+}
+function fallbackCopy(ok){
+  const ta=document.getElementById('order-text'); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); ok(); }catch(e){}
+  ta.blur();
+}
+function shareText(){
+  if(navigator.share) navigator.share({title:'鋼材注文',text:orderText()}).catch(()=>{});
+}
+function printPdf(){
+  if(!entries.length) return;
+  const ps=document.getElementById('print-sheet');
+  const head='<h1>鋼材注文書</h1><div class="ps-meta">'+(orderTitle()?'件名：'+esc(orderTitle())+'　':'')+'日付：'+todayStr()+'</div>';
+  if(orderEdited){
+    ps.innerHTML=head+'<pre style="font-family:inherit;font-size:11pt;white-space:pre-wrap;line-height:1.7">'+esc(orderText())+'</pre>';
+  } else {
+    const rows=aggregate().map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+esc(r.spec)+'</td><td>'+esc(r.dim)+'</td><td class="n">'+r.qty+' '+r.unit+'</td></tr>').join('');
+    ps.innerHTML=head+'<table><thead><tr><th>品名</th><th>規格</th><th>寸法</th><th class="n">数量</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  window.print();
+}
 
 loadEntries();
 renderEntries();
