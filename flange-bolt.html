@@ -91,6 +91,14 @@ select{
   background-repeat:no-repeat;background-position:right 10px center;transition:border-color .12s;
 }
 select:focus{border-color:var(--blueprint);}
+/* ── 呼び径・箇所数：入力欄を目立たせる ── */
+.grid2.key{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:6px;padding:8px 8px 2px;}
+.grid2.key label.fl{color:var(--accent);}
+.grid2.key select{height:42px;font-size:16px;border:2px solid var(--accent);background-color:#fff;box-shadow:0 1px 0 rgba(193,84,31,.25);}
+.grid2.key select:focus{border-color:var(--blueprint);}
+.grid2.key .num-field{height:42px;border:2px solid var(--accent);background:#fff;}
+.grid2.key .num-field input{font-size:1.05rem;}
+.grid2.key .num-adj{height:42px;}
 
 .num-wrap{display:flex;align-items:center;gap:4px;}
 .num-adj{
@@ -339,7 +347,7 @@ select:focus{border-color:var(--blueprint);}
       </div>
 
       <!-- 呼び径 ＋ 箇所数 -->
-      <div class="grid2">
+      <div class="grid2 key">
         <div class="field">
           <label class="fl">呼び径</label>
           <select id="size-select" onchange="update()" autocomplete="off"></select>
