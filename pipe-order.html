@@ -531,7 +531,22 @@ function buildNameSelect(){
   sel.value = cur.name;
 }
 function onName(){
-  cur = { name: si('name-sel').value, tokens: [], s1:'', s2:'', sel:-1, unit:'' };
+  // 前の品目で選んでいた材質・サイズ等は、新しい品名にも当てはまるものを引き継ぐ（入力を楽にするため）
+  const prev = cur, name = si('name-sel').value;
+  let tokens = [], s1 = '', s2 = '';
+  if(name !== OTHER){
+    const rows = rowsOf(name);
+    tokens = prev.tokens.filter(t => tokGroup(t)!=='note' && rows.some(r => r.toks.includes(t)));
+    const sizes = [[prev.s1, prev.s2], [prev.s1, ''], ['','']];
+    outer: for(;;){
+      for(const [a1,a2] of sizes){
+        if(filtered(rows,{tokens,s1:a1,s2:a2}).length){ s1=a1; s2=a2; break outer; }
+      }
+      if(!tokens.length){ s1=''; s2=''; break; }
+      tokens.pop();
+    }
+  }
+  cur = { name, tokens, s1, s2, sel:-1, unit:'' };
   renderPick();
 }
 function clearFilters(){ cur.tokens=[]; cur.s1=''; cur.s2=''; cur.sel=-1; renderPick(); }
