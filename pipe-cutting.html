@@ -167,9 +167,11 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
 @media print{
   @page{margin:14mm;}
   html,body{background:#fff!important;}
-  body{background-image:none!important;padding:0!important;}
+  body{background-image:none!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important;}
+  html{height:auto!important;}
   body>*:not(#ol-print){display:none!important;}
-  #ol-print{display:block!important;color:#000;}
+  #ol-print{display:block!important;color:#000;margin:0;padding:0;break-after:avoid;page-break-after:avoid;}
+  #ol-print tr{break-inside:avoid;}
   #ol-print h1{font-size:16pt;margin:0 0 4px;}
   #ol-print .m{font-size:10pt;margin-bottom:8px;}
   #ol-print table{width:100%;border-collapse:collapse;font-size:10.5pt;}
