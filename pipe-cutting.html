@@ -71,7 +71,8 @@ input[type=number]{ -moz-appearance:textfield; }
 
 .row-card{background:#fff; border:1.5px solid var(--paper-line); border-radius:5px; padding:14px;
   margin-bottom:12px; transition:border-color .15s, opacity .15s;}
-.row-card.empty{opacity:.55;}
+.card.need-input{background:#EDE8DA; border-style:dashed;}
+.row-card.empty{background:#EDE8DA; border-style:dashed;}
 .row-card.filled{border-color:var(--blueprint);}
 .panel.sw .row-card.filled{border-color:var(--sw);}
 .panel.mix .row-card.filled{border-color:var(--accent);}
@@ -82,7 +83,8 @@ input[type=number]{ -moz-appearance:textfield; }
 .panel.sw .row-num{background:var(--sw);}
 .panel.mix .row-num{background:var(--accent);}
 .row-name{font-size:.82rem; font-weight:700;}
-.row-clear{border:none; background:none; color:var(--ink-soft); font-size:.7rem; text-decoration:underline; cursor:pointer; padding:4px;}
+.row-clear{flex:0 0 auto; width:32px; height:32px; border:1.5px solid var(--paper-line); background:#fff; color:#B33; font-size:1.05rem; font-weight:700; border-radius:4px; cursor:pointer; padding:0;}
+.row-clear:active{background:#FDEDED;}
 .field-pair{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
 .row-menkan{margin-top:8px; font-size:.72rem; color:var(--ink-soft); font-family:"JetBrains Mono",Menlo,monospace;}
 .nukishiro-field{margin-top:10px; display:flex; align-items:center; gap:8px;}
@@ -124,14 +126,58 @@ input[type=number]{ -moz-appearance:textfield; }
 .result-warn{margin-top:10px; font-size:.8rem; color:#F4C9A0; background:rgba(193,84,31,.18);
   border:1px solid rgba(193,84,31,.4); border-radius:4px; padding:8px 10px; display:none;}
 .result-warn.show{display:block;}
-.reset-link{display:block; text-align:center; margin:18px auto 0; font-size:.78rem; color:var(--ink-soft);
-  text-decoration:underline; background:none; border:none; cursor:pointer;}
+.reset-link{display:block; width:100%; margin:18px 0 0; padding:12px; font-size:.9rem; font-weight:700; color:#B33;
+  background:#fff; border:1.5px solid #B33; border-radius:6px; cursor:pointer; margin-bottom:14px;}
+.reset-link:active{background:#FDEDED;}
 .draw-row{display:flex; gap:8px; align-items:stretch;}
 .draw-row input{flex:1;}
-.draw-clear-btn{flex:0 0 auto; border:none; background:none; color:var(--ink-soft); font-size:.72rem; text-decoration:underline; cursor:pointer; padding:4px; white-space:nowrap;}
+.draw-clear-btn{flex:0 0 auto; width:38px; border:1.5px solid var(--paper-line); background:#fff; color:#B33; font-size:1.1rem; font-weight:700; border-radius:4px; cursor:pointer; padding:0;}
+.draw-clear-btn:active{background:#FDEDED;}
 .stepper-btn{flex:0 0 auto; width:38px; height:38px; border:1.5px solid var(--paper-line); background:#fff; color:var(--ink); border-radius:4px; font-size:1.1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; -webkit-tap-highlight-color:transparent;}
 .stepper-btn:active{background:var(--paper);}
 footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22px; padding:0 16px; line-height:1.6;}
+
+/* ===== 切断リスト ===== */
+.ol-wrap{max-width:560px;margin:0 auto;padding:0 14px;}
+.ol-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ol-grid label{font-size:.72rem;color:var(--ink-soft);display:block;margin-bottom:2px;font-weight:700;}
+.ol-grid select,.ol-grid input{width:100%;font-size:.9rem;padding:8px;border:1px solid var(--paper-line);border-radius:4px;background:#fff;color:var(--ink);}
+.ol-add{width:100%;margin-top:10px;padding:12px;border:0;border-radius:6px;background:var(--accent);color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;}
+.ol-add:active{opacity:.8;}
+.ol-msg{font-size:.75rem;color:var(--sw);margin:6px 0 0;min-height:1em;}
+.ol-tablewrap{overflow-x:auto;margin-top:8px;}
+table.ol-t{width:100%;border-collapse:collapse;font-size:.78rem;background:#fff;}
+table.ol-t th,table.ol-t td{border:1px solid var(--paper-line);padding:5px 6px;text-align:center;white-space:nowrap;}
+table.ol-t th{background:var(--blueprint);color:#fff;font-weight:700;}
+table.ol-t td.n{text-align:right;font-weight:700;}
+table.ol-t td.note{text-align:left;white-space:normal;font-size:.7rem;color:var(--ink-soft);}
+table.ol-t input.q{width:52px;padding:4px;font-size:.85rem;text-align:center;border:1px solid var(--paper-line);border-radius:3px;}
+table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:pointer;}
+.ol-qrow{display:flex;gap:4px;align-items:center;}
+.ol-qrow input{flex:1;min-width:0;text-align:center;}
+.ol-t .ol-qrow{justify-content:center;gap:2px;}
+.ol-t .stepper-btn{width:28px;height:28px;font-size:1rem;padding:0;}
+.ol-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.ol-btns button{padding:10px 4px;border:1px solid var(--blueprint);background:#fff;color:var(--blueprint);border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer;}
+.ol-btns button.pri{background:var(--blueprint);color:#fff;}
+.ol-btns button.done{background:var(--sw);color:#fff;border-color:var(--sw);}
+.ol-empty{font-size:.8rem;color:var(--ink-soft);margin:8px 0 0;}
+.ol-text{width:100%;height:150px;margin-top:8px;font-size:.78rem;font-family:monospace;border:1px solid var(--paper-line);border-radius:4px;padding:8px;}
+#ol-print{display:none;}
+@media print{
+  @page{margin:14mm;}
+  html,body{background:#fff!important;}
+  body{background-image:none!important;padding:0!important;}
+  body>*:not(#ol-print){display:none!important;}
+  #ol-print{display:block!important;color:#000;}
+  #ol-print h1{font-size:16pt;margin:0 0 4px;}
+  #ol-print .m{font-size:10pt;margin-bottom:8px;}
+  #ol-print table{width:100%;border-collapse:collapse;font-size:10.5pt;}
+  #ol-print th,#ol-print td{border:1px solid #000;padding:4px 6px;text-align:center;}
+  #ol-print th{background:#e8e8e8;}
+  #ol-print td.n{text-align:right;}
+  #ol-print td.note{text-align:left;font-size:9pt;}
+}
 </style>
 </head>
 <body>
@@ -170,12 +216,12 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num">G</span><span class="step-title">ルートギャップ(mm)</span></div>
-    <div class="draw-row"><input type="number" id="bw_gapInput" placeholder="0" inputmode="decimal" value="0"><button type="button" class="draw-clear-btn" id="bw_gapClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="bw_gapInput" placeholder="0" inputmode="decimal" value="0"><button type="button" class="draw-clear-btn" id="bw_gapClear" title="この入力を消す" aria-label="クリア">✕</button></div>
     <p class="hint">FL(フランジ)の行には加算されません。それ以外の各行の面間に、この値を1つずつ加算します。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num">D</span><span class="step-title">図示寸法(mm)</span></div>
-    <div class="draw-row"><input type="number" id="bw_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="bw_drawClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="bw_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="bw_drawClear" title="この入力を消す" aria-label="クリア">✕</button></div>
   </div>
   <div class="card result-card">
     <p class="result-label">切断寸法</p>
@@ -183,7 +229,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <p class="result-formula" id="bw_resultFormula">パイプサイズと継手を入力してください</p>
     <p class="result-warn" id="bw_resultWarn">切断寸法が0以下になっています。入力値を確認してください。</p>
   </div>
-  <button class="reset-link" id="bw_resetBtn">すべてクリア</button>
+  <button class="reset-link" id="bw_resetBtn">↺ このタブの入力をすべてクリア</button>
 </div>
 
 <div class="panel sw" id="panel-sw">
@@ -206,12 +252,12 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num sw">G</span><span class="step-title">ギャップ(mm)(標準1.6±0.8)</span></div>
-    <div class="draw-row"><input type="number" id="sw_gapInput" placeholder="2" inputmode="decimal" value="2" step="0.1"><button type="button" class="draw-clear-btn" id="sw_gapClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="sw_gapInput" placeholder="2" inputmode="decimal" value="2" step="0.1"><button type="button" class="draw-clear-btn" id="sw_gapClear" title="この入力を消す" aria-label="クリア">✕</button></div>
     <p class="hint">各行の「面間 − 差込量 + ギャップ」を図示寸法から引きます。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num sw">D</span><span class="step-title">図示寸法(mm)</span></div>
-    <div class="draw-row"><input type="number" id="sw_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="sw_drawClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="sw_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="sw_drawClear" title="この入力を消す" aria-label="クリア">✕</button></div>
   </div>
   <div class="card result-card">
     <p class="result-label">切断寸法</p>
@@ -219,7 +265,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <p class="result-formula" id="sw_resultFormula">パイプサイズと継手を入力してください</p>
     <p class="result-warn" id="sw_resultWarn">切断寸法が0以下になっています。入力値を確認してください。</p>
   </div>
-  <button class="reset-link" id="sw_resetBtn">すべてクリア</button>
+  <button class="reset-link" id="sw_resetBtn">↺ このタブの入力をすべてクリア</button>
 </div>
 
 <div class="panel mix" id="panel-mix">
@@ -242,17 +288,17 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--blueprint)">G</span><span class="step-title">BW側ルートギャップ(mm)</span></div>
-    <div class="draw-row"><input type="number" id="mix_bwGapInput" placeholder="0" inputmode="decimal" value="0"><button type="button" class="draw-clear-btn" id="mix_bwGapClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="mix_bwGapInput" placeholder="0" inputmode="decimal" value="0"><button type="button" class="draw-clear-btn" id="mix_bwGapClear" title="この入力を消す" aria-label="クリア">✕</button></div>
     <p class="hint">BWの継手(FL除く)にだけ加算されます。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--sw)">G</span><span class="step-title">SW側ギャップ(mm)(標準1.6±0.8)</span></div>
-    <div class="draw-row"><input type="number" id="mix_swGapInput" placeholder="2" inputmode="decimal" value="2" step="0.1"><button type="button" class="draw-clear-btn" id="mix_swGapClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="mix_swGapInput" placeholder="2" inputmode="decimal" value="2" step="0.1"><button type="button" class="draw-clear-btn" id="mix_swGapClear" title="この入力を消す" aria-label="クリア">✕</button></div>
     <p class="hint">SWの継手にだけ使われます(面間 − 差込量 + ギャップ)。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--accent)">D</span><span class="step-title">図示寸法(mm)</span></div>
-    <div class="draw-row"><input type="number" id="mix_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="mix_drawClear">クリア</button></div>
+    <div class="draw-row"><input type="number" id="mix_drawSize" placeholder="例: 460" inputmode="decimal"><button type="button" class="draw-clear-btn" id="mix_drawClear" title="この入力を消す" aria-label="クリア">✕</button></div>
   </div>
   <div class="card result-card">
     <p class="result-label">切断寸法</p>
@@ -260,7 +306,7 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
     <p class="result-formula" id="mix_resultFormula">パイプサイズと継手を入力してください</p>
     <p class="result-warn" id="mix_resultWarn">切断寸法が0以下になっています。入力値を確認してください。</p>
   </div>
-  <button class="reset-link" id="mix_resetBtn">すべてクリア</button>
+  <button class="reset-link" id="mix_resetBtn">↺ このタブの入力をすべてクリア</button>
 </div>
 
 <div class="panel manual" id="panel-manual">
@@ -318,6 +364,38 @@ footer{text-align:center; font-size:.68rem; color:var(--ink-soft); margin-top:22
 
 
 </main>
+<div class="ol-wrap">
+  <div class="card" id="olCard">
+    <div class="step-label"><span class="step-num" style="background:var(--accent)">切</span><span class="step-title">切断リスト</span></div>
+    <p class="hint">各タブの「切断寸法」下にある「切断リストに追加」で、計算結果をここに集めます。一覧を印刷・PDF保存・メール送信できます。</p>
+    <div class="ol-grid">
+      <div style="grid-column:1/3"><label>件名(物件名など)</label><input type="text" id="olTitle" placeholder="例: ○○工事 配管切断"></div>
+    </div>
+    <div id="olResume" style="display:none;background:#FFF4DC;border:1px solid #E0B050;border-radius:6px;padding:10px;margin-top:8px;font-size:.82rem;line-height:1.6;">
+      <div><b>前回の切断リスト(<span id="olResumeN">0</span>件)が残っています。</b></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button type="button" id="olKeep" style="flex:1;padding:10px;border:0;border-radius:6px;background:var(--blueprint);color:#fff;font-weight:700;cursor:pointer;">残して続ける</button>
+        <button type="button" id="olDrop" style="flex:1;padding:10px;border:1px solid #B33;border-radius:6px;background:#fff;color:#B33;font-weight:700;cursor:pointer;">消して新規作成</button>
+      </div>
+    </div>
+    <div id="olEmpty" class="ol-empty">まだ追加されていません。</div>
+    <div class="ol-tablewrap"><table class="ol-t" id="olTable" style="display:none">
+      <thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th><th></th></tr></thead>
+      <tbody id="olBody"></tbody></table></div>
+    <div class="ol-btns" id="olBtns" style="display:none">
+      <button class="pri" id="olPrint">🖨 印刷 / PDF保存</button>
+      <button class="pri" id="olMail">✉ メール</button>
+      <button id="olCopy">コピー</button>
+    </div>
+    <div class="ol-btns" id="olBtns2" style="display:none;grid-template-columns:1fr 1fr">
+      <button id="olToggleText">メール本文を確認・編集</button>
+      <button id="olClear">全削除</button>
+    </div>
+    <textarea class="ol-text" id="olText" style="display:none"></textarea>
+    <p class="hint" style="margin-top:8px">※PDF保存は、印刷画面の送信先で「PDFに保存」を選んでください。メールは本文に一覧が入ります(PDFの添付は、保存したPDFをメールに添付してください)。</p>
+  </div>
+</div>
+<div id="ol-print"></div>
 <div style="max-width:560px; margin:0 auto; padding:0 14px;">
   <div class="card" style="border-color:var(--paper-line);">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">!</span><span class="step-title">免責事項</span></div>
@@ -714,7 +792,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       card.innerHTML = `
         <div class="row-head">
           <div class="row-title"><span class="row-num">${idx+1}</span><span class="row-name">${ROW_NAMES[idx]}</span></div>
-          <button class="row-clear" data-idx="${idx}">クリア</button>
+          <button class="row-clear" data-idx="${idx}" title="この継手を消す" aria-label="クリア">✕</button>
         </div>
         <div class="field-pair">
           <select data-idx="${idx}" data-field="type">${buildTypeOptions(r.type)}</select>
@@ -832,6 +910,8 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     resultWarn.classList.toggle('show', cut<=0);
   }
 
+  window.__cutInfo=window.__cutInfo||{};
+  window.__cutInfo.bw=function(){return rows.filter(r=>r.type&&r.size!=='').map(r=>({kind:r.type==='FL'?'FL':'BW',label:typeMeta[r.type].label}));};
   renderRows(); calc();
 })();
 
@@ -929,7 +1009,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       card.innerHTML = `
         <div class="row-head">
           <div class="row-title"><span class="row-num">${idx+1}</span><span class="row-name">${ROW_NAMES[idx]}</span></div>
-          <button class="row-clear" data-idx="${idx}">クリア</button>
+          <button class="row-clear" data-idx="${idx}" title="この継手を消す" aria-label="クリア">✕</button>
         </div>
         <div class="field-pair">
           <select data-idx="${idx}" data-field="type">${buildTypeOptions(r.type)}</select>
@@ -1045,6 +1125,8 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     resultWarn.classList.toggle('show', cut<=0);
   }
 
+  window.__cutInfo=window.__cutInfo||{};
+  window.__cutInfo.sw=function(){return rows.filter(r=>r.type&&r.size!=='').map(r=>({kind:r.type==='FL'?'FL':'SW',label:typeMeta[r.type].label}));};
   renderRows(); calc();
 })();
 
@@ -1213,7 +1295,7 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
       card.innerHTML = `
         <div class="row-head">
           <div class="row-title"><span class="row-num">${idx+1}</span><span class="row-name">${ROW_NAMES[idx]}</span></div>
-          <button class="row-clear" data-idx="${idx}">クリア</button>
+          <button class="row-clear" data-idx="${idx}" title="この継手を消す" aria-label="クリア">✕</button>
         </div>
         <div class="field-pair">
           <select data-idx="${idx}" data-field="type">${buildTypeOptions(r.typeIdx, idx)}</select>
@@ -1343,6 +1425,8 @@ function filterSizes(data, typeMeta, typeKey, targetSize){
     resultWarn.classList.toggle('show', cut<=0);
   }
 
+  window.__cutInfo=window.__cutInfo||{};
+  window.__cutInfo.mix=function(){return rows.filter(r=>r.typeIdx!==''&&r.size!=='').map(r=>{const t=findType(r.typeIdx);return {kind:t.key==='FL'?'FL':(t.src==='bw'?'BW':'SW'),label:t.meta.label};});};
   renderRows(); calc();
 })();
 
@@ -1417,6 +1501,164 @@ attachStepper('sw_drawSize', 1, 0, 0);
 attachStepper('mix_bwGapInput', 1, 0, 0, 20);
 attachStepper('mix_swGapInput', 0.1, 1, 0, 5);
 attachStepper('mix_drawSize', 1, 0, 0);
+
+/* ================= 切断リスト ================= */
+(function(){
+  const MATS=['SGP','SGP-W','STPG370','SUS304','SUS316','SUS304L','SUS316L','その他'];
+  const NOSCH=['SGP','SGP-W'];
+  function defSch(m){ return m==='STPG370'?'40S':(/^SUS/.test(m)?'10S':null); }
+  const SCHS=['5S','10S','20S','40S','80S','160S','その他'];
+  const CHS=['自動','面無し','片面','両面'];
+  const TAB={bw:'BW',sw:'SW',mix:'混合'};
+  const KEY='pipeCuttingList.v2';
+  let list=[], seq=1, last={mat:'SGP',sch:'10S',ch:'自動',matO:'',schO:''};
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify({list,seq,last,title:$('olTitle').value})); }catch(e){} }
+  function load(){ try{ const o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o){ list=o.list||[]; seq=o.seq||1; last=o.last||last; if(MATS.indexOf(last.mat)<0) last={mat:'SGP',sch:'10S',ch:'自動',matO:'',schO:''}; $('olTitle').value=o.title||''; } }catch(e){} }
+  function opts(a,v){ return a.map(x=>'<option'+(x===v?' selected':'')+'>'+x+'</option>').join(''); }
+  function today(){ const d=new Date(),z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+z(d.getMonth()+1)+'/'+z(d.getDate()); }
+
+  // 各タブの切断寸法カードの下に入力欄を差し込む
+  Object.keys(TAB).forEach(function(k){
+    const panel=$('panel-'+k); const rc=panel&&panel.querySelector('.result-card'); if(!rc) return;
+    const d=document.createElement('div'); d.className='card';
+    d.innerHTML='<div class="step-label"><span class="step-num" style="background:var(--accent)">切</span><span class="step-title">切断リストに追加</span></div>'
+      +'<div class="ol-grid">'
+      +'<div><label>配管材質</label><select data-f="mat">'+opts(MATS,last.mat)+'</select><input type="text" data-f="matO" placeholder="材質を入力(例: STPT370)" style="margin-top:4px;display:none"></div>'
+      +'<div><label>スケジュール</label><select data-f="sch">'+opts(SCHS,last.sch)+'</select><input type="text" data-f="schO" placeholder="Schを入力" style="margin-top:4px;display:none"></div>'
+      +'<div><label>面取り(自動=継手から判定)</label><select data-f="ch">'+opts(CHS,last.ch)+'</select></div>'
+      +'<div><label>本数</label><div class="ol-qrow"><input type="number" data-f="qty" value="1" min="1" inputmode="numeric"></div></div>'
+      +'</div><button type="button" class="ol-add">＋ この切断寸法をリストに追加</button><p class="ol-msg"></p>';
+    const rb=$(k+'_resetBtn'); (rb||rc).insertAdjacentElement('afterend',d);
+    attachStepperToElement(d.querySelector('[data-f="qty"]'),1,0,1);
+    d.querySelector('.ol-add').addEventListener('click',function(){
+      const msg=d.querySelector('.ol-msg');
+      const raw=($(k+'_resultValue').textContent||'').replace(/[,\s]/g,'');
+      const len=parseFloat(raw);
+      if(!isFinite(len)||len<=0){ msg.style.color='#B33'; msg.textContent='切断寸法が計算されていません。'; return; }
+      const g=f=>d.querySelector('[data-f="'+f+'"]').value.trim();
+      const qty=Math.max(1,parseInt(g('qty'),10)||1);
+      const selEl=$(k+'_pipeSizeSelect');
+      const size=selEl&&selEl.value?(selEl.options[selEl.selectedIndex].text):'';
+      const draw=parseFloat($(k+'_drawSize').value);
+      const info=(window.__cutInfo&&window.__cutInfo[k])?window.__cutInfo[k]():[];
+      // 面取り自動判定: パイプ両端(1個目・2個目)のBW継手の数 2=両面 1=片面 0=面無し
+      const ends=info.slice(0,2); const nBW=ends.filter(x=>x.kind==='BW').length;
+      const autoCh=nBW>=2?'両面':(nBW===1?'片面':'面無し');
+      const ch=g('ch')==='自動'?autoCh:g('ch');
+      const mat=g('mat')==='その他'?(g('matO')||'その他'):g('mat');
+      const sch=NOSCH.indexOf(g('mat'))>=0?'':(g('sch')==='その他'?(g('schO')||'その他'):g('sch'));
+      const note=info.map(x=>x.label+(x.kind==='FL'?'':' '+x.kind)).join('×');
+      last={mat:g('mat'),sch:g('sch'),ch:g('ch'),matO:g('matO'),schO:g('schO')};
+      const it={mat:mat,size:size,sch:sch,len:len,draw:isFinite(draw)?draw:null,ch:ch,qty:qty,note:note||TAB[k]};
+      const same=list.find(x=>x.mat===it.mat&&x.size===it.size&&x.sch===it.sch&&x.len===it.len&&x.draw===it.draw&&x.ch===it.ch&&x.note===it.note);
+      if(same) same.qty+=qty; else { it.id=seq++; list.push(it); }
+      msg.style.color=''; msg.textContent='✓ 追加しました(面取り: '+ch+(g('ch')==='自動'?'・自動判定':'')+')';
+      render();
+    });
+    const matSel=d.querySelector('[data-f="mat"]'), schSel=d.querySelector('[data-f="sch"]');
+    function sync(){
+      const f=n=>d.querySelector('[data-f="'+n+'"]');
+      f('matO').style.display=matSel.value==='その他'?'':'none';
+      const nosch=NOSCH.indexOf(matSel.value)>=0;
+      schSel.disabled=nosch; if(nosch){ schSel.style.opacity='.45'; } else { schSel.style.opacity=''; }
+      f('schO').style.display=(!nosch&&schSel.value==='その他')?'':'none';
+    }
+    sync();
+    // 選択値を3タブで共有
+    d.querySelectorAll('select,input[type=text]').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        const f=sel.getAttribute('data-f'); last[f]=sel.value;
+        const dflt=(f==='mat')?defSch(sel.value):null; if(dflt) last.sch=dflt;
+        document.querySelectorAll('#panel-bw,#panel-sw,#panel-mix').forEach(function(pn){
+          const o=pn.querySelector('.ol-grid [data-f="'+f+'"]'); if(o) o.value=sel.value;
+          if(dflt) pn.querySelector('[data-f="sch"]').value=dflt;
+          const m=pn.querySelector('[data-f="mat"]'), c=pn.querySelector('[data-f="sch"]');
+          const nos=NOSCH.indexOf(m.value)>=0; c.disabled=nos; c.style.opacity=nos?'.45':'';
+          pn.querySelector('[data-f="matO"]').style.display=m.value==='その他'?'':'none';
+          pn.querySelector('[data-f="schO"]').style.display=(!nos&&c.value==='その他')?'':'none';
+        });
+        save();
+      });
+    });
+  });
+
+  function lenOf(r){ return r.len.toLocaleString('ja-JP')+(r.draw!=null?'('+r.draw.toLocaleString('ja-JP')+')':''); }
+  function lineOf(r,i){ return (i+1)+'. '+r.mat+' '+(r.size||'')+' '+(r.sch?'Sch'+r.sch+' ':'')+'L='+lenOf(r)+'mm　面取り:'+r.ch+'　'+r.qty+'本'+(r.note?'　['+r.note+']':''); }
+  function textOf(){
+    const t=$('olTitle').value.trim();
+    const L=['【配管切断リスト】'+t,'日付：'+today(),''];
+    list.forEach((r,i)=>L.push(lineOf(r,i)));
+    const total=list.reduce((a,r)=>a+r.qty,0);
+    L.push('','合計 '+total+'本');
+    return L.join('\n');
+  }
+  let edited=false;
+  function render(){
+    const has=list.length>0;
+    $('olEmpty').style.display=has?'none':'';
+    $('olTable').style.display=has?'':'none';
+    $('olBtns').style.display=has?'':'none';
+    $('olBtns2').style.display=has?'grid':'none';
+    if(!has) $('olText').style.display='none';
+    $('olBody').innerHTML=list.map(function(r,i){
+      return '<tr><td>'+(i+1)+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
+        +'<td><div class="ol-qrow"><input class="q" type="number" min="1" value="'+r.qty+'" data-id="'+r.id+'" inputmode="numeric"></div></td><td class="note">'+esc(r.note)+'</td>'
+        +'<td><button type="button" data-del="'+r.id+'" title="削除">✕</button></td></tr>';
+    }).join('');
+    $('olBody').querySelectorAll('input.q').forEach(function(i){ attachStepperToElement(i,1,0,1); });
+    if(!edited) $('olText').value=textOf();
+    save();
+  }
+  $('olBody').addEventListener('click',function(e){
+    const id=e.target.getAttribute&&e.target.getAttribute('data-del'); if(!id) return;
+    list=list.filter(x=>String(x.id)!==id); render();
+  });
+  $('olBody').addEventListener('input',function(e){
+    const id=e.target.getAttribute&&e.target.getAttribute('data-id'); if(!id) return;
+    const v=parseInt(e.target.value,10); if(!(v>=1)) return;
+    const it=list.find(x=>String(x.id)===id); if(it){ it.qty=v; if(!edited) $('olText').value=textOf(); save(); }
+  });
+  $('olTitle').addEventListener('input',function(){ if(!edited) $('olText').value=textOf(); save(); });
+  $('olText').addEventListener('input',function(){ edited=true; });
+  $('olToggleText').addEventListener('click',function(){ const t=$('olText'); t.style.display=t.style.display==='none'?'':'none'; });
+  $('olClear').addEventListener('click',function(){ if(list.length && confirm('リストをすべて削除しますか?')){ list=[]; edited=false; render(); } });
+  function flash(id,label,orig){ const b=$(id); b.classList.add('done'); b.textContent=label; setTimeout(function(){ b.classList.remove('done'); b.textContent=orig; },1200); }
+  $('olMail').addEventListener('click',function(){
+    if(!list.length) return;
+    const subject='【配管切断リスト】'+($('olTitle').value.trim()||today());
+    location.href='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent($('olText').value.replace(/\n/g,'\r\n'));
+  });
+  $('olCopy').addEventListener('click',function(){
+    const txt=$('olText').value;
+    const fb=function(){ const t=$('olText'); const was=t.style.display; t.style.display=''; t.focus(); t.select(); try{ document.execCommand('copy'); flash('olCopy','✓ コピーしました','コピー'); }catch(e){} t.blur(); t.style.display=was; };
+    if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(function(){ flash('olCopy','✓ コピーしました','コピー'); },fb); else fb();
+  });
+  $('olPrint').addEventListener('click',function(){
+    if(!list.length) return;
+    const t=$('olTitle').value.trim();
+    let tb=list.map(function(r,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td><td>'+r.qty+'</td><td class="note">'+esc(r.note)+'</td></tr>'; }).join('');
+    const total=list.reduce((a,r)=>a+r.qty,0);
+    $('ol-print').innerHTML='<h1>配管切断リスト</h1><div class="m">'+(t?'件名：'+esc(t)+'　':'')+'日付：'+today()+'　合計 '+total+'本</div>'
+      +'<table><thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>';
+    window.print();
+  });
+  load(); render();
+  if(list.length>0){
+    $('olResumeN').textContent=list.length; $('olResume').style.display='';
+    $('olKeep').addEventListener('click',function(){ $('olResume').style.display='none'; });
+    $('olDrop').addEventListener('click',function(){ list=[]; edited=false; $('olTitle').value=''; $('olResume').style.display='none'; render(); });
+  }
+})();
+
+/* 図示寸法が未入力のカードを色替え */
+(function(){
+  const ids=['bw_drawSize','sw_drawSize','mix_drawSize'];
+  function sync(){ ids.forEach(function(id){ const el=document.getElementById(id); if(!el) return; const c=el.closest('.card'); if(c) c.classList.toggle('need-input', el.value.trim()===''); }); }
+  document.addEventListener('input',sync); document.addEventListener('click',sync); document.addEventListener('change',sync);
+  sync();
+})();
 </script>
 
 </body>
