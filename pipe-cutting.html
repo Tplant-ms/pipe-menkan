@@ -390,6 +390,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
       <button id="olCopy">コピー</button>
     </div>
     <div class="ol-btns" id="olBtns2" style="display:none;grid-template-columns:1fr 1fr">
+      <button id="olSort" class="pri" style="grid-column:1/3">⇅ 材質・サイズで並べ替え</button>
       <button id="olToggleText">メール本文を確認・編集</button>
       <button id="olClear">全削除</button>
     </div>
@@ -1629,6 +1630,16 @@ attachStepper('mix_drawSize', 1, 0, 0);
   $('olTitle').addEventListener('input',function(){ if(!edited) $('olText').value=textOf(); save(); });
   $('olText').addEventListener('input',function(){ edited=true; });
   $('olToggleText').addEventListener('click',function(){ const t=$('olText'); t.style.display=t.style.display==='none'?'':'none'; });
+  $('olSort').addEventListener('click',function(){
+    const num=function(t){ const m=String(t||'').match(/\d+/); return m?parseInt(m[0],10):-1; };
+    const mi=function(m){ const i=MATS.indexOf(m); return i<0?MATS.length-1:i; };
+    list.sort(function(a,b){
+      return (mi(a.mat)-mi(b.mat)) || (mi(a.mat)===MATS.length-1 && a.mat!==b.mat ? (a.mat<b.mat?-1:1) : 0)
+        || (num(a.size)-num(b.size)) || (num(a.sch)-num(b.sch)) || (a.sch<b.sch?-1:a.sch>b.sch?1:0) || (a.len-b.len);
+    });
+    edited=false; render();
+    flash('olSort','✓ 並べ替えました','⇅ 材質・サイズで並べ替え');
+  });
   $('olClear').addEventListener('click',function(){ if(list.length && confirm('リストをすべて削除しますか?')){ list=[]; edited=false; render(); } });
   function flash(id,label,orig){ const b=$(id); b.classList.add('done'); b.textContent=label; setTimeout(function(){ b.classList.remove('done'); b.textContent=orig; },1200); }
   $('olMail').addEventListener('click',function(){
