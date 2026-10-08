@@ -150,6 +150,8 @@ table.ol-t{width:100%;border-collapse:collapse;font-size:.78rem;background:#fff;
 table.ol-t th,table.ol-t td{border:1px solid var(--paper-line);padding:5px 6px;text-align:center;white-space:nowrap;}
 table.ol-t th{background:var(--blueprint);color:#fff;font-weight:700;}
 table.ol-t td.n{text-align:right;font-weight:700;}
+table.ol-t select.ol-ed{font-size:.78rem;padding:4px 2px;border:1px solid var(--paper-line);border-radius:3px;background:#fff;color:var(--ink);width:auto;font-family:inherit;}
+table.ol-t select.ol-ed:disabled{opacity:.5;}
 table.ol-t td.note{text-align:left;white-space:normal;font-size:.7rem;color:var(--ink-soft);}
 table.ol-t input.q{width:52px;padding:4px;font-size:.85rem;text-align:center;border:1px solid var(--paper-line);border-radius:3px;}
 table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:pointer;}
@@ -1591,6 +1593,21 @@ attachStepper('mix_drawSize', 1, 0, 0);
     });
   });
 
+  function optHtml(vals,cur,blankLabel){
+    let h='';
+    vals.forEach(function(v){ h+='<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+(v===''?blankLabel:esc(v))+'</option>'; });
+    return h;
+  }
+  function matSel(r){
+    const base=MATS.filter(function(m){return m!=='その他';});
+    const vals=base.indexOf(r.mat)<0?base.concat([r.mat]):base;
+    return '<select class="ol-ed" data-ed="mat" data-id="'+r.id+'">'+optHtml(vals,r.mat)+'<option value="__other">その他…</option></select>';
+  }
+  function schSel(r){
+    const base=['','5S','10S','20S','40S','80S','160S'];
+    const vals=base.indexOf(r.sch)<0?base.concat([r.sch]):base;
+    return '<select class="ol-ed" data-ed="sch" data-id="'+r.id+'"'+(NOSCH.indexOf(r.mat)>=0?' disabled':'')+'>'+optHtml(vals,r.sch,'—')+'<option value="__other">その他…</option></select>';
+  }
   function lenOf(r){ return r.len.toLocaleString('ja-JP')+(r.draw!=null?'('+r.draw.toLocaleString('ja-JP')+')':''); }
   function lineOf(r,i){ return (i+1)+'. '+r.mat+' '+(r.size||'')+' '+(r.sch?'Sch'+r.sch+' ':'')+'L='+lenOf(r)+'mm　面取り:'+r.ch+'　'+r.qty+'本'+(r.note?'　['+r.note+']':''); }
   function textOf(){
@@ -1610,7 +1627,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     $('olBtns2').style.display=has?'grid':'none';
     if(!has) $('olText').style.display='none';
     $('olBody').innerHTML=list.map(function(r,i){
-      return '<tr><td>'+(i+1)+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
+      return '<tr><td>'+(i+1)+'</td><td>'+matSel(r)+'</td><td>'+esc(r.size)+'</td><td>'+schSel(r)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
         +'<td><div class="ol-qrow"><input class="q" type="number" min="1" value="'+r.qty+'" data-id="'+r.id+'" inputmode="numeric"></div></td><td class="note">'+esc(r.note)+'</td>'
         +'<td><button type="button" data-del="'+r.id+'" title="削除">✕</button></td></tr>';
     }).join('');
@@ -1622,8 +1639,24 @@ attachStepper('mix_drawSize', 1, 0, 0);
     const id=e.target.getAttribute&&e.target.getAttribute('data-del'); if(!id) return;
     list=list.filter(x=>String(x.id)!==id); render();
   });
+  $('olBody').addEventListener('change',function(e){
+    const t=e.target; const kind=t.getAttribute&&t.getAttribute('data-ed'); if(!kind) return;
+    const it=list.find(function(x){return String(x.id)===t.getAttribute('data-id');}); if(!it) return;
+    let v=t.value;
+    if(v==='__other'){
+      v=(window.prompt(kind==='mat'?'材質を入力してください(例: STPT370)':'スケジュールを入力してください',''))||'';
+      v=v.trim(); if(!v){ render(); return; }
+    }
+    if(kind==='mat'){
+      it.mat=v;
+      if(NOSCH.indexOf(v)>=0) it.sch='';
+      else { const d=defSch(v); if(d) it.sch=d; else if(!it.sch) it.sch='10S'; }
+    } else it.sch=v;
+    edited=false; render();
+  });
   $('olBody').addEventListener('input',function(e){
-    const id=e.target.getAttribute&&e.target.getAttribute('data-id'); if(!id) return;
+    if(!e.target.classList||!e.target.classList.contains('q')) return;
+    const id=e.target.getAttribute('data-id'); if(!id) return;
     const v=parseInt(e.target.value,10); if(!(v>=1)) return;
     const it=list.find(x=>String(x.id)===id); if(it){ it.qty=v; if(!edited) $('olText').value=textOf(); save(); }
   });
