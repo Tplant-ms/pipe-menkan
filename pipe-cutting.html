@@ -1525,8 +1525,8 @@ attachStepper('mix_drawSize', 1, 0, 0);
     const d=document.createElement('div'); d.className='card';
     d.innerHTML='<div class="step-label"><span class="step-num" style="background:var(--accent)">切</span><span class="step-title">切断リストに追加</span></div>'
       +'<div class="ol-grid">'
-      +'<div><label>配管材質</label><select data-f="mat">'+opts(MATS,last.mat)+'</select><input type="text" data-f="matO" placeholder="材質を入力(例: STPT370)" style="margin-top:4px;display:none"></div>'
-      +'<div><label>スケジュール</label><select data-f="sch">'+opts(SCHS,last.sch)+'</select><input type="text" data-f="schO" placeholder="Schを入力" style="margin-top:4px;display:none"></div>'
+      +'<div><label>配管材質</label><select data-f="mat">'+opts(MATS,last.mat)+'</select><input type="text" data-f="matO" placeholder="「その他」で入力可(例: STPT370)" style="margin-top:4px" disabled></div>'
+      +'<div><label>スケジュール</label><select data-f="sch">'+opts(SCHS,last.sch)+'</select><input type="text" data-f="schO" placeholder="「その他」で入力可" style="margin-top:4px" disabled></div>'
       +'<div><label>面取り(自動=継手から判定)</label><select data-f="ch">'+opts(CHS,last.ch)+'</select></div>'
       +'<div><label>本数</label><div class="ol-qrow"><input type="number" data-f="qty" value="1" min="1" inputmode="numeric"></div></div>'
       +'</div><button type="button" class="ol-add">＋ この切断寸法をリストに追加</button><p class="ol-msg"></p>';
@@ -1560,15 +1560,15 @@ attachStepper('mix_drawSize', 1, 0, 0);
     const matSel=d.querySelector('[data-f="mat"]'), schSel=d.querySelector('[data-f="sch"]');
     function sync(){
       const f=n=>d.querySelector('[data-f="'+n+'"]');
-      f('matO').style.display=matSel.value==='その他'?'':'none';
+      f('matO').disabled=matSel.value!=='その他';
       const nosch=NOSCH.indexOf(matSel.value)>=0;
       schSel.disabled=nosch; if(nosch){ schSel.style.opacity='.45'; } else { schSel.style.opacity=''; }
-      f('schO').style.display=(!nosch&&schSel.value==='その他')?'':'none';
+      f('schO').disabled=!(!nosch&&schSel.value==='その他');
     }
     sync();
     // 選択値を3タブで共有
     d.querySelectorAll('select,input[type=text]').forEach(function(sel){
-      sel.addEventListener('change',function(){
+      const onSel=function(){
         const f=sel.getAttribute('data-f'); last[f]=sel.value;
         const dflt=(f==='mat')?defSch(sel.value):null; if(dflt) last.sch=dflt;
         document.querySelectorAll('#panel-bw,#panel-sw,#panel-mix').forEach(function(pn){
@@ -1576,11 +1576,15 @@ attachStepper('mix_drawSize', 1, 0, 0);
           if(dflt) pn.querySelector('[data-f="sch"]').value=dflt;
           const m=pn.querySelector('[data-f="mat"]'), c=pn.querySelector('[data-f="sch"]');
           const nos=NOSCH.indexOf(m.value)>=0; c.disabled=nos; c.style.opacity=nos?'.45':'';
-          pn.querySelector('[data-f="matO"]').style.display=m.value==='その他'?'':'none';
-          pn.querySelector('[data-f="schO"]').style.display=(!nos&&c.value==='その他')?'':'none';
+          const mo=pn.querySelector('[data-f="matO"]'), so=pn.querySelector('[data-f="schO"]');
+          mo.disabled=m.value!=='その他'; if(mo.disabled) mo.value='';
+          so.disabled=!(!nos&&c.value==='その他'); if(so.disabled) so.value='';
+          if(mo.disabled) last.matO=''; if(so.disabled) last.schO='';
         });
         save();
-      });
+      };
+      sel.addEventListener('change',onSel);
+      if(sel.tagName==='SELECT') sel.addEventListener('input',onSel); else sel.addEventListener('input',function(){ last[sel.getAttribute('data-f')]=sel.value; document.querySelectorAll('.ol-grid [data-f="'+sel.getAttribute('data-f')+'"]').forEach(function(o){ if(o!==sel) o.value=sel.value; }); save(); });
     });
   });
 
