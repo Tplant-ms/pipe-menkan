@@ -152,6 +152,12 @@ table.ol-t th{background:var(--blueprint);color:#fff;font-weight:700;}
 table.ol-t td.n{text-align:right;font-weight:700;}
 table.ol-t select.ol-ed{font-size:.78rem;padding:4px 2px;border:1px solid var(--paper-line);border-radius:3px;background:#fff;color:var(--ink);width:auto;font-family:inherit;}
 table.ol-t select.ol-ed:disabled{opacity:.5;}
+table.ol-b{width:100%;border-collapse:collapse;font-size:.76rem;background:#fff;}
+table.ol-b th,table.ol-b td{border:1px solid var(--paper-line);padding:5px 6px;vertical-align:top;}
+table.ol-b th{background:var(--sw);color:#fff;}
+table.ol-b td.c{text-align:center;white-space:nowrap;}
+table.ol-b td.n{text-align:center;font-weight:700;font-size:1rem;white-space:nowrap;}
+.ol-bt{font-size:.8rem;font-weight:700;margin:4px 0;}
 table.ol-t td.note{text-align:left;white-space:normal;font-size:.7rem;color:var(--ink-soft);}
 table.ol-t input.q{width:52px;padding:4px;font-size:.85rem;text-align:center;border:1px solid var(--paper-line);border-radius:3px;}
 table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:pointer;}
@@ -180,6 +186,11 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
   #ol-print th,#ol-print td{border:1px solid #000;padding:4px 6px;text-align:center;}
   #ol-print th{background:#e8e8e8;}
   #ol-print td.n{text-align:right;}
+  #ol-print .ol-bt{font-size:11pt;margin:14px 0 4px;}
+  #ol-print table.ol-b{font-size:9.5pt;}
+  #ol-print table.ol-b th{background:#e8e8e8;color:#000;}
+  #ol-print table.ol-b td{text-align:left;}
+  #ol-print table.ol-b td.c,#ol-print table.ol-b td.n{text-align:center;}
   #ol-print td.note{text-align:left;font-size:9pt;}
 }
 </style>
@@ -361,6 +372,28 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <p class="hint">フランジを選ぶと「抜きしろ」の欄が出ます。パイプの厚みに応じて、0.1mm単位で数値を調整できます(初期値はサイズに応じて自動で入ります)。</p>
   </div>
   <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">8</span><span class="step-title">切断リストの使い方</span></div>
+    <p class="hint">切断寸法が出たら、画面下の「切断リストに追加」で材質・スケジュール・面取り・本数を選んで追加します。追加した内容は一番下の「切断リスト」に一覧で並び、印刷・PDF保存・メール送信ができます。</p>
+    <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li>面取りは「自動」のとき、パイプの両端(1個目・2個目)のBW継手の数で決まります。2箇所なら両面、1箇所なら片面、BW継手がなければ面無しです(SW継手・FLは面取り不要)。</li>
+      <li>SGP・SGP-Wはスケジュールなしです。STPG370は40S、SUS系は10Sが初期値です。「その他」を選ぶと材質・スケジュールを手入力できます。</li>
+      <li>リストの材質・スケジュールは、一覧の中で選び直して修正できます。「材質・サイズで並べ替え」で整理できます。</li>
+      <li>リストは次に開いたときも残ります。開いたときに「残して続ける」か「消して新規作成」を選べます。</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--sw)">9</span><span class="step-title">定尺の選び方(必要本数の計算)</span></div>
+    <p class="hint">切断リストの「📏 定尺で必要本数を計算(割付)」を押すと、材質・呼径・スケジュールが同じものごとに、何本の定尺が必要かを計算します。</p>
+    <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li><strong>定尺の長さ</strong>:SGP・SGP-W・STPG370などの炭素鋼は5.5m、VP・VU・HIVP・HTVPは4m、SUSは基本4mです。</li>
+      <li><strong>切りしろ</strong>:1カットごとに切断寸法へ3mm(初期値)を足して、長い順に定尺へ詰めていきます。数値は変更できます。</li>
+      <li><strong>SUSの4mと6m</strong>:自動のときは、まず4mで割り付けます。6mにすると端材が基準(初期値1,000mm)以上減る場合だけ6mを選びます。6mは在庫が少ないので、6mが出たものだけ手配が必要です。「SUSの定尺」で4mか6mに固定することもできます。</li>
+      <li><strong>定尺を超える寸法</strong>:定尺1本ぶんずつに分け、「(継)」「(継ぎ端)」と表示します(2本継ぎ)。</li>
+      <li>結果には、1本ごとの切り分け(長い順)と端材の長さも出ます。メール本文・印刷にも付きます。</li>
+    </ul>
+    <p class="hint" style="margin-top:10px;">※計算は定尺を5,500mm・4,000mm・6,000mmちょうどとして行います。実際の定尺は少し長い(5,512mm・4,012mmなど)ことがあるので、ぎりぎりで収まる場合や、定尺を超える切り寸は、現物の長さを測ってから決めてください。</p>
+  </div>
+  <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--accent)">!</span><span class="step-title">困ったとき</span></div>
     <p class="hint">入力した継手の並びがおかしく見える場合や、数字が想定と違う場合は、パイプサイズや継手のサイズの選び間違いがないか確認してください。それでも解決しない場合は、作成者にご相談ください。</p>
   </div>
@@ -393,9 +426,19 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     </div>
     <div class="ol-btns" id="olBtns2" style="display:none;grid-template-columns:1fr 1fr">
       <button id="olSort" class="pri" style="grid-column:1/3">⇅ 材質・サイズで並べ替え</button>
+      <button id="olBars" class="pri" style="grid-column:1/3">📏 定尺で必要本数を計算(割付)</button>
       <button id="olToggleText">メール本文を確認・編集</button>
       <button id="olClear">全削除</button>
     </div>
+    <div id="olBarOpt" style="display:none;margin-top:8px;font-size:.78rem;color:var(--ink-soft);">
+      <div class="ol-grid">
+        <div><label>切りしろ(mm/1カット)</label><input type="number" id="olKerf" value="3" min="0" inputmode="numeric"></div>
+        <div style="grid-column:1/3"><label>自動時、6mにする基準(4mより端材が○mm以上減る場合)</label><input type="number" id="olSus6Thr" value="1000" min="0" inputmode="numeric"></div>
+        <div style="grid-column:1/3"><label>SUSの定尺</label><select id="olSusLen"><option value="auto">自動(4m基本・端材減なら6m)</option><option value="4000">4m</option><option value="6000">6m</option></select></div>
+      </div>
+      <p class="hint" style="margin:6px 0 0">定尺: SGP・SGP-W・STPG370などの炭素鋼=5.5m、SUS=基本4m(4mで割り付けて端材が基準値以上減るときだけ6m)、VP等=4m。切断寸法+切りしろで長い順に割り付けます。定尺を超える分は定尺1本ぶんずつ分けて「継ぎ」にします。</p>
+    </div>
+    <div id="olBarOut" style="margin-top:8px"></div>
     <textarea class="ol-text" id="olText" style="display:none"></textarea>
     <p class="hint" style="margin-top:8px">※PDF保存は、印刷画面の送信先で「PDFに保存」を選んでください。メールは本文に一覧が入ります(PDFの添付は、保存したPDFをメールに添付してください)。</p>
   </div>
@@ -1610,12 +1653,92 @@ attachStepper('mix_drawSize', 1, 0, 0);
   }
   function lenOf(r){ return r.len.toLocaleString('ja-JP')+(r.draw!=null?'('+r.draw.toLocaleString('ja-JP')+')':''); }
   function lineOf(r,i){ return (i+1)+'. '+r.mat+' '+(r.size||'')+' '+(r.sch?'Sch'+r.sch+' ':'')+'L='+lenOf(r)+'mm　面取り:'+r.ch+'　'+r.qty+'本'+(r.note?'　['+r.note+']':''); }
+
+  /* ---- 定尺割付 ---- */
+  let barsOn=false;
+  function stdLens(mat){
+    if(/^SUS/i.test(mat)) { const v=$('olSusLen').value; return v==='auto'?[4000,6000]:[parseInt(v,10)]; }
+    if(/^(VP|VU|HIVP|HTVP)/i.test(mat)) return [4000];
+    return [5500];
+  }
+  function packBars(group,bar,kerf){
+    const items=[];
+    group.rows.forEach(function(r){
+      for(let q=0;q<r.qty;q++){
+        let rem=r.len, joint=0; const segs=[];
+        while(rem+kerf>bar){ const seg=bar-kerf; segs.push(seg); rem-=seg; joint++; }
+        if(joint>0) segs.forEach(function(sg){ items.push({len:sg,label:sg+'(継)',own:true}); });
+        items.push({len:rem,label:String(rem)+(joint>0?'(継ぎ端)':'')});
+      }
+    });
+    items.sort(function(a,b){return b.len-a.len;});
+    const bins=[];
+    items.forEach(function(it){
+      const need=it.len+kerf; let b=null;
+      for(let i=0;i<bins.length;i++){ if(bins[i].free>=need){ b=bins[i]; break; } }
+      if(!b){ b={free:bar,items:[]}; bins.push(b); }
+      b.free-=need; b.items.push(it.label);
+    });
+    return bins;
+  }
+  function calcBars(){
+    const kerf=Math.max(0,parseInt($('olKerf').value,10)||0);
+    const map={}, order=[];
+    list.forEach(function(r){
+      const k=[r.mat,r.size,r.sch].join('|');
+      if(!map[k]){ map[k]={mat:r.mat,size:r.size,sch:r.sch,rows:[]}; order.push(k); }
+      map[k].rows.push(r);
+    });
+    return order.map(function(k){
+      const g=map[k]; let best=null;
+  const lens=stdLens(g.mat);
+      if(lens.length===1){ const bins=packBars(g,lens[0],kerf); best={bar:lens[0],bins:bins,tot:bins.length*lens[0]}; }
+      else {
+        const b4=packBars(g,4000,kerf), b6=packBars(g,6000,kerf);
+        const thr=Math.max(0,parseInt($('olSus6Thr').value,10)||0);
+        const cut=(b4.length*4000)-(b6.length*6000);   // 6mにすると減る端材(=仕入れ総長さの差)
+        best=(cut>=thr&&cut>0)?{bar:6000,bins:b6}:{bar:4000,bins:b4};
+      }
+      return {g:g,bar:best.bar,bins:best.bins,kerf:kerf};
+    });
+  }
+  function barLabel(b){ return (b/1000)+'m'; }
+  function binLine(bn,i,bar){ return (i+1)+'本目: '+bn.items.join(' + ')+'　(端材 '+bn.free+')'; }
+  function barsText(){
+    if(!barsOn||!list.length) return [];
+    const res=calcBars(); const L=['','【定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)】'];
+    let all=0;
+    res.forEach(function(r){
+      all+=r.bins.length;
+      L.push(r.g.mat+' '+r.g.size+' '+(r.g.sch?'Sch'+r.g.sch+' ':'')+'定尺'+barLabel(r.bar)+' × '+r.bins.length+'本');
+      r.bins.forEach(function(bn,i){ L.push('  '+binLine(bn,i,r.bar)); });
+    });
+    L.push('定尺 合計 '+all+'本');
+    return L;
+  }
+  function barsHtml(){
+    const res=calcBars(); let all=0;
+    const rows=res.map(function(r){
+      all+=r.bins.length;
+      return '<tr><td>'+esc(r.g.mat)+'</td><td class="c">'+esc(r.g.size)+'</td><td class="c">'+esc(r.g.sch)+'</td><td class="c">'+barLabel(r.bar)+'</td><td class="n">'+r.bins.length+'本</td><td>'+r.bins.map(function(bn,i){return esc(binLine(bn,i,r.bar));}).join('<br>')+'</td></tr>';
+    }).join('');
+    return '<div class="ol-bt">定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)　合計 '+all+'本</div><table class="ol-b"><thead><tr><th>材質</th><th>呼径</th><th>Sch</th><th>定尺</th><th>必要本数</th><th>切り分け(長い順)</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  function refreshBars(){
+    $('olBarOpt').style.display=barsOn&&list.length?'':'none';
+    $('olBarOut').innerHTML=(barsOn&&list.length)?barsHtml():'';
+  }
+  $('olBars').addEventListener('click',function(){ barsOn=true; edited=false; render(); });
+  $('olKerf').addEventListener('input',function(){ if(barsOn){ edited=false; render(); } });
+  $('olSus6Thr').addEventListener('input',function(){ if(barsOn){ edited=false; render(); } });
+  $('olSusLen').addEventListener('change',function(){ if(barsOn){ edited=false; render(); } });
   function textOf(){
     const t=$('olTitle').value.trim();
     const L=['【配管切断リスト】'+t,'日付：'+today(),''];
     list.forEach((r,i)=>L.push(lineOf(r,i)));
     const total=list.reduce((a,r)=>a+r.qty,0);
     L.push('','合計 '+total+'本');
+    barsText().forEach(function(x){ L.push(x); });
     return L.join('\n');
   }
   let edited=false;
@@ -1625,13 +1748,14 @@ attachStepper('mix_drawSize', 1, 0, 0);
     $('olTable').style.display=has?'':'none';
     $('olBtns').style.display=has?'':'none';
     $('olBtns2').style.display=has?'grid':'none';
-    if(!has) $('olText').style.display='none';
+    if(!has){ $('olText').style.display='none'; barsOn=false; }
     $('olBody').innerHTML=list.map(function(r,i){
       return '<tr><td>'+(i+1)+'</td><td>'+matSel(r)+'</td><td>'+esc(r.size)+'</td><td>'+schSel(r)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
         +'<td><div class="ol-qrow"><input class="q" type="number" min="1" value="'+r.qty+'" data-id="'+r.id+'" inputmode="numeric"></div></td><td class="note">'+esc(r.note)+'</td>'
         +'<td><button type="button" data-del="'+r.id+'" title="削除">✕</button></td></tr>';
     }).join('');
     $('olBody').querySelectorAll('input.q').forEach(function(i){ attachStepperToElement(i,1,0,1); });
+    refreshBars();
     if(!edited) $('olText').value=textOf();
     save();
   }
@@ -1691,7 +1815,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     let tb=list.map(function(r,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td><td>'+r.qty+'</td><td class="note">'+esc(r.note)+'</td></tr>'; }).join('');
     const total=list.reduce((a,r)=>a+r.qty,0);
     $('ol-print').innerHTML='<h1>配管切断リスト</h1><div class="m">'+(t?'件名：'+esc(t)+'　':'')+'日付：'+today()+'　合計 '+total+'本</div>'
-      +'<table><thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>';
+      +'<table><thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>'+(barsOn?barsHtml():'');
     window.print();
   });
   load(); render();
