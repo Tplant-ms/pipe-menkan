@@ -1676,6 +1676,18 @@ attachStepper('mix_drawSize', 1, 0, 0);
   document.addEventListener('input',sync); document.addEventListener('click',sync); document.addEventListener('change',sync);
   sync();
 })();
+
+/* 図示寸法: クリック(フォーカス)で既存の値を全選択 */
+(function(){
+  ['bw_drawSize','sw_drawSize','mix_drawSize'].forEach(function(id){
+    const el=document.getElementById(id); if(!el) return;
+    let fresh=false;
+    function sel(){ try{ el.select(); }catch(e){} }
+    el.addEventListener('focus',function(){ fresh=true; sel(); setTimeout(sel,0); });
+    el.addEventListener('mouseup',function(e){ if(fresh){ e.preventDefault(); fresh=false; } });
+    el.addEventListener('touchend',function(){ setTimeout(sel,0); });
+  });
+})();
 </script>
 
 </body>
