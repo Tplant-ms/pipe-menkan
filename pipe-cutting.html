@@ -327,7 +327,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
 <div class="panel manual" id="panel-manual">
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">?</span><span class="step-title">これは何のツール?</span></div>
-    <p class="hint">配管の継手(エルボ・レジューサー・フランジなど)を組み合わせたときに、必要なパイプの切断寸法を自動で計算するツールです。スマホ・タブレット・PCのブラウザで、インストール不要で使えます。</p>
+    <p class="hint">配管の継手(エルボ・レジューサー・フランジなど)を組み合わせたときに、必要なパイプの切断寸法を自動で計算するツールです。スマホ・タブレット・PCのブラウザで、インストール不要で使えます。計算した切断寸法は「切断リスト」に集めて、定尺の必要本数の計算、印刷・PDF保存・メール送信、アイソ別の保存と合算までできます。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">1</span><span class="step-title">基本の使い方</span></div>
@@ -337,8 +337,10 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
       <li>「1個目」「2個目」に、使う継手の種類とサイズを選ぶ(3個使う場合は「3個目」も)</li>
       <li>図示寸法(mm)を入力する(図面に書かれている寸法)</li>
       <li>一番下に「切断寸法」が自動で表示される</li>
+      <li>切断リストに残すときは、続けて「切断リストに追加」を使う(下の8・9を参照)</li>
     </ol>
     <p class="hint" style="margin-top:10px;">継手を選ぶと、面間(継手ごとの寸法)が自動で表示されます。特別な操作をしなくても、選ぶだけで計算されます。</p>
+    <p class="hint" style="margin-top:8px;">入力のクリア:各欄の右にある赤い「✕」はその欄だけ、「↺ このタブの入力をすべてクリア」はそのタブの入力全部を消します(切断リストは消えません)。図示寸法の欄は、タップすると入っている数字が全部選択されるので、そのまま打ち直せます。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--accent)">2</span><span class="step-title">混合タブの使い方</span></div>
@@ -375,9 +377,12 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">8</span><span class="step-title">切断リストの使い方</span></div>
     <p class="hint">切断寸法が出たら、画面下の「切断リストに追加」で材質・スケジュール・面取り・本数を選んで追加します。追加した内容は一番下の「切断リスト」に一覧で並び、印刷・PDF保存・メール送信ができます。</p>
     <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
-      <li>面取りは「自動」のとき、パイプの両端(1個目・2個目)のBW継手の数で決まります。2箇所なら両面、1箇所なら片面、BW継手がなければ面無しです(SW継手・FLは面取り不要)。</li>
-      <li>SGP・SGP-Wはスケジュールなしです。STPG370は40S、SUS系は10Sが初期値です。「その他」を選ぶと材質・スケジュールを手入力できます。</li>
-      <li>リストの材質・スケジュールは、一覧の中で選び直して修正できます。「材質・サイズで並べ替え」で整理できます。</li>
+      <li><strong>面取り</strong>は「自動」のとき、パイプの両端(1個目・2個目)のBW継手の数で決まります。2箇所なら両面、1箇所なら片面、BW継手がなければ面無しです(SW継手・FLは面取り不要)。手動で選ぶこともできます。</li>
+      <li><strong>材質・スケジュール</strong>:SGP・SGP-Wはスケジュールなしです。STPG370は40S、SUS系は10Sが初期値です。「その他」を選ぶと、材質・スケジュールを手入力できます(その他以外を選ぶと入力は消えます)。</li>
+      <li><strong>図示寸法</strong>:リストには「切断寸法(図示寸法)」の形(例: 546(700))で入ります。同じ内容を追加すると、行が増えず本数が足されます。</li>
+      <li><strong>修正</strong>:リストの中で、材質・スケジュールを選び直せます。本数は「−」「＋」か直接入力で変えられます。行の右の「✕」でその行を削除、「全削除」で全部を消します(アイソNo.も消えます)。</li>
+      <li><strong>並べ替え</strong>:「材質・サイズで並べ替え」で、材質→サイズ→スケジュール→切断寸法の順に整理できます。</li>
+      <li><strong>メール</strong>:「メール」でメールソフトが開き、一覧が本文に入ります。「メール本文を確認・編集」で本文を書き換えられます。メールソフトが開かない環境では「コピー」を使ってください。PDFを添付したいときは、印刷画面で「PDFに保存」してからメールに添付します。</li>
       <li>リストは次に開いたときも残ります。開いたときに「残して続ける」か「消して新規作成」を選べます。</li>
     </ul>
   </div>
@@ -394,6 +399,22 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <p class="hint" style="margin-top:10px;">※計算は定尺を5,500mm・4,000mm・6,000mmちょうどとして行います。実際の定尺は少し長い(5,512mm・4,012mmなど)ことがあるので、ぎりぎりで収まる場合や、定尺を超える切り寸は、現物の長さを測ってから決めてください。</p>
   </div>
   <div class="card">
+    <div class="step-label"><span class="step-num" style="background:var(--accent)">10</span><span class="step-title">アイソ別の保存と合算</span></div>
+    <p class="hint">アイソ(アイソメNo.)ごとに切断リストを作り、あとでまとめて、切断寸法の合計と定尺の必要本数を出せます。</p>
+    <ol style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li>切断リストの「アイソNo.」に番号(例: 2021)を入れて、そのアイソの切断寸法を追加していく</li>
+      <li>「💾 データ保存(アイソ別)」を押す。<strong>入力しているアイソNo.の行だけ</strong>が、cutlist_2021.json のようなファイルに保存される</li>
+      <li>「全削除」でリストを空にして、次のアイソ(2022など)を同じように追加して保存する</li>
+      <li>全部のアイソが終わったら、「📂 保存データを読込・合算」で、保存したファイルを<strong>まとめて選ぶ</strong>(複数選択できる)</li>
+      <li>1つのリストに集まる。各行にはアイソNo.が付き、切断寸法の合計が出る。「📏 定尺で必要本数を計算」で、全アイソを合わせた必要本数が出る</li>
+    </ol>
+    <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
+      <li>定尺の必要本数は、全アイソを合わせて詰め直すので、アイソ別に足した本数より少なくなることがあります。結果に「アイソ別に足すと○本 → 合算で○本」と出ます。</li>
+      <li>すでにリストにある行と全く同じ内容の行は、読み込んでも重複せず読み飛ばします。同じアイソNo.で内容の違う行を追加しようとすると、確認が出ます。</li>
+      <li>保存ファイルは、ダウンロードフォルダなどに保存されます。PCやスマホの間で渡すときは、そのファイルを送って読み込んでください。</li>
+    </ul>
+  </div>
+  <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--accent)">!</span><span class="step-title">困ったとき</span></div>
     <p class="hint">入力した継手の並びがおかしく見える場合や、数字が想定と違う場合は、パイプサイズや継手のサイズの選び間違いがないか確認してください。それでも解決しない場合は、作成者にご相談ください。</p>
   </div>
@@ -406,8 +427,15 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <div class="step-label"><span class="step-num" style="background:var(--accent)">切</span><span class="step-title">切断リスト</span></div>
     <p class="hint">各タブの「切断寸法」下にある「切断リストに追加」で、計算結果をここに集めます。一覧を印刷・PDF保存・メール送信できます。</p>
     <div class="ol-grid">
-      <div style="grid-column:1/3"><label>件名(物件名など)</label><input type="text" id="olTitle" placeholder="例: ○○工事 配管切断"></div>
+      <div><label>件名(物件名など)</label><input type="text" id="olTitle" placeholder="例: ○○工事"></div>
+      <div><label>アイソNo.(追加する分)</label><input type="text" id="olIso" placeholder="例: 2021"></div>
     </div>
+    <div class="ol-btns" style="grid-template-columns:1fr 1fr">
+      <button id="olSaveFile">💾 データ保存(アイソ別)</button>
+      <button id="olLoadFile">📂 保存データを読込・合算</button>
+    </div>
+    <input type="file" id="olFile" accept=".json,application/json" multiple style="display:none">
+    <p class="ol-msg" id="olIOMsg"></p>
     <div id="olResume" style="display:none;background:#FFF4DC;border:1px solid #E0B050;border-radius:6px;padding:10px;margin-top:8px;font-size:.82rem;line-height:1.6;">
       <div><b>前回の切断リスト(<span id="olResumeN">0</span>件)が残っています。</b></div>
       <div style="display:flex;gap:8px;margin-top:8px;">
@@ -417,7 +445,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     </div>
     <div id="olEmpty" class="ol-empty">まだ追加されていません。</div>
     <div class="ol-tablewrap"><table class="ol-t" id="olTable" style="display:none">
-      <thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th><th></th></tr></thead>
+      <thead><tr><th>No</th><th>アイソ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th><th></th></tr></thead>
       <tbody id="olBody"></tbody></table></div>
     <div class="ol-btns" id="olBtns" style="display:none">
       <button class="pri" id="olPrint">🖨 印刷 / PDF保存</button>
@@ -1562,8 +1590,8 @@ attachStepper('mix_drawSize', 1, 0, 0);
   let list=[], seq=1, last={mat:'SGP',sch:'10S',ch:'自動',matO:'',schO:''};
   const $=id=>document.getElementById(id);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function save(){ try{ localStorage.setItem(KEY,JSON.stringify({list,seq,last,title:$('olTitle').value})); }catch(e){} }
-  function load(){ try{ const o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o){ list=o.list||[]; seq=o.seq||1; last=o.last||last; if(MATS.indexOf(last.mat)<0) last={mat:'SGP',sch:'10S',ch:'自動',matO:'',schO:''}; $('olTitle').value=o.title||''; } }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify({list,seq,last,title:$('olTitle').value,iso:$('olIso').value})); }catch(e){} }
+  function load(){ try{ const o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o){ list=o.list||[]; seq=o.seq||1; last=o.last||last; if(MATS.indexOf(last.mat)<0) last={mat:'SGP',sch:'10S',ch:'自動',matO:'',schO:''}; $('olTitle').value=o.title||''; $('olIso').value=o.iso||''; } }catch(e){} }
   function opts(a,v){ return a.map(x=>'<option'+(x===v?' selected':'')+'>'+x+'</option>').join(''); }
   function today(){ const d=new Date(),z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'/'+z(d.getMonth()+1)+'/'+z(d.getDate()); }
 
@@ -1599,8 +1627,8 @@ attachStepper('mix_drawSize', 1, 0, 0);
       const sch=NOSCH.indexOf(g('mat'))>=0?'':(g('sch')==='その他'?(g('schO')||'その他'):g('sch'));
       const note=info.map(x=>x.label+(x.kind==='FL'?'':' '+x.kind)).join('×');
       last={mat:g('mat'),sch:g('sch'),ch:g('ch'),matO:g('matO'),schO:g('schO')};
-      const it={mat:mat,size:size,sch:sch,len:len,draw:isFinite(draw)?draw:null,ch:ch,qty:qty,note:note||TAB[k]};
-      const same=list.find(x=>x.mat===it.mat&&x.size===it.size&&x.sch===it.sch&&x.len===it.len&&x.draw===it.draw&&x.ch===it.ch&&x.note===it.note);
+      const it={mat:mat,size:size,sch:sch,len:len,draw:isFinite(draw)?draw:null,ch:ch,qty:qty,note:note||TAB[k],src:$('olIso').value.trim()};
+      const same=list.find(x=>x.mat===it.mat&&x.size===it.size&&x.sch===it.sch&&x.len===it.len&&x.draw===it.draw&&x.ch===it.ch&&x.note===it.note&&(x.src||'')===(it.src||''));
       if(same) same.qty+=qty; else { it.id=seq++; list.push(it); }
       msg.style.color=''; msg.textContent='✓ 追加しました(面取り: '+ch+(g('ch')==='自動'?'・自動判定':'')+')';
       render();
@@ -1652,7 +1680,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     return '<select class="ol-ed" data-ed="sch" data-id="'+r.id+'"'+(NOSCH.indexOf(r.mat)>=0?' disabled':'')+'>'+optHtml(vals,r.sch,'—')+'<option value="__other">その他…</option></select>';
   }
   function lenOf(r){ return r.len.toLocaleString('ja-JP')+(r.draw!=null?'('+r.draw.toLocaleString('ja-JP')+')':''); }
-  function lineOf(r,i){ return (i+1)+'. '+r.mat+' '+(r.size||'')+' '+(r.sch?'Sch'+r.sch+' ':'')+'L='+lenOf(r)+'mm　面取り:'+r.ch+'　'+r.qty+'本'+(r.note?'　['+r.note+']':''); }
+  function lineOf(r,i){ return (i+1)+'. '+(r.src?'['+r.src+'] ':'')+r.mat+' '+(r.size||'')+' '+(r.sch?'Sch'+r.sch+' ':'')+'L='+lenOf(r)+'mm　面取り:'+r.ch+'　'+r.qty+'本'+(r.note?'　['+r.note+']':''); }
 
   /* ---- 定尺割付 ---- */
   let barsOn=false;
@@ -1665,10 +1693,10 @@ attachStepper('mix_drawSize', 1, 0, 0);
     const items=[];
     group.rows.forEach(function(r){
       for(let q=0;q<r.qty;q++){
-        let rem=r.len, joint=0; const segs=[];
+        let rem=r.len, joint=0; const segs=[]; const tg=r.src?'['+r.src+']':'';
         while(rem+kerf>bar){ const seg=bar-kerf; segs.push(seg); rem-=seg; joint++; }
-        if(joint>0) segs.forEach(function(sg){ items.push({len:sg,label:sg+'(継)',own:true}); });
-        items.push({len:rem,label:String(rem)+(joint>0?'(継ぎ端)':'')});
+        if(joint>0) segs.forEach(function(sg){ items.push({len:sg,label:sg+'(継)'+tg,own:true}); });
+        items.push({len:rem,label:String(rem)+(joint>0?'(継ぎ端)':'')+tg});
       }
     });
     items.sort(function(a,b){return b.len-a.len;});
@@ -1699,30 +1727,35 @@ attachStepper('mix_drawSize', 1, 0, 0);
         const cut=(b4.length*4000)-(b6.length*6000);   // 6mにすると減る端材(=仕入れ総長さの差)
         best=(cut>=thr&&cut>0)?{bar:6000,bins:b6}:{bar:4000,bins:b4};
       }
-      return {g:g,bar:best.bar,bins:best.bins,kerf:kerf};
+      const srcs=[]; g.rows.forEach(function(r){ const sc=r.src||''; if(srcs.indexOf(sc)<0) srcs.push(sc); });
+      const per=srcs.length>1?srcs.map(function(sc){ return {src:sc||'(未設定)',n:packBars({rows:g.rows.filter(function(r){return (r.src||'')===sc;})},best.bar,kerf).length}; }):null;
+      return {g:g,bar:best.bar,bins:best.bins,kerf:kerf,per:per};
     });
   }
   function barLabel(b){ return (b/1000)+'m'; }
   function binLine(bn,i,bar){ return (i+1)+'本目: '+bn.items.join(' + ')+'　(端材 '+bn.free+')'; }
+  function perText(r){ return r.per?'　(アイソ別単独: '+r.per.map(function(x){return x.src+'='+x.n+'本';}).join(' / ')+' → 合算で'+r.bins.length+'本)':''; }
+  function sepTotal(res){ let t=0, any=false; res.forEach(function(r){ if(r.per){ any=true; r.per.forEach(function(x){t+=x.n;}); } else t+=r.bins.length; }); return any?t:null; }
   function barsText(){
     if(!barsOn||!list.length) return [];
     const res=calcBars(); const L=['','【定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)】'];
     let all=0;
     res.forEach(function(r){
       all+=r.bins.length;
-      L.push(r.g.mat+' '+r.g.size+' '+(r.g.sch?'Sch'+r.g.sch+' ':'')+'定尺'+barLabel(r.bar)+' × '+r.bins.length+'本');
+      L.push(r.g.mat+' '+r.g.size+' '+(r.g.sch?'Sch'+r.g.sch+' ':'')+'定尺'+barLabel(r.bar)+' × '+r.bins.length+'本'+perText(r));
       r.bins.forEach(function(bn,i){ L.push('  '+binLine(bn,i,r.bar)); });
     });
-    L.push('定尺 合計 '+all+'本');
+    const sp=sepTotal(res);
+    L.push('定尺 合計 '+all+'本'+(sp!==null&&sp!==all?'　(アイソ別に単純に足すと'+sp+'本 → 合算割付で'+all+'本)':''));
     return L;
   }
   function barsHtml(){
     const res=calcBars(); let all=0;
     const rows=res.map(function(r){
       all+=r.bins.length;
-      return '<tr><td>'+esc(r.g.mat)+'</td><td class="c">'+esc(r.g.size)+'</td><td class="c">'+esc(r.g.sch)+'</td><td class="c">'+barLabel(r.bar)+'</td><td class="n">'+r.bins.length+'本</td><td>'+r.bins.map(function(bn,i){return esc(binLine(bn,i,r.bar));}).join('<br>')+'</td></tr>';
+      return '<tr><td>'+esc(r.g.mat)+'</td><td class="c">'+esc(r.g.size)+'</td><td class="c">'+esc(r.g.sch)+'</td><td class="c">'+barLabel(r.bar)+'</td><td class="n">'+r.bins.length+'本'+(r.per?'<div style="font-size:.62rem;font-weight:400;color:var(--ink-soft);white-space:normal">単独: '+r.per.map(function(x){return esc(x.src)+'='+x.n;}).join(' / ')+'</div>':'')+'</td><td>'+r.bins.map(function(bn,i){return esc(binLine(bn,i,r.bar));}).join('<br>')+'</td></tr>';
     }).join('');
-    return '<div class="ol-bt">定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)　合計 '+all+'本</div><table class="ol-b"><thead><tr><th>材質</th><th>呼径</th><th>Sch</th><th>定尺</th><th>必要本数</th><th>切り分け(長い順)</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    return '<div class="ol-bt">定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)　合計 '+all+'本'+(function(){const sp=sepTotal(res);return (sp!==null&&sp!==all)?'(アイソ別に足すと'+sp+'本)':'';})()+'</div><table class="ol-b"><thead><tr><th>材質</th><th>呼径</th><th>Sch</th><th>定尺</th><th>必要本数</th><th>切り分け(長い順)</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }
   function refreshBars(){
     $('olBarOpt').style.display=barsOn&&list.length?'':'none';
@@ -1732,12 +1765,54 @@ attachStepper('mix_drawSize', 1, 0, 0);
   $('olKerf').addEventListener('input',function(){ if(barsOn){ edited=false; render(); } });
   $('olSus6Thr').addEventListener('input',function(){ if(barsOn){ edited=false; render(); } });
   $('olSusLen').addEventListener('change',function(){ if(barsOn){ edited=false; render(); } });
+
+  /* ---- アイソ別データの保存・読込(合算) ---- */
+  function ioMsg(t,err){ const m=$('olIOMsg'); m.style.color=err?'#B33':''; m.textContent=t; }
+  $('olSaveFile').addEventListener('click',function(){
+    if(!list.length){ ioMsg('保存するデータがありません。',true); return; }
+    let iso=$('olIso').value.trim();
+    if(!iso){ iso=(window.prompt('アイソNo.を入力してください(ファイル名になります)','')||'').trim(); if(!iso) return; $('olIso').value=iso; save(); }
+    const data={app:'pipe-cutting-list',v:1,iso:iso,title:$('olTitle').value.trim(),date:today(),
+      list:list.filter(function(x){ return !x.src||x.src===iso; }).map(function(x){ const c=Object.assign({},x); c.src=c.src||iso; return c; })};
+    if(!data.list.length){ ioMsg('アイソ「'+iso+'」の行がリストにありません。アイソNo.を確認してください。',true); return; }
+    const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='cutlist_'+iso.replace(/[\\\/:*?"<>|]/g,'_')+'.json';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+    ioMsg('✓ 「'+a.download+'」を保存しました(アイソ「'+iso+'」'+data.list.length+'行)。');
+  });
+  $('olLoadFile').addEventListener('click',function(){ $('olFile').click(); });
+  $('olFile').addEventListener('change',function(e){
+    const files=Array.prototype.slice.call(e.target.files||[]); e.target.value='';
+    if(!files.length) return;
+    Promise.all(files.map(function(f){ return f.text().then(function(t){ return {f:f,t:t}; }); })).then(function(arr){
+      let added=0, skipped=0, names=[];
+      arr.forEach(function(o){
+        let d; try{ d=JSON.parse(o.t); }catch(err){ d=null; }
+        if(!d||d.app!=='pipe-cutting-list'||!Array.isArray(d.list)){ ioMsg('「'+o.f.name+'」は切断リストのデータではありません。',true); return; }
+        const fallback=d.iso||o.f.name.replace(/\.json$/i,'').replace(/^(cutlist_|切断リスト_)/,'');
+        const keyOf=function(x){ return [x.src,x.mat,x.size,x.sch,x.len,x.draw,x.ch,x.qty,x.note].join('|'); };
+        const rows=d.list.map(function(x){ const c=Object.assign({},x); c.src=c.src||fallback; return c; });
+        const have={}; list.forEach(function(y){ have[keyOf(y)]=true; });
+        const fresh=rows.filter(function(c){ return !have[keyOf(c)]; });
+        skipped+=rows.length-fresh.length;
+        const srcs=[]; fresh.forEach(function(c){ if(srcs.indexOf(c.src)<0) srcs.push(c.src); });
+        const dup=srcs.filter(function(sc){ return list.some(function(y){return y.src===sc;}); });
+        if(dup.length&&!window.confirm('アイソ「'+dup.join('、')+'」は既にリストにあります。重複して追加しますか?')) return;
+        fresh.forEach(function(c){ c.id=seq++; list.push(c); added++; });
+        names.push(srcs.join('、'));
+      });
+      if(added){ edited=false; render(); ioMsg('✓ '+added+'行を読み込みました('+names.join(' / ')+')'+(skipped?'。同じ内容の'+skipped+'行は重複のため読み飛ばしました':'')+'。合計・定尺割付は全アイソを合わせて計算します。'); }
+      else if(skipped){ ioMsg('新しく追加する行はありませんでした(同じ内容の'+skipped+'行は既にリストにあります)。'); }
+    });
+  });
   function textOf(){
     const t=$('olTitle').value.trim();
     const L=['【配管切断リスト】'+t,'日付：'+today(),''];
     list.forEach((r,i)=>L.push(lineOf(r,i)));
     const total=list.reduce((a,r)=>a+r.qty,0);
-    L.push('','合計 '+total+'本');
+    const totLen=list.reduce(function(a,r){return a+r.len*r.qty;},0);
+    L.push('','合計 '+total+'本　切断寸法の合計 '+totLen.toLocaleString('ja-JP')+'mm');
     barsText().forEach(function(x){ L.push(x); });
     return L.join('\n');
   }
@@ -1750,7 +1825,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     $('olBtns2').style.display=has?'grid':'none';
     if(!has){ $('olText').style.display='none'; barsOn=false; }
     $('olBody').innerHTML=list.map(function(r,i){
-      return '<tr><td>'+(i+1)+'</td><td>'+matSel(r)+'</td><td>'+esc(r.size)+'</td><td>'+schSel(r)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
+      return '<tr><td>'+(i+1)+'</td><td>'+esc(r.src||'')+'</td><td>'+matSel(r)+'</td><td>'+esc(r.size)+'</td><td>'+schSel(r)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td>'
         +'<td><div class="ol-qrow"><input class="q" type="number" min="1" value="'+r.qty+'" data-id="'+r.id+'" inputmode="numeric"></div></td><td class="note">'+esc(r.note)+'</td>'
         +'<td><button type="button" data-del="'+r.id+'" title="削除">✕</button></td></tr>';
     }).join('');
@@ -1784,6 +1859,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     const v=parseInt(e.target.value,10); if(!(v>=1)) return;
     const it=list.find(x=>String(x.id)===id); if(it){ it.qty=v; if(!edited) $('olText').value=textOf(); save(); }
   });
+  $('olIso').addEventListener('input',function(){ save(); });
   $('olTitle').addEventListener('input',function(){ if(!edited) $('olText').value=textOf(); save(); });
   $('olText').addEventListener('input',function(){ edited=true; });
   $('olToggleText').addEventListener('click',function(){ const t=$('olText'); t.style.display=t.style.display==='none'?'':'none'; });
@@ -1797,7 +1873,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     edited=false; render();
     flash('olSort','✓ 並べ替えました','⇅ 材質・サイズで並べ替え');
   });
-  $('olClear').addEventListener('click',function(){ if(list.length && confirm('リストをすべて削除しますか?')){ list=[]; edited=false; render(); } });
+  $('olClear').addEventListener('click',function(){ if(list.length && confirm('リストをすべて削除しますか?')){ list=[]; edited=false; $('olIso').value=''; render(); } });
   function flash(id,label,orig){ const b=$(id); b.classList.add('done'); b.textContent=label; setTimeout(function(){ b.classList.remove('done'); b.textContent=orig; },1200); }
   $('olMail').addEventListener('click',function(){
     if(!list.length) return;
@@ -1812,17 +1888,17 @@ attachStepper('mix_drawSize', 1, 0, 0);
   $('olPrint').addEventListener('click',function(){
     if(!list.length) return;
     const t=$('olTitle').value.trim();
-    let tb=list.map(function(r,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td><td>'+r.qty+'</td><td class="note">'+esc(r.note)+'</td></tr>'; }).join('');
+    let tb=list.map(function(r,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(r.src||'')+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td><td>'+r.qty+'</td><td class="note">'+esc(r.note)+'</td></tr>'; }).join('');
     const total=list.reduce((a,r)=>a+r.qty,0);
     $('ol-print').innerHTML='<h1>配管切断リスト</h1><div class="m">'+(t?'件名：'+esc(t)+'　':'')+'日付：'+today()+'　合計 '+total+'本</div>'
-      +'<table><thead><tr><th>No</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>'+(barsOn?barsHtml():'');
+      +'<table><thead><tr><th>No</th><th>アイソ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>'+(barsOn?barsHtml():'');
     window.print();
   });
   load(); render();
   if(list.length>0){
     $('olResumeN').textContent=list.length; $('olResume').style.display='';
     $('olKeep').addEventListener('click',function(){ $('olResume').style.display='none'; });
-    $('olDrop').addEventListener('click',function(){ list=[]; edited=false; $('olTitle').value=''; $('olResume').style.display='none'; render(); });
+    $('olDrop').addEventListener('click',function(){ list=[]; edited=false; $('olTitle').value=''; $('olIso').value=''; $('olResume').style.display='none'; render(); });
   }
 })();
 
