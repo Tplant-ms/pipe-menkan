@@ -327,7 +327,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
 <div class="panel manual" id="panel-manual">
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">?</span><span class="step-title">これは何のツール?</span></div>
-    <p class="hint">配管の継手(エルボ・レジューサー・フランジなど)を組み合わせたときに、必要なパイプの切断寸法を自動で計算するツールです。スマホ・タブレット・PCのブラウザで、インストール不要で使えます。計算した切断寸法は「切断リスト」に集めて、定尺の必要本数の計算、印刷・PDF保存・メール送信、アイソ別の保存と合算までできます。</p>
+    <p class="hint">配管の継手(エルボ・レジューサー・フランジなど)を組み合わせたときに、必要なパイプの切断寸法を自動で計算するツールです。スマホ・タブレット・PCのブラウザで、インストール不要で使えます。計算した切断寸法は「切断リスト」に集めて、定尺の必要本数の計算、印刷・PDF保存・メール送信、アイソメ別の保存と合算までできます。</p>
   </div>
   <div class="card">
     <div class="step-label"><span class="step-num" style="background:var(--ink-soft)">1</span><span class="step-title">基本の使い方</span></div>
@@ -380,7 +380,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
       <li><strong>面取り</strong>は「自動」のとき、パイプの両端(1個目・2個目)のBW継手の数で決まります。2箇所なら両面、1箇所なら片面、BW継手がなければ面無しです(SW継手・FLは面取り不要)。手動で選ぶこともできます。</li>
       <li><strong>材質・スケジュール</strong>:SGP・SGP-Wはスケジュールなしです。STPG370は40S、SUS系は10Sが初期値です。「その他」を選ぶと、材質・スケジュールを手入力できます(その他以外を選ぶと入力は消えます)。</li>
       <li><strong>図示寸法</strong>:リストには「切断寸法(図示寸法)」の形(例: 546(700))で入ります。同じ内容を追加すると、行が増えず本数が足されます。</li>
-      <li><strong>修正</strong>:リストの中で、材質・スケジュールを選び直せます。本数は「−」「＋」か直接入力で変えられます。行の右の「✕」でその行を削除、「全削除」で全部を消します(アイソNo.も消えます)。</li>
+      <li><strong>修正</strong>:リストの中で、材質・スケジュールを選び直せます。本数は「−」「＋」か直接入力で変えられます。行の右の「✕」でその行を削除、「全削除」で全部を消します(アイソメNo.も消えます)。</li>
       <li><strong>並べ替え</strong>:「材質・サイズで並べ替え」で、材質→サイズ→スケジュール→切断寸法の順に整理できます。</li>
       <li><strong>メール</strong>:「メール」でメールソフトが開き、一覧が本文に入ります。「メール本文を確認・編集」で本文を書き換えられます。メールソフトが開かない環境では「コピー」を使ってください。PDFを添付したいときは、印刷画面で「PDFに保存」してからメールに添付します。</li>
       <li>リストは次に開いたときも残ります。開いたときに「残して続ける」か「消して新規作成」を選べます。</li>
@@ -399,18 +399,18 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <p class="hint" style="margin-top:10px;">※計算は定尺を5,500mm・4,000mm・6,000mmちょうどとして行います。実際の定尺は少し長い(5,512mm・4,012mmなど)ことがあるので、ぎりぎりで収まる場合や、定尺を超える切り寸は、現物の長さを測ってから決めてください。</p>
   </div>
   <div class="card">
-    <div class="step-label"><span class="step-num" style="background:var(--accent)">10</span><span class="step-title">アイソ別の保存と合算</span></div>
-    <p class="hint">アイソ(アイソメNo.)ごとに切断リストを作り、あとでまとめて、切断寸法の合計と定尺の必要本数を出せます。</p>
+    <div class="step-label"><span class="step-num" style="background:var(--accent)">10</span><span class="step-title">アイソメ別の保存と合算</span></div>
+    <p class="hint">アイソメ図ごとに切断リストを作り、あとでまとめて、切断寸法の合計と定尺の必要本数を出せます。</p>
     <ol style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
-      <li>切断リストの「アイソNo.」に番号(例: 2021)を入れて、そのアイソの切断寸法を追加していく</li>
-      <li>「💾 データ保存(アイソ別)」を押す。<strong>入力しているアイソNo.の行だけ</strong>が、cutlist_2021.json のようなファイルに保存される</li>
-      <li>「全削除」でリストを空にして、次のアイソ(2022など)を同じように追加して保存する</li>
-      <li>全部のアイソが終わったら、「📂 保存データを読込・合算」で、保存したファイルを<strong>まとめて選ぶ</strong>(複数選択できる)</li>
-      <li>1つのリストに集まる。各行にはアイソNo.が付き、切断寸法の合計が出る。「📏 定尺で必要本数を計算」で、全アイソを合わせた必要本数が出る</li>
+      <li>切断リストの「アイソメNo.」に番号(例: 2021)を入れて、そのアイソメの切断寸法を追加していく</li>
+      <li>「💾 データ保存(アイソメ別)」を押す。<strong>入力しているアイソメNo.の行だけ</strong>が、cutlist_2021.json のようなファイルに保存される</li>
+      <li>「全削除」でリストを空にして、次のアイソメ(2022など)を同じように追加して保存する</li>
+      <li>全部のアイソメが終わったら、「📂 保存データを読込・合算」で、保存したファイルを<strong>まとめて選ぶ</strong>(複数選択できる)</li>
+      <li>1つのリストに集まる。各行にはアイソメNo.が付き、切断寸法の合計が出る。「📏 定尺で必要本数を計算」で、全アイソメを合わせた必要本数が出る</li>
     </ol>
     <ul style="margin:8px 0 0; padding-left:20px; font-size:.82rem; line-height:1.9; color:var(--ink);">
-      <li>定尺の必要本数は、全アイソを合わせて詰め直すので、アイソ別に足した本数より少なくなることがあります。結果に「アイソ別に足すと○本 → 合算で○本」と出ます。</li>
-      <li>すでにリストにある行と全く同じ内容の行は、読み込んでも重複せず読み飛ばします。同じアイソNo.で内容の違う行を追加しようとすると、確認が出ます。</li>
+      <li>定尺の必要本数は、全アイソメを合わせて詰め直すので、アイソメ別に足した本数より少なくなることがあります。結果に「アイソメ別に足すと○本 → 合算で○本」と出ます。</li>
+      <li>すでにリストにある行と全く同じ内容の行は、読み込んでも重複せず読み飛ばします。同じアイソメNo.で内容の違う行を追加しようとすると、確認が出ます。</li>
       <li>保存ファイルは、ダウンロードフォルダなどに保存されます。PCやスマホの間で渡すときは、そのファイルを送って読み込んでください。</li>
     </ul>
   </div>
@@ -428,10 +428,10 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     <p class="hint">各タブの「切断寸法」下にある「切断リストに追加」で、計算結果をここに集めます。一覧を印刷・PDF保存・メール送信できます。</p>
     <div class="ol-grid">
       <div><label>件名(物件名など)</label><input type="text" id="olTitle" placeholder="例: ○○工事"></div>
-      <div><label>アイソNo.(追加する分)</label><input type="text" id="olIso" placeholder="例: 2021"></div>
+      <div><label>アイソメNo.(追加する分)</label><input type="text" id="olIso" placeholder="例: 2021"></div>
     </div>
     <div class="ol-btns" style="grid-template-columns:1fr 1fr">
-      <button id="olSaveFile">💾 データ保存(アイソ別)</button>
+      <button id="olSaveFile">💾 データ保存(アイソメ別)</button>
       <button id="olLoadFile">📂 保存データを読込・合算</button>
     </div>
     <input type="file" id="olFile" accept=".json,application/json" multiple style="display:none">
@@ -445,7 +445,7 @@ table.ol-t button{border:0;background:none;color:#B33;font-size:1rem;cursor:poin
     </div>
     <div id="olEmpty" class="ol-empty">まだ追加されていません。</div>
     <div class="ol-tablewrap"><table class="ol-t" id="olTable" style="display:none">
-      <thead><tr><th>No</th><th>アイソ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th><th></th></tr></thead>
+      <thead><tr><th>No</th><th>アイソメ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th><th></th></tr></thead>
       <tbody id="olBody"></tbody></table></div>
     <div class="ol-btns" id="olBtns" style="display:none">
       <button class="pri" id="olPrint">🖨 印刷 / PDF保存</button>
@@ -1734,7 +1734,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
   }
   function barLabel(b){ return (b/1000)+'m'; }
   function binLine(bn,i,bar){ return (i+1)+'本目: '+bn.items.join(' + ')+'　(端材 '+bn.free+')'; }
-  function perText(r){ return r.per?'　(アイソ別単独: '+r.per.map(function(x){return x.src+'='+x.n+'本';}).join(' / ')+' → 合算で'+r.bins.length+'本)':''; }
+  function perText(r){ return r.per?'　(アイソメ別単独: '+r.per.map(function(x){return x.src+'='+x.n+'本';}).join(' / ')+' → 合算で'+r.bins.length+'本)':''; }
   function sepTotal(res){ let t=0, any=false; res.forEach(function(r){ if(r.per){ any=true; r.per.forEach(function(x){t+=x.n;}); } else t+=r.bins.length; }); return any?t:null; }
   function barsText(){
     if(!barsOn||!list.length) return [];
@@ -1746,7 +1746,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
       r.bins.forEach(function(bn,i){ L.push('  '+binLine(bn,i,r.bar)); });
     });
     const sp=sepTotal(res);
-    L.push('定尺 合計 '+all+'本'+(sp!==null&&sp!==all?'　(アイソ別に単純に足すと'+sp+'本 → 合算割付で'+all+'本)':''));
+    L.push('定尺 合計 '+all+'本'+(sp!==null&&sp!==all?'　(アイソメ別に単純に足すと'+sp+'本 → 合算割付で'+all+'本)':''));
     return L;
   }
   function barsHtml(){
@@ -1755,7 +1755,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
       all+=r.bins.length;
       return '<tr><td>'+esc(r.g.mat)+'</td><td class="c">'+esc(r.g.size)+'</td><td class="c">'+esc(r.g.sch)+'</td><td class="c">'+barLabel(r.bar)+'</td><td class="n">'+r.bins.length+'本'+(r.per?'<div style="font-size:.62rem;font-weight:400;color:var(--ink-soft);white-space:normal">単独: '+r.per.map(function(x){return esc(x.src)+'='+x.n;}).join(' / ')+'</div>':'')+'</td><td>'+r.bins.map(function(bn,i){return esc(binLine(bn,i,r.bar));}).join('<br>')+'</td></tr>';
     }).join('');
-    return '<div class="ol-bt">定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)　合計 '+all+'本'+(function(){const sp=sepTotal(res);return (sp!==null&&sp!==all)?'(アイソ別に足すと'+sp+'本)':'';})()+'</div><table class="ol-b"><thead><tr><th>材質</th><th>呼径</th><th>Sch</th><th>定尺</th><th>必要本数</th><th>切り分け(長い順)</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    return '<div class="ol-bt">定尺割付(切りしろ'+(res.length?res[0].kerf:3)+'mm)　合計 '+all+'本'+(function(){const sp=sepTotal(res);return (sp!==null&&sp!==all)?'(アイソメ別に足すと'+sp+'本)':'';})()+'</div><table class="ol-b"><thead><tr><th>材質</th><th>呼径</th><th>Sch</th><th>定尺</th><th>必要本数</th><th>切り分け(長い順)</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }
   function refreshBars(){
     $('olBarOpt').style.display=barsOn&&list.length?'':'none';
@@ -1766,20 +1766,20 @@ attachStepper('mix_drawSize', 1, 0, 0);
   $('olSus6Thr').addEventListener('input',function(){ if(barsOn){ edited=false; render(); } });
   $('olSusLen').addEventListener('change',function(){ if(barsOn){ edited=false; render(); } });
 
-  /* ---- アイソ別データの保存・読込(合算) ---- */
+  /* ---- アイソメ別データの保存・読込(合算) ---- */
   function ioMsg(t,err){ const m=$('olIOMsg'); m.style.color=err?'#B33':''; m.textContent=t; }
   $('olSaveFile').addEventListener('click',function(){
     if(!list.length){ ioMsg('保存するデータがありません。',true); return; }
     let iso=$('olIso').value.trim();
-    if(!iso){ iso=(window.prompt('アイソNo.を入力してください(ファイル名になります)','')||'').trim(); if(!iso) return; $('olIso').value=iso; save(); }
+    if(!iso){ iso=(window.prompt('アイソメNo.を入力してください(ファイル名になります)','')||'').trim(); if(!iso) return; $('olIso').value=iso; save(); }
     const data={app:'pipe-cutting-list',v:1,iso:iso,title:$('olTitle').value.trim(),date:today(),
       list:list.filter(function(x){ return !x.src||x.src===iso; }).map(function(x){ const c=Object.assign({},x); c.src=c.src||iso; return c; })};
-    if(!data.list.length){ ioMsg('アイソ「'+iso+'」の行がリストにありません。アイソNo.を確認してください。',true); return; }
+    if(!data.list.length){ ioMsg('アイソメ「'+iso+'」の行がリストにありません。アイソメNo.を確認してください。',true); return; }
     const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='cutlist_'+iso.replace(/[\\\/:*?"<>|]/g,'_')+'.json';
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
-    ioMsg('✓ 「'+a.download+'」を保存しました(アイソ「'+iso+'」'+data.list.length+'行)。');
+    ioMsg('✓ 「'+a.download+'」を保存しました(アイソメ「'+iso+'」'+data.list.length+'行)。');
   });
   $('olLoadFile').addEventListener('click',function(){ $('olFile').click(); });
   $('olFile').addEventListener('change',function(e){
@@ -1798,11 +1798,11 @@ attachStepper('mix_drawSize', 1, 0, 0);
         skipped+=rows.length-fresh.length;
         const srcs=[]; fresh.forEach(function(c){ if(srcs.indexOf(c.src)<0) srcs.push(c.src); });
         const dup=srcs.filter(function(sc){ return list.some(function(y){return y.src===sc;}); });
-        if(dup.length&&!window.confirm('アイソ「'+dup.join('、')+'」は既にリストにあります。重複して追加しますか?')) return;
+        if(dup.length&&!window.confirm('アイソメ「'+dup.join('、')+'」は既にリストにあります。重複して追加しますか?')) return;
         fresh.forEach(function(c){ c.id=seq++; list.push(c); added++; });
         names.push(srcs.join('、'));
       });
-      if(added){ edited=false; render(); ioMsg('✓ '+added+'行を読み込みました('+names.join(' / ')+')'+(skipped?'。同じ内容の'+skipped+'行は重複のため読み飛ばしました':'')+'。合計・定尺割付は全アイソを合わせて計算します。'); }
+      if(added){ edited=false; render(); ioMsg('✓ '+added+'行を読み込みました('+names.join(' / ')+')'+(skipped?'。同じ内容の'+skipped+'行は重複のため読み飛ばしました':'')+'。合計・定尺割付は全アイソメを合わせて計算します。'); }
       else if(skipped){ ioMsg('新しく追加する行はありませんでした(同じ内容の'+skipped+'行は既にリストにあります)。'); }
     });
   });
@@ -1891,7 +1891,7 @@ attachStepper('mix_drawSize', 1, 0, 0);
     let tb=list.map(function(r,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(r.src||'')+'</td><td>'+esc(r.mat)+'</td><td>'+esc(r.size)+'</td><td>'+esc(r.sch)+'</td><td class="n">'+lenOf(r)+'</td><td>'+esc(r.ch)+'</td><td>'+r.qty+'</td><td class="note">'+esc(r.note)+'</td></tr>'; }).join('');
     const total=list.reduce((a,r)=>a+r.qty,0);
     $('ol-print').innerHTML='<h1>配管切断リスト</h1><div class="m">'+(t?'件名：'+esc(t)+'　':'')+'日付：'+today()+'　合計 '+total+'本</div>'
-      +'<table><thead><tr><th>No</th><th>アイソ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>'+(barsOn?barsHtml():'');
+      +'<table><thead><tr><th>No</th><th>アイソメ</th><th>材質</th><th>呼径</th><th>Sch</th><th>切断寸法(図示)</th><th>面取り</th><th>本数</th><th>継手の組合せ</th></tr></thead><tbody>'+tb+'</tbody></table>'+(barsOn?barsHtml():'');
     window.print();
   });
   load(); render();
